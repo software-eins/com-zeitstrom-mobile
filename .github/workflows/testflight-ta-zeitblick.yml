@@ -19,7 +19,7 @@ jobs:
       - name: Install node dependencies
         run: 'npm i'
       - name: Install pods
-        run: 'ionic cap sync'
+        run: 'npm install -g @ionic/cli; ionic cap sync'
       - name: Archiving project
         env:
           PR_NUMBER: $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
