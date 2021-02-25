@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-npm i
+mkdir ../../node_modules
+npm i --prefix ../../
