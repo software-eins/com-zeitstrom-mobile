@@ -1,0 +1,52 @@
+<template>
+    <span>
+        <ion-skeleton-text v-if="!isSolved" :style="getPlaceholderStyle()" animated></ion-skeleton-text>
+        {{ value }}
+    </span>
+</template>
+
+<style scoped>
+    ion-skeleton-text {
+        margin: 0 !important;
+        padding: 2px 0;
+    }
+</style>
+
+<script lang="ts">
+    import { defineComponent } from 'vue';
+
+    import { IonSkeletonText } from '@ionic/vue';
+
+    export default defineComponent({
+        components: {
+            IonSkeletonText,
+        },
+        props: {
+            promise: Object,
+            width: {
+                type: String,
+                default: '40px',
+            },
+        },
+        data() {
+            return {
+                isSolved: false,
+                value: undefined,
+            }
+        },
+        methods: {
+            getPlaceholderStyle() {
+                return {
+                    width: this.width,
+                    display: 'inline-block',
+                }
+            },
+        },
+        mounted() {
+            this.promise!.then((result: any) => {
+                this.value = result;
+                this.isSolved = true;
+            });
+        }
+    });
+</script>
