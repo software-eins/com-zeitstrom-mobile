@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>method</key>
+	<string>app-store</string>
+	<key>teamID</key>
+	<string>6PL683D69K</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.zeitstrom.tamobile</key>
+        <string>2021-02-25-com-zeitstrom-tamobile</string>
+    </dict>
+</dict>
+</plist>
