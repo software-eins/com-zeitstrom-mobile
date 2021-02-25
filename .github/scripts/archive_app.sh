@@ -2,6 +2,8 @@
 
 set -eo pipefail
 
+security unlock-keychain -p "" ~/Library/Keychains/build.keychain
+
 xcodebuild -workspace ios/App/App.xcworkspace \
             -allowProvisioningUpdates \
             -scheme App \
