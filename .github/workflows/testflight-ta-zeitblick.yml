@@ -1,4 +1,5 @@
 name: Testflight TA Zeitblick
+runs-on: self-hosted
 on:
   push:
     branches:
