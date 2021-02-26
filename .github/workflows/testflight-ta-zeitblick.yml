@@ -10,20 +10,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v1
+
       - name: Install gpg
         run: brew install gnupg
+
+      - name: Set version number
+        run: ./.github/scripts/set_version_number.sh
+
       - name: Setup provisioning profile
         env:
           IOS_KEYS: ${{ secrets.IOS_KEYS }}
         run: ./.github/secrets/decrypt_secrets.sh
+
       - name: Install node dependencies
         run: 'npm i'
+
       - name: Install pods
         run: 'npm install -g @ionic/cli; ionic cap sync'
+
       - name: Archiving project
         env:
           PR_NUMBER: $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
         run: ./.github/scripts/archive_app.sh
+
       - name: Exporting .ipa
         run: ./.github/scripts/export_ipa.sh
       - name: Publishing app

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eo pipefail
+set -euxo pipefail
 
 security unlock-keychain -p "" ~/Library/Keychains/build.keychain
 
