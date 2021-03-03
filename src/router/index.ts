@@ -131,6 +131,13 @@ const routes: Array<RouteRecordRaw> = [
     // meta: { permissionSpace: 'acc' },
   },
 
+  // Reports
+  {
+    path: '/reports/employees/',
+    component: () => import('../views/EmployeeReport.vue'),
+      meta: { permissionSpace: 'monthly_report' },
+  },
+
   // Debug
   {
     path: '/debug/',

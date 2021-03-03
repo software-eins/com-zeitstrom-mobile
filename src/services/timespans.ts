@@ -1,6 +1,7 @@
 import BaseService, { FormField, PaginatedResponse } from './_base';
 
 import { Timestamp } from "./timestamps";
+import { AxiosResponse } from 'axios';
 
 
 interface Timespan {
@@ -23,6 +24,7 @@ interface TimespanListParams {
     page?: number;
     pagesize?: number;
     verbosity?: string;
+    order?: Array<string>;
 }
 
 interface TimespanHistoryParams {
@@ -71,7 +73,7 @@ class TimespanService extends BaseService<Timespan> {
         this.cacheTimeout = 60;
     }
 
-    listParams(params: TimespanListParams): PaginatedResponse<Timespan> {
+    listParams(params: TimespanListParams): AxiosResponse<PaginatedResponse<Timespan>> {
         params = params || {};
         const page = params.page || 1;
         const pagesize = params.pagesize || 50;
@@ -86,8 +88,9 @@ class TimespanService extends BaseService<Timespan> {
         if (params.verbosity) query += '&verbosity=' + params.verbosity;
         if (params.isoDateFrom) query += '&datetime_from=' + params.isoDateFrom;
         if (params.isoDateTo) query += '&datetime_to=' + params.isoDateTo;
+        if (params.order) query += "&order=" + params.order.join("|");
 
-        return this._get(query) as unknown as PaginatedResponse<Timespan>;
+        return this._get(query) as unknown as AxiosResponse<PaginatedResponse<Timespan>>;
     }
 
     history(resourceId: string, params: TimespanHistoryParams) {

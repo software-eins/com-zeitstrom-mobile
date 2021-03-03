@@ -62,6 +62,7 @@
     ion-list {
         padding-top: 0 !important;
     }
+    zeit-tab-menu.hide,
     ion-menu.hide {
         pointer-events: none;
         display: none;
@@ -85,7 +86,7 @@ import { ChoiceField, PaginatedResponse } from './services/_base';
 import { AxiosResponse } from 'axios';
 import ZeitTabMenu from './components/ui/ZeitTabMenu.vue';
 
-const { StatusBar } = Plugins;
+const { StatusBar, SplashScreen } = Plugins;
 
 export default defineComponent({
   name: 'App',
@@ -217,37 +218,37 @@ export default defineComponent({
           }
       },
   },
+  data() {
+      return {
+          showMenu: false,
+      }
+  },
   methods: {
     loadDarkMode() {
-      document.querySelector('html')!.classList.remove('dark')
-      return;
+      if (document === null) return;
 
-    //   console.log("load dark mode");
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.querySelector('body')!.classList.add('dark')
+      } else {
+          document.querySelector('body')!.classList.remove('dark')
+      }
 
-    //   if (document === null) return;
+      // Whenever the user explicitly chooses light mode
+      localStorage.theme = 'light'
 
-    //   // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-    //   if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    //       document.querySelector('html')!.classList.add('dark')
-    //   } else {
-    //       document.querySelector('html')!.classList.remove('dark')
-    //   }
+      // Whenever the user explicitly chooses dark mode
+      localStorage.theme = 'dark'
 
-    //   // Whenever the user explicitly chooses light mode
-    //   localStorage.theme = 'light'
-
-    //   // Whenever the user explicitly chooses dark mode
-    //   localStorage.theme = 'dark'
-
-    //   // Whenever the user explicitly chooses to respect the OS preference
-    //   localStorage.removeItem('theme')
+      // Whenever the user explicitly chooses to respect the OS preference
+      localStorage.removeItem('theme')
     },
     logout() {
       this.accountService.logout();
       this.$router.replace({name:'authentication:login'});
     },
     updateAccountDetails() {
-        Promise.all([
+        return Promise.all([
             this.accountService.list().then((response: AxiosResponse<PaginatedResponse<Account>>) => {
                 this.account = response.data.results[0];
                 return this.account;
@@ -278,8 +279,16 @@ export default defineComponent({
   },
   mounted() {
     this.loadDarkMode();
-    this.updateAccountDetails();
-    // StatusBar.setStyle({style: StatusBarStyle.Light});
+    this.updateAccountDetails().then(() => {
+        // Hide splash
+        console.log("hide splash");
+        SplashScreen.hide();
+    });
+
+    this.$router.afterEach((to: any) => {
+      this.showMenu = !to.meta.hideChrome;
+    });
+    this.showMenu = !this.$route.meta.hideChrome;
   }
 });
 </script>

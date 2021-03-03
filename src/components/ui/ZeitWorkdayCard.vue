@@ -1,5 +1,5 @@
 <template>
-  <ion-card>
+  <ion-card class="mt-0">
     <ion-list class="transparent-bg">
       <ion-item class="flex items-center justify-center w-full transparent-bg" lines="full">
         <ion-label class="flex-grow">
@@ -59,7 +59,7 @@
 
   import moment from 'moment';
   import { Timespan, timespanService } from '../../services/timespans';
-import ZeitProjectBadge from './ZeitProjectBadge.vue';
+  import ZeitProjectBadge from './ZeitProjectBadge.vue';
 
 
   export default defineComponent({

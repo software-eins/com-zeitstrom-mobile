@@ -13,21 +13,32 @@ interface WorkdayReport {
     timespans: Array<Timespan>;
 }
 
+interface WorkdayReprotListParams {
+    page?: number;
+    pagesize?: number;
+    daterange?: Array<string>;
+}
+
 class EmployeeReportService extends BaseService<WorkdayReport> {
     constructor() {
         super("/api/v2/reports/employees/");
     }
 
-    workdayReports(objectId: string, page=1, pagesize=50) {
-        const params =
+    workdayReports(employeeId: string, params: WorkdayReprotListParams = {}) {
+        const page = params.page || 1;
+        const pagesize = params.pagesize || 50;
+        const daterange = params.daterange;
+
+        let query =
             '?limit=' + String(pagesize) +
             '&offset=' + String((page - 1) * pagesize);
 
-        return this._get(objectId + '/' + params);
+        if (daterange) query += "&daterange=" + daterange[0] + "|" + daterange[1];
+
+        return this._get(employeeId + '/' + query);
     }
 }
 
 const employeeReportService = new EmployeeReportService();
 
 export { employeeReportService, WorkdayReport }
-

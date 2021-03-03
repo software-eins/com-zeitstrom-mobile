@@ -1,5 +1,6 @@
 <template>
   <ion-page>
+
     <ion-tabs @ionTabsWillChange="beforeTabChange" @ionTabsDidChange="afterTabChange">
       <ion-tab-bar slot="bottom" :translucent="true" v-if="!$route.meta.hideChrome">
 
@@ -8,7 +9,7 @@
           <ion-label>Stempeln</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="report" href="/debug/">
+        <ion-tab-button tab="report" href="/reports/employees/">
           <ion-icon :md="calendar" :ios="calendarSharp"></ion-icon>
           <ion-label>Bericht</ion-label>
         </ion-tab-button>
@@ -26,7 +27,10 @@
   ion-tab-bar {
     border-top: .55px solid var(--ion-toolbar-border-color, var(--ion-border-color, var(--ion-color-step-150, rgba(0, 0, 0, 0.2))));
     padding-top: .25rem;
-    background: white;
+  }
+
+  body:not(.dark) ion-tab-bar {
+    --background: white;
   }
 </style>
 
@@ -39,6 +43,7 @@ import {
   IonTabButton,
   IonTabs,
   IonPage,
+  IonRouterOutlet,
 } from '@ionic/vue';
 import {
   calendar, personCircle, timer,
@@ -46,20 +51,40 @@ import {
 } from 'ionicons/icons';
 
 export default defineComponent({
-  components: { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs, IonPage, },
+  components: {
+    IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs, IonPage,
+    // IonRouterOutlet,
+  },
   setup() {
-    const beforeTabChange = () => {
-      // do something before tab change
-    }
-    const afterTabChange = () => {
-      // do something after tab change
-    }
     return {
       calendar, personCircle, timer,
       calendarSharp, personCircleSharp, timerSharp,
-      beforeTabChange,
-      afterTabChange
     }
+  },
+  methods: {
+    beforeTabChange: function() {
+      if (!this.$route.meta.hideChrome) {
+        this.showMenu = true;
+      }
+    },
+    afterTabChange: function() {
+      if (this.$route.meta.hideChrome) {
+        this.showMenu = false;
+      }
+    },
+  },
+  data() {
+    return {
+      showMenu: false,
+    }
+  },
+  mounted() {
+    console.log("foo");
+    this.$router.afterEach(to => {
+      this.showMenu = !to.meta.hideChrome;
+      this.$forceUpdate();
+    });
+    this.showMenu = !this.$route.meta.hideChrome;
   }
 });
 </script>

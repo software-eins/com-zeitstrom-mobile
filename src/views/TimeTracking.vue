@@ -1,14 +1,15 @@
 <template>
-  <ion-page v-if="isLoaded">
+  <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start" v-if="false">
-          <ion-menu-button color="primary"></ion-menu-button>
-        </ion-buttons>
-        <ion-title v-if="activeTimespan">
-          <div class="dot-active mr-2" /> Angemeldet
-        </ion-title>
-        <ion-title v-else>Abgemeldet</ion-title>
+
+          <ion-buttons slot="start" v-if="false"><ion-menu-button color="primary"></ion-menu-button></ion-buttons>
+          <ion-title>
+            <template v-if="activeTimespan"><div class="dot-active mr-2" /> Angemeldet</template>
+            <template v-else-if="isLoaded">Abgemeldet</template>
+            <template v-else><ion-skeleton-text animated /></template>
+          </ion-title>
+
       </ion-toolbar>
     </ion-header>
 
@@ -20,12 +21,17 @@
         <ion-toolbar class="px-3 pb-4">
           <ion-text color="medium">
             <template v-if="activeTimespan">Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</template>
-            <template v-else>Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.</template>
+            <template v-else-if="isLoaded">Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.</template>
+            <template v-else>
+              <ion-skeleton-text animated class="mb-3" />
+              <ion-skeleton-text animated class="mb-3 w-1/2" />
+            </template>
           </ion-text>
         </ion-toolbar>
       </ion-header>
 
       <zeit-permission-request
+        v-if="locationSetting == 'location_tracking_detailed'"
         feature="location"
         description="Dein Arbeitgeber benötigt den genauen Standort zur Erfassung von Arbeitszeiten."
         notEnabledDescription="Leider unterstützt dein Gerät keine Standortfreigabe. Du kannst daher keine Zeiten erfassen."
@@ -33,33 +39,44 @@
         @isAvailable="handleLocationPermissionChange($event)"
       />
 
-      <ion-item lines="full" class="hero-cta mb-4" @click="addTimestamp()" v-if="showTrackingButton()">
+      <ion-item  v-if="isLoaded" lines="full" class="hero-cta mb-4" @click="addTimestamp()">
+
         <ion-label v-if="activeTimespan">
           <h2>
             Erfassung beenden
             <div class="dot-active" />
             <ion-text color="success" class="ml-2" :key="now"><span class="text-sm">{{ timeAgo(activeTimespan.checkin.time) }}</span></ion-text>
           </h2>
-          <p v-if="!formattedAddress">Pausiere oder beende deinen Arbeitstag</p>
-          <p v-else>{{ formattedAddress }}</p>
+          <p v-if="formattedAddress">{{ formattedAddress }}</p>
+          <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
+          <p v-else>Pausiere oder beende deinen Arbeitstag</p>
         </ion-label>
         <ion-label v-else>
           <h2>Erfassung starten</h2>
-          <p v-if="!formattedAddress">Beginne einen neuen Arbeitstag</p>
-          <p v-else>{{ formattedAddress }}</p>
+          <p v-if="formattedAddress">{{ formattedAddress }}</p>
+          <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
+          <p v-else>Beginne einen neuen Arbeitstag</p>
         </ion-label>
 
-        <ion-icon :icon="logOutOutline" slot="end" size="large" v-if="!isLoadingAddTimestamp && activeTimespan" />
-        <ion-icon :icon="playOutline" slot="end" size="large" v-else-if="!isLoadingAddTimestamp" />
+        <ion-icon :icon="logOutOutline" slot="end" size="large" v-if="!isLoadingAddTimestamp && activeTimespan && !waitingForAddress()" />
+        <ion-icon :icon="playOutline" slot="end" size="large" v-else-if="!isLoadingAddTimestamp && !waitingForAddress()" />
         <ion-spinner slot="end" name="dots" v-else />
       </ion-item>
+      <ion-item v-else lines="full" class="hero-cta mb-4">
+        <ion-label>
+          <h2><ion-skeleton-text animated class="w-60" /></h2>
+          <p><ion-skeleton-text animated class="w-40" /></p>
+        </ion-label>
+      </ion-item>
 
-      <zeit-workday-card
-        v-for="workday of getWorkdays()"
-        :activeTimespanId="activeTimespan ? activeTimespan.id : undefined"
-        :key="workday.id"
-        :workday="workday"
-      />
+      <template v-if="isLoaded">
+        <zeit-workday-card
+            v-for="workday of getWorkdays()"
+            :activeTimespanId="activeTimespan ? activeTimespan.id : undefined"
+            :key="workday.id"
+            :workday="workday"
+        />
+      </template>
 
     </ion-content>
   </ion-page>
@@ -99,7 +116,7 @@
   import { defineComponent } from 'vue';
   import {
     IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonIcon, IonLabel,
-    IonContent, IonToolbar, IonItem, IonText, IonSpinner, getPlatforms,
+    IonContent, IonToolbar, IonItem, IonText, IonSpinner, IonSkeletonText, getPlatforms,
   } from '@ionic/vue';
 
   import { Coordinates, Geolocation, Geoposition } from '@ionic-native/geolocation';
@@ -134,7 +151,7 @@
   export default defineComponent({
     components: {
         IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonIcon, IonLabel,
-        IonContent, IonToolbar, IonItem, IonText, IonSpinner,
+        IonContent, IonToolbar, IonItem, IonText, IonSpinner, IonSkeletonText,
 
         ZeitWorkdayCard, ZeitPermissionRequest,
     },
@@ -214,6 +231,7 @@
       },
       addTimestamp() {
         if (this.isLoadingAddTimestamp) return;
+        if (this.waitingForAddress()) return;
 
         const meta: any = {
           "platforms": getPlatforms(),
@@ -266,11 +284,8 @@
           error: (err) => console.log(err),
         })
       },
-      showTrackingButton() {
-        if (this.locationSetting != 'location_tracking_detailed') return true;
-        if (this.formattedAddress) return true;
-
-        return false;
+      waitingForAddress() {
+        return this.locationSetting == 'location_tracking_detailed' && !this.formattedAddress;
       },
     },
     mounted() {

@@ -1,10 +1,7 @@
 <template>
-  <ion-page v-if="isLoaded">
+  <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start" v-if="false">
-          <ion-menu-button color="primary"></ion-menu-button>
-        </ion-buttons>
         <ion-title>Dein Konto</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -22,21 +19,30 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-list>
+      <ion-list v-if="isLoaded">
         <zeit-simple-item label="Vorname" :value="employee.first_name" />
         <zeit-simple-item label="Nachname" :value="employee.last_name" />
-        <zeit-simple-item label="Unternehmen" :value="institution.name" />
-
-        <zeit-simple-item label="Email" :value="employee.email" lines="full" />
+        <zeit-simple-item label="Email" :value="employee.email" v-if="employee.email" />
+        <zeit-simple-item label="Unternehmen" :value="institution.name" lines="full" />
+      </ion-list>
+      <ion-list v-else>
+        <zeit-simple-item label="Vorname" :isLoading="true" />
+        <zeit-simple-item label="Nachname" :isLoading="true" />
+        <zeit-simple-item label="Unternehmen" :isLoading="true" lines="full" />
       </ion-list>
 
       <ion-item lines="full" class="transparent-bg" />
 
-      <ion-list>
+      <ion-list  v-if="isLoaded">
         <zeit-simple-item v-if="employee" label="Kartennummer" :value="employee.physical_token_id" />
         <zeit-simple-item v-if="employeeGroup" label="Abteilung" :value="employeeGroup.name" />
         <zeit-simple-item label="Wochenarbeitszeit" :value="weeklyWorkingTime + ' Stunden'" />
         <zeit-simple-item label="Arbeitstage" :value="workingDays" lines="full" />
+      </ion-list>
+      <ion-list v-else>
+        <zeit-simple-item label="Kartennummer" :isLoading="true" />
+        <zeit-simple-item label="Wochenarbeitszeit" :isLoading="true" />
+        <zeit-simple-item label="Arbeitstage" :isLoading="true" lines="full" />
       </ion-list>
 
       <ion-item lines="full" class="transparent-bg" />
@@ -45,30 +51,7 @@
         <ion-label color="danger">Benutzer abmelden</ion-label>
       </ion-item>
 
-      <ion-item lines="none" class="transparent-bg" />
-
-
-
-      <ion-item lines="full" class="hero-cta mb-4" @click="addTimestamp()" v-if="false">
-        <ion-label v-if="activeTimespan">
-          <h2>
-            Erfassung beenden
-            <div class="dot-active" />
-            <ion-text color="success" class="ml-2" :key="now"><span class="text-sm">{{ timeAgo(activeTimespan.checkin.time) }}</span></ion-text>
-          </h2>
-          <p v-if="!formattedAddress">Pausiere oder beende deinen Arbeitstag</p>
-          <p v-else>{{ formattedAddress }}</p>
-        </ion-label>
-        <ion-label v-else>
-          <h2>Erfassung starten</h2>
-          <p v-if="!formattedAddress">Beginne einen neuen Arbeitstag</p>
-          <p v-else>{{ formattedAddress }}</p>
-        </ion-label>
-
-        <ion-icon :icon="logOutOutline" slot="end" size="large" v-if="!isLoadingAddTimestamp && activeTimespan" />
-        <ion-icon :icon="playOutline" slot="end" size="large" v-else-if="!isLoadingAddTimestamp" />
-        <ion-spinner slot="end" name="dots" v-else />
-      </ion-item>
+      <ion-item lines="none" class="transparent-bg pb-16" />
 
     </ion-content>
   </ion-page>
@@ -83,8 +66,8 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   import {
-    IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonIcon, IonLabel,
-    IonContent, IonToolbar, IonItem, IonText, IonSpinner, IonList,
+    IonPage, IonHeader, IonTitle, IonLabel,
+    IonContent, IonToolbar, IonItem, IonText, IonList,
   } from '@ionic/vue';
 
 
@@ -99,8 +82,8 @@
 
   export default defineComponent({
     components: {
-        IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonIcon, IonLabel,
-        IonContent, IonToolbar, IonItem, IonText, IonSpinner, IonList,
+        IonPage, IonHeader, IonTitle, IonLabel,
+        IonContent, IonToolbar, IonItem, IonText, IonList,
         ZeitSimpleItem,
     },
     data() {
@@ -130,45 +113,47 @@
       logout() {
         this.accountService.logout();
         this.$router.replace({name:'authentication:login'});
-      }
-    },
-    async mounted() {
-      const [accountResponse, institutionResponse] = await Promise.all([
-        this.accountService.list(),
-        this.institutionService.list(),
-      ]);
-      this.account = accountResponse.data.results[0];
-      this.institution = institutionResponse.data.results[0];
+      },
 
-      // Employee promise
-      if (this.account.employee_id) {
-        this.employee = (await this.employeeService.retrieve(this.account.employee_id)).data;
-      }
-
-      if (this.employee && this.employee.employee_group_id) {
-        this.employeeGroup = (await this.employeeGroupService.retrieve(this.employee.employee_group_id)).data;
-      }
-
-      if (this.employee) {
-        [this.weeklyWorkingTime, this.workingDays] = await Promise.all([
-          this.employeeService.retrieveSettingValue(this.employee.id, 'working_session', 'weekly_working_time'),
-          this.employeeService.retrieveSettingValue(this.employee.id, 'working_session', 'working_days').then((result: any) => {
-            const workingDays = [];
-            if (result.Mon) workingDays.push("Mo");
-            if (result.Tue) workingDays.push("Di");
-            if (result.Wed) workingDays.push("Mi");
-            if (result.Thu) workingDays.push("Do");
-            if (result.Fri) workingDays.push("Fr");
-            if (result.Sat) workingDays.push("Sa");
-            if (result.Sun) workingDays.push("So");
-            return workingDays.join(", ");
-          }),
+      async loadInitialData() {
+        const [accountResponse, institutionResponse] = await Promise.all([
+            this.accountService.list(),
+            this.institutionService.list(),
         ]);
+        this.account = accountResponse.data.results[0];
+        this.institution = institutionResponse.data.results[0];
 
-        console.log([this.weeklyWorkingTime, this.workingDays]);
-      }
+        // Employee promise
+        if (this.account.employee_id) {
+            this.employee = (await this.employeeService.retrieve(this.account.employee_id)).data;
+        }
 
-      this.isLoaded = true;
+        if (this.employee && this.employee.employee_group_id) {
+            this.employeeGroup = (await this.employeeGroupService.retrieve(this.employee.employee_group_id)).data;
+        }
+
+        if (this.employee) {
+            [this.weeklyWorkingTime, this.workingDays] = await Promise.all([
+            this.employeeService.retrieveSettingValue(this.employee.id, 'working_session', 'weekly_working_time'),
+            this.employeeService.retrieveSettingValue(this.employee.id, 'working_session', 'working_days').then((result: any) => {
+                const workingDays = [];
+                if (result.Mon) workingDays.push("Mo");
+                if (result.Tue) workingDays.push("Di");
+                if (result.Wed) workingDays.push("Mi");
+                if (result.Thu) workingDays.push("Do");
+                if (result.Fri) workingDays.push("Fr");
+                if (result.Sat) workingDays.push("Sa");
+                if (result.Sun) workingDays.push("So");
+                return workingDays.join(", ");
+            }),
+            ]);
+        }
+
+        this.isLoaded = true;
+      },
+    },
+    mounted() {
+        this.loadInitialData();
     },
   });
 </script>

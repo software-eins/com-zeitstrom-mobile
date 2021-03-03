@@ -1,14 +1,7 @@
 <template>
-  <ion-item color="warning" v-if="!available">
+  <ion-item color="warning" v-if="available == false">
     <div class="flex flex-col py-4">
       <p class="text-sm mb-2">{{ description }}</p>
-
-<pre class="text-xs mb-2" v-if="false">
-authorizationStatus: {{ authorizationStatus }}
-enabled: {{ enabled }}
-authorized: {{ authorized }}
-available: {{ available }}
-</pre>
 
       <div v-if="enabled">
         <zeit-button
@@ -124,7 +117,6 @@ available: {{ available }}
         Diagnostic.switchToSettings();
       },
       updateAll() {
-        console.log("updateAll");
         return Promise.all([
           this.updatePermissions(),
           this.updateAuthorizationStatus(),
@@ -133,7 +125,6 @@ available: {{ available }}
     },
     mounted() {
       document.addEventListener('resume', this.updateAll);
-      console.log("mounted");
       this.updateAll();
     },
     beforeUnmount() {
