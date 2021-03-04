@@ -98,14 +98,13 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 
 import {
-    IonButton, IonList, IonItem, IonLabel, IonIcon, IonNote, IonInfiniteScroll, IonCheckbox,
+    IonButton, IonList, IonItem, IonLabel, IonIcon, IonInfiniteScroll, IonCheckbox,
     IonInfiniteScrollContent, IonSpinner, IonRefresher, IonRefresherContent, IonSkeletonText
 } from '@ionic/vue';
 
-import BaseService, { PaginatedResponse } from '../../services/_base';
 import ZeitPromiseSolver from '../helpers/ZeitPromiseSolver.vue';
 
 
@@ -221,14 +220,15 @@ export default defineComponent({
         },
         localSelection: {
             deep: true,
-            handler(newValue, oldValue) {
+            handler(newValue) {
                 this.$emit("update:selection", newValue);
             },
         }
     },
     methods: {
         reloadEntries(append=false, clearCache=false) {
-            if (this.service === undefined) return;
+            if (this.service === undefined) return Promise.resolve([]);
+
             if (clearCache) this.service.clearCache();
 
             const listService = this.service[this.listMethod].bind(this.service);
@@ -305,7 +305,7 @@ export default defineComponent({
         appendNextPage(event: any) {
             this.pagination.currentPage += 1;
             this
-                .reloadEntries(true)!
+                .reloadEntries(true)
                 .then(() => {
                     // Reset the state of the infinite scroll element
                     event.target.complete();
@@ -328,9 +328,11 @@ export default defineComponent({
         },
 
         showDetails(entry: any) {
+            if (!this.service) return;
+
             // Prefetch model - we discard the result since the next page will
             // be able to utilize the cache of the underlying service
-            this.service!.retrieve(entry.id).then(() => {
+            this.service.retrieve(entry.id).then(() => {
                 let basePath = this.basePath;
                 if (basePath === undefined) basePath = this.$route.fullPath;
 
@@ -388,7 +390,8 @@ export default defineComponent({
         },
 
         getBorderStyle(entry: any) {
-            for (const column of this.columns!.filter((c: any) => c.mobileLevel == "colorborder")) {
+            const columns = this.columns || [];
+            for (const column of columns.filter((c: any) => c.mobileLevel == "colorborder")) {
                return {
                     'border-left-width': '10px',
                     'border-left-color': '#' + entry[(column as any).id],
@@ -397,10 +400,10 @@ export default defineComponent({
             return {}
         },
 
-        isChecked(entry: any) {
+        isChecked(entry: { id: string }) {
             return (
                 this.localSelection === undefined ||
-                (this.localSelection as unknown as Array<string>).indexOf(entry!.id) > -1
+                (this.localSelection as unknown as Array<string>).indexOf(entry.id) > -1
             );
         },
 

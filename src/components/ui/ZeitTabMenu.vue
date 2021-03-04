@@ -43,7 +43,6 @@ import {
   IonTabButton,
   IonTabs,
   IonPage,
-  IonRouterOutlet,
 } from '@ionic/vue';
 import {
   calendar, personCircle, timer,
@@ -53,7 +52,6 @@ import {
 export default defineComponent({
   components: {
     IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs, IonPage,
-    // IonRouterOutlet,
   },
   setup() {
     return {
@@ -79,7 +77,6 @@ export default defineComponent({
     }
   },
   mounted() {
-    console.log("foo");
     this.$router.afterEach(to => {
       this.showMenu = !to.meta.hideChrome;
       this.$forceUpdate();

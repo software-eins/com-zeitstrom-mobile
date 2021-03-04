@@ -123,7 +123,7 @@
     IonRefresher, IonRefresherContent,
   } from '@ionic/vue';
 
-  import { Coordinates, Geolocation, Geoposition } from '@ionic-native/geolocation';
+  import { Geolocation, Geoposition } from '@ionic-native/geolocation';
 
   import { playOutline, logOutOutline } from 'ionicons/icons';
 
@@ -139,7 +139,7 @@
 
   import branding from '../branding';
   import { AxiosResponse } from 'axios';
-  import { ChoiceField, PaginatedResponse } from '../services/_base';
+  import { PaginatedResponse } from '../services/_base';
   import { Timespan } from '../services/timespans';
 
   import { formatTime, timeAgo, calendar, formatLongDate, formatDifference } from '../globals/helpers';
@@ -221,14 +221,19 @@
       }
     },
     methods: {
-      updateWorkingStatus() {
-        return this.trackingService.activeTimespan(this.account!.employee_id!).then(response => {
-          if (response.data == '') {
-            this.activeTimespan = undefined;
-          } else {
-            this.activeTimespan = response.data as Timespan;
-          }
-        });
+      async updateWorkingStatus() {
+        if (this.account === undefined) return;
+        if (this.account.employee_id === undefined) return;
+
+        const employeeId = this.account.employee_id
+        const activeTimespanResponse = await this.trackingService.activeTimespan(employeeId);
+        if (activeTimespanResponse.data == '') {
+          this.activeTimespan = undefined;
+        } else {
+          this.activeTimespan = activeTimespanResponse.data as Timespan;
+        }
+
+        return this.activeTimespan;
       },
       getName() {
         if (this.account && this.account.full_name) return this.account.full_name.split(' ')[0];
@@ -237,6 +242,10 @@
       addTimestamp() {
         if (this.isLoadingAddTimestamp) return;
         if (this.waitingForAddress()) return;
+        if (this.account === undefined) return;
+        if (this.account.employee_id === undefined) return;
+
+        const employeeId = this.account.employee_id
 
         const meta: any = {
           "platforms": getPlatforms(),
@@ -245,7 +254,7 @@
         if (this.coordinates) meta["coordinates"] = this.coordinates;
 
         this.isLoadingAddTimestamp = true;
-        this.trackingService.addTimestamp(this.account!.employee_id!, undefined, undefined, meta).then(() => {
+        this.trackingService.addTimestamp(employeeId, undefined, undefined, meta).then(() => {
           this.updateWorkingStatus().then(() => {
             this.isLoadingAddTimestamp = false;
             this.loadWorkdayReports();
@@ -253,7 +262,12 @@
         });
       },
       loadWorkdayReports() {
-        return this.employeeReportService.workdayReports(this.account!.employee_id!).then(result => {
+        if (this.account === undefined) return;
+        if (this.account.employee_id === undefined) return;
+
+        const employeeId = this.account.employee_id;
+
+        return this.employeeReportService.workdayReports(employeeId).then((result: AxiosResponse<PaginatedResponse<WorkdayReport>>) => {
           this.workdays = result.data.results;
         });
       },
@@ -262,7 +276,12 @@
         return this.workdays.filter(workday => workday.timespans.length > 0);
       },
       loadLocationSettings() {
-        return this.employeeService.retrieveSettingValue(this.account!.employee_id!, 'employee_app_access', 'location_tracking').then(response => {
+        if (this.account === undefined) return;
+        if (this.account.employee_id === undefined) return;
+
+        const employeeId = this.account.employee_id;
+
+        return this.employeeService.retrieveSettingValue(employeeId, 'employee_app_access', 'location_tracking').then((response: string) => {
           this.locationSetting = response;
         })
       },

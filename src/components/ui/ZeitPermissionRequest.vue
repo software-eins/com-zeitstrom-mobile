@@ -96,21 +96,25 @@
         )
       },
       async requestPermission() {
-        const permission = await features[this.feature!].requestPermission();
-        console.log(permission);
+        if (!this.feature) return;
+
+        await features[this.feature].requestPermission();
         this.updateAll();
       },
       async updatePermissions() {
-        const promises: Array<Promise<boolean>> = features[this.feature!].permissions();
+        if (!this.feature) return;
+
+        const promises: Array<Promise<boolean>> = features[this.feature].permissions();
         const results = await Promise.all(promises);
-        console.log(results);
         this.enabled = results[0];
         this.authorized = results[1];
         this.available = results[2];
         return results;
       },
       async updateAuthorizationStatus() {
-        this.authorizationStatus = await features[this.feature!].authorizationStatus();
+        if (!this.feature) return;
+
+        this.authorizationStatus = await features[this.feature].authorizationStatus();
         return this.authorizationStatus;
       },
       openAppSettings() {

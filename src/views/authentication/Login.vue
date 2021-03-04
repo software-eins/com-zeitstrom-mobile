@@ -70,12 +70,10 @@
 </style>
 
 <script lang="ts">
-    import { IonContent, IonText, IonInput, IonIcon, IonHeader, IonButton, IonMenuButton, IonPage, IonTitle, IonToolbar, toastController } from '@ionic/vue';
+    import { IonContent, IonText, IonInput, IonIcon, IonButton, IonPage, toastController } from '@ionic/vue';
     import { qrCodeOutline } from 'ionicons/icons';
 
     import { defineComponent } from 'vue';
-    import axios from '../../axios';
-    import querystring from 'query-string';
 
     import QrScanner from '../../components/hardware/QRScanner.vue';
 
@@ -173,10 +171,8 @@
           if (localStorage.accessToken !== undefined) {
               this.$router.replace(this.nextUrl());
           }
-          console.log("status?");
-          QRScanner.getStatus().then(status => {
-              console.log(status);
-              this.showScannerButton = true;
+          QRScanner.getStatus().then(() => {
+            this.showScannerButton = true;
           }).catch(error => {
             this.showScannerButton = false;
             if (error != "cordova_not_available") console.log(error);
