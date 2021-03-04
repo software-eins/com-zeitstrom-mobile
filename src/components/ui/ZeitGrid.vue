@@ -55,7 +55,7 @@
                     <ion-label v-if="entry.$virtual">
                         <h2>{{ entry.$display }}</h2>
                     </ion-label>
-                    <ion-spinner slot="end" v-if="isLoadingEntry == entry.id" name="dots"></ion-spinner>
+                    <ion-spinner slot="end" v-if="isLoadingEntry == entry.id" />
                 </ion-item>
             </ion-list>
 
@@ -74,7 +74,6 @@
             >
                 <ion-infinite-scroll-content
                     class="mt-4"
-                    loading-spinner="dots"
                     :loading-text="'Lade weitere ' + pagination.pageSize + ' Einträge…'">
                 </ion-infinite-scroll-content>
             </ion-infinite-scroll>

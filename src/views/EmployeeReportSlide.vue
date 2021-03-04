@@ -5,12 +5,12 @@
     </ion-refresher>
     <ion-header :collapse="hideHeader ? false : 'condense'">
       <ion-toolbar>
-      <ion-title size="large" @click="$emit('selectMonth')">
-        <div class="flex items-center">
-          <div class="mr-2">{{ formatDatetime(new Date(year, month - 1).toISOString(), "MMMM YYYY") }}</div>
-          <ion-icon :md="chevronDownOutline" :ios="chevronDownSharp" />
-        </div>
-      </ion-title>
+        <ion-title size="large" @click="$emit('selectMonth')">
+            <div class="flex items-center">
+            <div class="mr-2">{{ formatDatetime(new Date(year, month - 1).toISOString(), "MMMM YYYY") }}</div>
+            <ion-icon :md="chevronDownOutline" :ios="chevronDownSharp" />
+            </div>
+        </ion-title>
       </ion-toolbar>
     </ion-header>
 

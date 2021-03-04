@@ -25,7 +25,7 @@
       </template>
       <template v-else-if="field.mobileType == 'select'">
         <ion-label position="stacked">{{ field.label }}</ion-label>
-        <ion-spinner name="dots" v-if="!choicesByField[field.name]" />
+        <ion-spinner v-if="!choicesByField[field.name]" />
         <ion-select
           v-if="choicesByField[field.name]"
           :disabled="field.isReadOnly || disabled"

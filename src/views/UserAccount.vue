@@ -45,7 +45,7 @@
           <ion-label color="danger">Benutzer abmelden</ion-label>
         </ion-item>
 
-        <ion-item lines="none" class="transparent-bg pb-16" />
+        <ion-item lines="none" class="transparent-bg" />
       </template>
 
       <ion-item v-if="!isLoaded" lines="none" class="transparent-bg">

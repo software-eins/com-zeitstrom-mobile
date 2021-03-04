@@ -63,7 +63,7 @@
 
         <ion-icon :icon="logOutOutline" slot="end" size="large" v-if="!isLoadingAddTimestamp && activeTimespan && !waitingForAddress()" />
         <ion-icon :icon="playOutline" slot="end" size="large" v-else-if="!isLoadingAddTimestamp && !waitingForAddress()" />
-        <ion-spinner slot="end" name="dots" v-else />
+        <ion-spinner slot="end" v-else />
       </ion-item>
       <ion-item v-else lines="full" class="hero-cta mb-4">
         <ion-label>

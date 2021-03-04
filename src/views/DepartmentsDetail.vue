@@ -3,7 +3,7 @@
       <template v-slot:after-form v-if="$route.params.id">
         <ion-item button :detail="!isLoadingEmployees" @click="showEmployees()">
             <ion-label>Mitarbeiter anzeigen</ion-label>
-            <ion-spinner slot="end" v-if="isLoadingEmployees" name="dots" />
+            <ion-spinner slot="end" v-if="isLoadingEmployees" />
         </ion-item>
       </template>
   </zeit-detail>

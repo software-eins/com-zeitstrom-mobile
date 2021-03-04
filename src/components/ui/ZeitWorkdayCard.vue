@@ -41,7 +41,7 @@
         ><zeit-promise-solver
           :promise="formatDifference(timespan.checkin.time, timespan.checkout.time, 'seconds')"
         /></ion-note>
-        <ion-spinner slot="end" v-if="isLoadingTimespan == timespan.id" name="dots"></ion-spinner>
+        <ion-spinner slot="end" v-if="isLoadingTimespan == timespan.id" />
       </ion-item>
     </ion-list>
   </ion-card>
