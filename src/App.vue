@@ -77,8 +77,6 @@ import { logOutOutline, archiveOutline, fishOutline, folderOpenOutline, peopleOu
 
 import ZeitAvatar from './components/ui/ZeitAvatar.vue';
 
-import { Plugins, StatusBarStyle } from '@capacitor/core';
-
 import { accountService, Account } from './services/accounts';
 import { institutionService, Institution } from './services/institutions';
 import BackgroundDrawingBottom from './components/graphics/BackgroundDrawingBottom.vue';
@@ -86,7 +84,8 @@ import { ChoiceField, PaginatedResponse } from './services/_base';
 import { AxiosResponse } from 'axios';
 import ZeitTabMenu from './components/ui/ZeitTabMenu.vue';
 
-const { StatusBar } = Plugins;
+import branding from './branding';
+
 
 export default defineComponent({
   name: 'App',
@@ -220,7 +219,8 @@ export default defineComponent({
   },
   data() {
       return {
-          showMenu: false,
+        branding,
+        showMenu: false,
       }
   },
   methods: {
@@ -285,6 +285,9 @@ export default defineComponent({
       this.showMenu = !to.meta.hideChrome;
     });
     this.showMenu = !this.$route.meta.hideChrome;
+
+    // Add branding to html tag
+    document.getElementsByTagName("html")[0].classList.add("brand-" + branding.id);
   }
 });
 </script>
