@@ -14,6 +14,9 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
+      <ion-refresher slot="fixed" @ionRefresh="loadData($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Hallo {{ getName() }}</ion-title>
@@ -117,6 +120,7 @@
   import {
     IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonIcon, IonLabel,
     IonContent, IonToolbar, IonItem, IonText, IonSpinner, IonSkeletonText, getPlatforms,
+    IonRefresher, IonRefresherContent,
   } from '@ionic/vue';
 
   import { Coordinates, Geolocation, Geoposition } from '@ionic-native/geolocation';
@@ -152,6 +156,7 @@
     components: {
         IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonIcon, IonLabel,
         IonContent, IonToolbar, IonItem, IonText, IonSpinner, IonSkeletonText,
+        IonRefresher, IonRefresherContent,
 
         ZeitWorkdayCard, ZeitPermissionRequest,
     },
@@ -287,28 +292,38 @@
       waitingForAddress() {
         return this.locationSetting == 'location_tracking_detailed' && !this.formattedAddress;
       },
+      loadData(event?: any) {
+        if (event) {
+          this.accountService.clearCache();
+          this.institutionService.clearCache();
+        }
+
+        Promise.all([
+            // Load account
+            this.accountService.list().then((response: AxiosResponse<PaginatedResponse<Account>>) => {
+            this.account = response.data.results[0];
+            }),
+            // Load institution
+            this.institutionService.list().then((response: AxiosResponse<PaginatedResponse<Institution>>) => {
+            this.institution = response.data.results[0];
+            }),
+        ]).then(() => {
+            Promise.all([
+                this.updateWorkingStatus(),
+                this.loadWorkdayReports(),
+                this.loadLocationSettings(),
+            ]).then(() => {
+                this.isLoaded = true;
+                if (event && event.target && event.target.complete) event.target.complete();
+            });
+        });
+      },
     },
     mounted() {
       this.mountedFullPath = this.$route.fullPath;
 
-      Promise.all([
-        // Load account
-        this.accountService.list().then((response: AxiosResponse<PaginatedResponse<Account>>) => {
-          this.account = response.data.results[0];
-        }),
-        // Load institution
-        this.institutionService.list().then((response: AxiosResponse<PaginatedResponse<Institution>>) => {
-          this.institution = response.data.results[0];
-        }),
-      ]).then(() => {
-        Promise.all([
-          this.updateWorkingStatus(),
-          this.loadWorkdayReports(),
-          this.loadLocationSettings(),
-        ]).then(() => {
-          this.isLoaded = true;
-        });
-      });
+      this.loadData();
+
       this.timer = setInterval(() => {
         this.now = new Date();
       }, 1000);

@@ -86,7 +86,7 @@ import { ChoiceField, PaginatedResponse } from './services/_base';
 import { AxiosResponse } from 'axios';
 import ZeitTabMenu from './components/ui/ZeitTabMenu.vue';
 
-const { StatusBar, SplashScreen } = Plugins;
+const { StatusBar } = Plugins;
 
 export default defineComponent({
   name: 'App',
@@ -279,11 +279,7 @@ export default defineComponent({
   },
   mounted() {
     this.loadDarkMode();
-    this.updateAccountDetails().then(() => {
-        // Hide splash
-        console.log("hide splash");
-        SplashScreen.hide();
-    });
+    this.updateAccountDetails().then();
 
     this.$router.afterEach((to: any) => {
       this.showMenu = !to.meta.hideChrome;

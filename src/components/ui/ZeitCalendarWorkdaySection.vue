@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!isLoading">
     <zeit-workday-card
       v-for="workdayReport of workdayReports"
       :key="workdayReport.id"
@@ -32,6 +32,8 @@
     },
     data() {
       return {
+        isLoading: true,
+
         employeeReportService,
         workdayReports: [] as Array<WorkdayReport>,
 
@@ -50,6 +52,7 @@
 
     methods: {
       async updateWorkdayReports() {
+        this.isLoading = true;
         const day = this.day!.isoformat;
         const nextDay = new Date(Number(day.slice(0, 4)), Number(day.slice(5, 7)) - 1, Number(day.slice(8, 10)) + 1, 12);
         const workdayReportsResponse = await this.employeeReportService.workdayReports(
@@ -58,6 +61,7 @@
           });
 
         this.workdayReports = workdayReportsResponse.data.results;
+        this.isLoading = false;
       },
     },
 

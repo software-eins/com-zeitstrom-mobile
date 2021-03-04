@@ -180,12 +180,6 @@
       },
 
       getDayClass(day: Day) {
-        // background: rgba(255, 255, 255, .15);
-        // if (day.isoformat == this.activeDay) return {
-        //     'dark:text-gray-600': day.inactive,
-        //     'text-gray-400': day.inactive,
-        // }
-
         return {
             // Day not within month
             'dark:text-gray-600': day.inactive,

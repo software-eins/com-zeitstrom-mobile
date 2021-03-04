@@ -56,7 +56,6 @@
     },
     methods: {
       getDayOffDescription(dayOffReason: DayOffReason) {
-        console.log(dayOffReason);
         if (dayOffReason.type == "no-work-day") return "Kein Arbeitstag";
         if (dayOffReason.type == "missing-day") return dayOffReason.name!;
 

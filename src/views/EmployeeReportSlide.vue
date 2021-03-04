@@ -69,7 +69,6 @@
     },
     methods: {
       loadWorkmonth: async function(event?: any) {
-        console.log(event);
         let employeeId = undefined;
         if (this.account!.employee_id) employeeId = this.account!.employee_id;
 

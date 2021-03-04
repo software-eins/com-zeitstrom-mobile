@@ -131,7 +131,7 @@
 
         swiper: undefined as any,
         showSwiper: false,
-        hideHeader: false,
+        hideHeader: true,
       }
     },
     methods: {
@@ -231,12 +231,14 @@
 
       this.year = today.getFullYear();
       this.month = today.getMonth() + 1;
+
+      this.updatePickerValue();
     },
     async mounted() {
-      this.updatePickerValue();
       await this.updateAvailableMonths();
       setTimeout(() => {
         this.showSwiper = true;
+        this.hideHeader = false;
       }, 100);
 
     },
