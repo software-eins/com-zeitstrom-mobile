@@ -17,7 +17,7 @@ jobs:
       - name: Set version number
         run: ./.github/scripts/set_version_number.sh
 
-      - name: Setup provisioning profile
+      - name: Decrypt secrets
         env:
           IOS_KEYS: ${{ secrets.IOS_KEYS }}
         run: ./.github/secrets/decrypt_secrets.sh
@@ -28,12 +28,13 @@ jobs:
       - name: Install pods
         run: 'npm install -g @ionic/cli; ionic cap sync'
 
-      - name: Archiving project
+      - name: Archive project
+        timeout-minutes: 10
         env:
           PR_NUMBER: $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
         run: ./.github/scripts/archive_app.sh
 
-      - name: Exporting .ipa
+      - name: Export .ipa
         run: ./.github/scripts/export_ipa.sh
       - name: Publishing app
         if: success()
