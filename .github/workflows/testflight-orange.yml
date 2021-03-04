@@ -1,4 +1,4 @@
-name: Testflight TA Zeitblick
+name: Testflight Orange
 on:
   push:
     branches:
@@ -13,6 +13,9 @@ jobs:
 
       - name: Install gpg
         run: brew install gnupg
+
+      - name: Set branding orange
+        run: ./.github/scripts/set_branding_orange.sh
 
       - name: Set version number
         run: ./.github/scripts/set_version_number.sh
