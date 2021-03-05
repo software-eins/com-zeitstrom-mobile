@@ -1,4 +1,4 @@
-name: Testflight Orange
+name: Testflight Red
 on:
   push:
     branches:
@@ -14,8 +14,8 @@ jobs:
       - name: Install gpg
         run: brew install gnupg
 
-      - name: Set branding orange
-        run: ./.github/scripts/set_branding_orange.sh
+      - name: Set branding red
+        run: ./.github/scripts/set_branding_red.sh
 
       - name: Set version number
         run: ./.github/scripts/set_version_number.sh
@@ -35,7 +35,7 @@ jobs:
         timeout-minutes: 10
         env:
           PR_NUMBER: $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          TARGET: Orange
+          TARGET: Red
         run: ./.github/scripts/archive_app.sh
 
       - name: Export .ipa
