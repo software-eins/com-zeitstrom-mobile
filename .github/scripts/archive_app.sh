@@ -4,8 +4,9 @@ set -euxo pipefail
 
 security unlock-keychain -p "" ~/Library/Keychains/build.keychain
 
-xcodebuild -workspace ios/App/App.xcworkspace \
-            -allowProvisioningUpdates \
+# -workspace ios/App/App.xcworkspace \
+
+xcodebuild -allowProvisioningUpdates \
             -scheme App \
             -sdk iphoneos \
             -target App$TARGET \
