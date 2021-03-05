@@ -29,7 +29,7 @@ jobs:
         run: 'npm i'
 
       - name: Install pods
-        run: 'npm install -g @ionic/cli; ionic cap sync'
+        run: 'npm install -g @ionic/cli; ionic cap sync ios'
 
       - name: Archive project
         timeout-minutes: 10
