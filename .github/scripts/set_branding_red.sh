@@ -9,6 +9,3 @@ mv .env.red .env
 # ios / set icons
 rm -r ios/App/App/Assets.xcassets/AppIcon.appiconset
 mv brands/red/ios/AppIcon.appiconset ios/App/App/Assets.xcassets/AppIcon.appiconset
-
-# ios / set app target
-sed -i '' 's/AppOrange/AppRed/g' ./ios/App/Podfile

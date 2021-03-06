@@ -19,3 +19,13 @@ target 'AppRed' do
   capacitor_pods
   # Add your Pods here
 end
+
+target 'AppOrange' do
+  capacitor_pods
+  # Add your Pods here
+end
+
+target 'App' do
+  capacitor_pods
+  # Add your Pods here
+end
