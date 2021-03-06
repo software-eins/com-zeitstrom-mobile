@@ -38,7 +38,6 @@
 		6375DDB795BB8EB93781DF5D /* Pods_AppOrange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AppOrange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A27EED9FE7DC15B8528CF0BE /* Pods-AppOrange.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AppOrange.release.xcconfig"; path = "Pods/Target Support Files/Pods-AppOrange/Pods-AppOrange.release.xcconfig"; sourceTree = "<group>"; };
 		FA1C88A125F26CBC00A64E62 /* AppRed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppRed.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FA1C88A225F26CBD00A64E62 /* App copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "App copy2-Info.plist"; path = "/Users/alex/projects/com.zeitstrom/web3/zeitblick/ios/App/App copy2-Info.plist"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,7 +74,6 @@
 				504EC3051FED79650016851F /* Products */,
 				7F8756D8B27F46E3366F6CEA /* Pods */,
 				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
-				FA1C88A225F26CBD00A64E62 /* App copy2-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -475,7 +473,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3.1.0;
 				DEVELOPMENT_TEAM = 6PL683D69K;
-				INFOPLIST_FILE = "App copy2-Info.plist";
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 3.1.0;
@@ -497,7 +495,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 3.1.0;
 				DEVELOPMENT_TEAM = 6PL683D69K;
-				INFOPLIST_FILE = "App copy2-Info.plist";
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 3.1.0;
