@@ -35,14 +35,17 @@ jobs:
         timeout-minutes: 10
         env:
           PR_NUMBER: $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          TARGET: Orange
         run: ./.github/scripts/archive_app.sh
 
       - name: Export .ipa
         run: ./.github/scripts/export_ipa.sh
+        env:
+          TARGET: Orange
+
       - name: Publishing app
         if: success()
         env:
           APPLEID_USERNAME: ${{ secrets.APPLEID_USERNAME }}
           APPLEID_PASSWORD: ${{ secrets.APPLEID_PASSWORD }}
+          TARGET: Orange
         run: ./.github/scripts/publish_testflight.sh

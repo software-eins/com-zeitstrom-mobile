@@ -15,7 +15,7 @@ def capacitor_pods
   # Do not delete
 end
 
-target 'AppOrange' do
+target 'AppRed' do
   capacitor_pods
   # Add your Pods here
 end
