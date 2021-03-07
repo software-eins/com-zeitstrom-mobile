@@ -35,6 +35,7 @@ jobs:
         timeout-minutes: 10
         env:
           PR_NUMBER: $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          TARGET: Red
         run: ./.github/scripts/archive_app.sh
 
       - name: Export .ipa

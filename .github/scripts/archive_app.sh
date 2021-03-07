@@ -6,7 +6,7 @@ security unlock-keychain -p "" ~/Library/Keychains/build.keychain
 
 xcodebuild -workspace ios/App/App.xcworkspace \
             -allowProvisioningUpdates \
-            -scheme App \
+            -scheme App$TARGET \
             -sdk iphoneos \
             -configuration AppStoreDistribution \
             -archivePath $PWD/ios/build/App.xcarchive \
