@@ -1,12 +1,14 @@
 #!/bin/sh
 set -eo pipefail
 
-gpg --quiet --batch --yes --decrypt --passphrase="$IOS_KEYS" --output ./.github/secrets/2021-02-25-Profile.mobileprovision ./.github/secrets/2021-02-25-Profile.mobileprovision.gpg
 gpg --quiet --batch --yes --decrypt --passphrase="$IOS_KEYS" --output ./.github/secrets/2021-02-25-Keypair.p12 ./.github/secrets/2021-02-25-Keypair.p12.gpg
+gpg --quiet --batch --yes --decrypt --passphrase="$IOS_KEYS" --output ./.github/secrets/2021-02-25-orange.mobileprovision ./.github/secrets/2021-02-25-orange.mobileprovision.gpg
+gpg --quiet --batch --yes --decrypt --passphrase="$IOS_KEYS" --output ./.github/secrets/2021-03-04-red.mobileprovision ./.github/secrets/2021-03-04-red.mobileprovision.gpg
 
 mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
 
-cp ./.github/secrets/2021-02-25-Profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/2021-02-25-Profile.mobileprovision
+cp ./.github/secrets/2021-02-25-orange.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/2021-02-25-orange.mobileprovision
+cp ./.github/secrets/2021-03-04-red.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/2021-03-04-red.mobileprovision
 
 
 security create-keychain -p "" build.keychain
