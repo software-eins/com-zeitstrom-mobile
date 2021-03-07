@@ -55,7 +55,6 @@
 		D8FF4969EEFE1EC05FFB16EB /* Pods_AppOrange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AppOrange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA1C88A125F26CBC00A64E62 /* Zeitstrom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zeitstrom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA1C88C725F4387100A64E62 /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FA1C88C825F4387100A64E62 /* AppOrange copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "AppOrange copy-Info.plist"; path = "/Users/alex/projects/com.zeitstrom/web3/zeitblick/ios/App/AppOrange copy-Info.plist"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,7 +103,6 @@
 				504EC3051FED79650016851F /* Products */,
 				7F8756D8B27F46E3366F6CEA /* Pods */,
 				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
-				FA1C88C825F4387100A64E62 /* AppOrange copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -608,7 +606,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 465461B2B1E182ABE47653D9 /* Pods-AppOrange.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconOrange;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3.1.0;
@@ -631,7 +629,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A27EED9FE7DC15B8528CF0BE /* Pods-AppOrange.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconOrange;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 3.1.0;
@@ -653,7 +651,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 72F7FEFA588DCD15044170F6 /* Pods-AppRed.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRed;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3.1.0;
@@ -676,7 +674,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 57FDC53A322E14DCDE44F13D /* Pods-AppRed.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRed;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 3.1.0;
@@ -698,7 +696,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9311C5D60908F2FACC1680FB /* Pods-App.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconOrange;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3.1.0;
@@ -721,7 +719,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0EDCF9889D7EEC1E9A63DC00 /* Pods-App.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconOrange;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 3.1.0;
