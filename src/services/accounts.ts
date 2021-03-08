@@ -85,7 +85,7 @@ class AccountService extends BaseService<Account> {
         return this._post(resourceId + '/set-password/', body) as unknown as Promise<undefined>;
     }
 
-    login(username: string, password: string): Promise<AxiosResponse<OAuthResponse>> {
+    async login(username: string, password: string): Promise<AxiosResponse<OAuthResponse>> {
         const payload = {
             "grant_type": "password",
             "username": username,
@@ -94,12 +94,10 @@ class AccountService extends BaseService<Account> {
             "client_secret": process.env.VUE_APP_OAUTH_CLIENT_SECRET,
         };
 
-        return axios
-            .post<OAuthResponse>("/o/token/", querystring.stringify(payload))
-            .then(response => {
-                localStorage.accessToken = response.data.access_token;
-                return response;
-            });
+        const response = await axios.post<OAuthResponse>("/o/token/", querystring.stringify(payload));
+        console.log("token after login: ", localStorage.accessToken);
+        localStorage.accessToken = response.data.access_token;
+        return response;
     }
 
     logout() {

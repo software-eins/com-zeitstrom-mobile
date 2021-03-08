@@ -50,7 +50,8 @@
       <ion-router-outlet id="main-content"></ion-router-outlet>
     </ion-split-pane>
 
-    <zeit-tab-menu />
+    <ion-router-outlet v-if="$route.meta.hideChrome"></ion-router-outlet>
+    <zeit-tab-menu v-if="!$route.meta.hideChrome" />
 
   </ion-app>
 </template>
@@ -85,6 +86,8 @@ import { AxiosResponse } from 'axios';
 import ZeitTabMenu from './components/ui/ZeitTabMenu.vue';
 
 import branding from './branding';
+
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 
 export default defineComponent({
@@ -288,6 +291,10 @@ export default defineComponent({
 
     // Add branding to html tag
     document.getElementsByTagName("html")[0].classList.add("brand-" + branding.id);
+
+    // Lock to portrait mode
+    ScreenOrientation.lock("portrait");
+    console.log(ScreenOrientation);
   }
 });
 </script>

@@ -1,8 +1,8 @@
 <template>
   <ion-page>
 
-    <ion-tabs @ionTabsWillChange="beforeTabChange" @ionTabsDidChange="afterTabChange">
-      <ion-tab-bar slot="bottom" :translucent="true" v-if="!$route.meta.hideChrome">
+    <ion-tabs>
+      <ion-tab-bar slot="bottom" :translucent="true">
 
         <ion-tab-button tab="tracking" href="/time-tracking/">
           <ion-icon :md="timer" :ios="timerSharp"></ion-icon>
@@ -59,29 +59,5 @@ export default defineComponent({
       calendarSharp, personCircleSharp, timerSharp,
     }
   },
-  methods: {
-    beforeTabChange: function() {
-      if (!this.$route.meta.hideChrome) {
-        this.showMenu = true;
-      }
-    },
-    afterTabChange: function() {
-      if (this.$route.meta.hideChrome) {
-        this.showMenu = false;
-      }
-    },
-  },
-  data() {
-    return {
-      showMenu: false,
-    }
-  },
-  mounted() {
-    this.$router.afterEach(to => {
-      this.showMenu = !to.meta.hideChrome;
-      this.$forceUpdate();
-    });
-    this.showMenu = !this.$route.meta.hideChrome;
-  }
 });
 </script>

@@ -201,7 +201,7 @@
     watch: {
       $route: function(newRoute) {
         if (this.mountedFullPath == newRoute.fullPath) {
-          this.loadWorkdayReports();
+          this.loadData();
         }
       },
       coordinates: function(newCoordinates: LatLong|undefined) {

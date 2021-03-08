@@ -132,7 +132,16 @@
         swiper: undefined as any,
         showSwiper: false,
         hideHeader: true,
+
+        mountedFullPath: undefined as string|undefined,
       }
+    },
+    watch: {
+      $route: function(newRoute) {
+        if (this.mountedFullPath == newRoute.fullPath) {
+          this.loadData();
+        }
+      },
     },
     methods: {
       onSwiperInit(swiper: any) {
@@ -188,15 +197,16 @@
           order: ['checkin__time'],
           verbosity: 'detail',
         })).data.results[0];
-        let earliestMonth = firstTimespan.checkin.time.slice(0, 7);
 
         const previousMonths = [];
-
-        while (earliestMonth < newMonths[0]) {
-          previousMonths.push(earliestMonth);
-          const year = Number(earliestMonth.split("-")[0]);
-          const month = Number(earliestMonth.split("-")[1]);
-          earliestMonth = (new Date(year, month, 15)).toISOString().slice(0, 7);
+        if (firstTimespan) {
+            let earliestMonth = firstTimespan.checkin.time.slice(0, 7);
+            while (earliestMonth < newMonths[0]) {
+            previousMonths.push(earliestMonth);
+            const year = Number(earliestMonth.split("-")[0]);
+            const month = Number(earliestMonth.split("-")[1]);
+            earliestMonth = (new Date(year, month, 15)).toISOString().slice(0, 7);
+            }
         }
 
         const nextMonths = [...previousMonths, ...newMonths];
@@ -224,7 +234,10 @@
           await this.$nextTick();
           this.swiper.slideTo(Math.max(this.months.indexOf(month), 0));
         });
-      }
+      },
+      loadData() {
+        return this.updateAvailableMonths();
+      },
     },
     beforeMount() {
       const today = new Date();
@@ -235,7 +248,10 @@
       this.updatePickerValue();
     },
     async mounted() {
-      await this.updateAvailableMonths();
+      this.mountedFullPath = this.$route.fullPath;
+
+      await this.loadData();
+
       setTimeout(() => {
         this.showSwiper = true;
         this.hideHeader = false;
