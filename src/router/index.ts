@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 
+import { accountService } from '../services/accounts';
+
 const routes: Array<RouteRecordRaw> = [
 
   {
@@ -17,6 +19,9 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/time-tracking/',
     component: () => import('../views/TimeTracking.vue'),
+    meta: {
+      requiresEmployee: true,
+    }
   },
 
   // Projects
@@ -144,12 +149,23 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Debug.vue')
   },
 
+  // Errors
+  {
+    name: 'errors',
+    path: '/errors/:type/',
+    component: () => import('../views/Error.vue'),
+    meta: {
+      hideChrome: true,
+    },
+  },
+
   // Startpage
   {
     path: '',
     // component: () => import('../components/ui/ZeitTabMenu.vue')
     redirect: { path: '/time-tracking/',},
   },
+
 ]
 
 const router = createRouter({
@@ -157,6 +173,7 @@ const router = createRouter({
   routes
 })
 
+// Check if this view is allowed for guests
 router.beforeEach((to, _from, next) => {
     const isGuest = localStorage.accessToken === undefined;
 
@@ -164,9 +181,24 @@ router.beforeEach((to, _from, next) => {
         next();
         return
     }
-
     next({name: 'authentication:login', query: {next: to.fullPath}});
+});
 
+
+// Check if this view is allowed for non-employees
+router.beforeEach(async (to, _from, next) => {
+  if (!to.meta.requiresEmployee) {
+    next();
+    return
+  }
+
+  const account = (await accountService.list()).data.results[0];
+  if (!account || !account.employee_id) {
+    next({ name: 'errors', params: { type: 'no-employee-assigned' } });
+    return
+  }
+
+  next();
 });
 
 export default router

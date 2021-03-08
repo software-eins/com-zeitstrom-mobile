@@ -213,17 +213,12 @@ export default defineComponent({
   watch: {
       "$route": function(newRoute, oldRoute) {
           // Update account details if coming from an unauthenticated route
-          if (oldRoute.meta.allowGuests && !newRoute.meta.allowGuests) this.updateAccountDetails();
-          if (newRoute.meta.allowGuests) {
-              this.account = undefined;
-              this.institution = undefined;
-          }
+          if (oldRoute.meta.allowGuests) this.updateAccountDetails();
       },
   },
   data() {
       return {
         branding,
-        showMenu: false,
       }
   },
   methods: {
@@ -284,17 +279,11 @@ export default defineComponent({
     this.loadDarkMode();
     this.updateAccountDetails().then();
 
-    this.$router.afterEach((to: any) => {
-      this.showMenu = !to.meta.hideChrome;
-    });
-    this.showMenu = !this.$route.meta.hideChrome;
-
     // Add branding to html tag
     document.getElementsByTagName("html")[0].classList.add("brand-" + branding.id);
 
     // Lock to portrait mode
     ScreenOrientation.lock("portrait");
-    console.log(ScreenOrientation);
   }
 });
 </script>

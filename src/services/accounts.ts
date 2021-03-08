@@ -95,8 +95,12 @@ class AccountService extends BaseService<Account> {
         };
 
         const response = await axios.post<OAuthResponse>("/o/token/", querystring.stringify(payload));
-        console.log("token after login: ", localStorage.accessToken);
         localStorage.accessToken = response.data.access_token;
+
+        // We already load the account list once, so we have it in the cache
+        // already
+        await this.list();
+
         return response;
     }
 
