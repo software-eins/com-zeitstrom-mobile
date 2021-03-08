@@ -44,7 +44,7 @@
 </template>
 
 <style scoped>
-    /* html.dark svg.light, html:not(.dark) svg.dark { display: none; } */
+    body.dark svg.light, body:not(.dark) svg.dark { display: none; }
 </style>
 
 <script lang="ts">

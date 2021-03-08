@@ -35,7 +35,7 @@
     IonPage, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonContent, IonText,
   } from '@ionic/vue';
 
-  const errors = {
+  const errors: any = {
     'no-employee-assigned': {
       title: "Kein Mitarbeiter",
       description: "Du bist nicht als Mitarbeiter angemeldet. Bitte melde dich ab und verwende die Zugangsdaten eines Mitarbeiters.",
@@ -54,7 +54,7 @@
     },
     computed: {
       title() {
-        const type = this.$route.params.type;
+        const type = this.$route.params.type as string;
         const error = errors[type];
 
         if (!error) return "Fehler";
@@ -62,7 +62,7 @@
         return errors[type].title;
       },
       description() {
-        const type = this.$route.params.type;
+        const type = this.$route.params.type as string;
         const error = errors[type];
 
         if (!error) return "Es ist ein unbekannter Fehler aufgetreten.";
