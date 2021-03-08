@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "FA1C888F25F26CBC00A64E62"
-               BuildableName = "AppRed.app"
+               BuildableName = "Zeitstrom.app"
                BlueprintName = "AppRed"
                ReferencedContainer = "container:App.xcodeproj">
             </BuildableReference>

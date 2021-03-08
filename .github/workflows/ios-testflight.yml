@@ -20,12 +20,12 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Set version number
-        run: ./.github/scripts/set_version_number.sh
+        run: ./.github/scripts/ios/set_version_number.sh
 
       - name: Decrypt secrets
         env:
           IOS_KEYS: ${{ secrets.IOS_KEYS }}
-        run: ./.github/secrets/decrypt_secrets.sh
+        run: ./.github/scripts/ios/decrypt_secrets.sh
 
       - name: Install node dependencies
         run: 'npm i'
@@ -47,10 +47,10 @@ jobs:
         timeout-minutes: 10
         env:
           TARGET: Orange
-        run: ./.github/scripts/archive_app.sh
+        run: ./.github/scripts/ios/archive_app.sh
 
       - name: orange / Export .ipa
-        run: ./.github/scripts/export_ipa.sh
+        run: ./.github/scripts/ios/export_ipa.sh
         env:
           TARGET: Orange
 
@@ -60,7 +60,7 @@ jobs:
           APPLEID_USERNAME: ${{ secrets.APPLEID_USERNAME }}
           APPLEID_PASSWORD: ${{ secrets.APPLEID_PASSWORD }}
           PRODUCT: 'TA Zeitblick'
-        run: ./.github/scripts/publish_testflight.sh
+        run: ./.github/scripts/ios/publish_testflight.sh
 
       # Red
       - name: red / Build capacitor app
@@ -76,10 +76,10 @@ jobs:
         timeout-minutes: 10
         env:
           TARGET: Red
-        run: ./.github/scripts/archive_app.sh
+        run: ./.github/scripts/ios/archive_app.sh
 
       - name: red / Export .ipa
-        run: ./.github/scripts/export_ipa.sh
+        run: ./.github/scripts/ios/export_ipa.sh
         env:
           TARGET: Red
 
@@ -89,4 +89,4 @@ jobs:
           APPLEID_USERNAME: ${{ secrets.APPLEID_USERNAME }}
           APPLEID_PASSWORD: ${{ secrets.APPLEID_PASSWORD }}
           PRODUCT: 'Zeitstrom'
-        run: ./.github/scripts/publish_testflight.sh
+        run: ./.github/scripts/ios/publish_testflight.sh
