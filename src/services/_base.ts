@@ -1,6 +1,7 @@
 import axios from "@/axios"
 import { AxiosError, AxiosResponse } from 'axios';
 
+
 export class FormFieldCondition {
     name: string;
     value: any;
@@ -233,8 +234,9 @@ export class BaseService<T> {
     _get(pathParameters: string, useCachedResponse = true) {
         pathParameters = pathParameters ? pathParameters : '';
         const url = this.endpoint + pathParameters;
+        const cacheKey = localStorage.accessToken + "|" + url;
 
-        const cachedResponse = this._cachedResponses.get(url);
+        const cachedResponse = this._cachedResponses.get(cacheKey);
         let promise;
         if (useCachedResponse && cachedResponse && cachedResponse.isValid()) {
             promise = cachedResponse.response;
@@ -243,11 +245,11 @@ export class BaseService<T> {
 
             // Add promise to cache. We add it to the cache before a succesful
             // response, to avoid multiple requests being sent at the same time
-            this._cachedResponses.set(url, new CachedResponse(promise, this.cacheTimeout));
+            this._cachedResponses.set(cacheKey, new CachedResponse(promise, this.cacheTimeout));
 
             // In case of a failure, we remove it from the cache
             promise.then(undefined, () => {
-                this._cachedResponses.delete(url);
+                this._cachedResponses.delete(cacheKey);
             });
         }
 
