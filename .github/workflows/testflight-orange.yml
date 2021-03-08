@@ -11,12 +11,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
 
-      - name: Install gpg
-        run: brew install gnupg
-
-      - name: Set branding orange
-        run: ./.github/scripts/set_branding_orange.sh
-
       - name: Set version number
         run: ./.github/scripts/set_version_number.sh
 
@@ -30,6 +24,13 @@ jobs:
 
       - name: Install pods
         run: 'npm install -g @ionic/cli; ionic cap sync ios'
+        env:
+          VUE_APP_OAUTH_CLIENT_ID: nyXOY94HtiiEgNCTaSJ8RSDjxXCc0kGJnPVBrPZi
+          VUE_APP_OAUTH_CLIENT_SECRET: cZhCRsP1E2erEF6EJInRlWxBz6xu5ZiO2P5Fq5QUAZkYr99chWDmdWdZ2KDtUj8PuarEjyev9YoqR6NjUF6ZhAgu8YyMVZxna6pRbThLG0IyyleV6bkJgWYvIfJua2hR
+
+          VUE_APP_DEBUG: false
+          VUE_APP_BASE_URL: https://api.ta-zeitblick.de
+          VUE_APP_BRANDING: orange
 
       - name: Archive project
         timeout-minutes: 10
