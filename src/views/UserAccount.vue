@@ -22,6 +22,16 @@
         </ion-toolbar>
       </ion-header>
 
+
+      <ion-item lines="full" class="transparent-bg" v-if="!isPlatform('ios')">
+        <div class="py-4 text-sm">
+          <ion-text color="medium">
+            Folgende Daten sind zu deiner Person gespeichert. Bitte kontaktiere
+            für Änderungen deinen Vorgesetzten.
+          </ion-text>
+        </div>
+      </ion-item>
+
       <template v-if="isLoaded">
         <ion-list>
           <zeit-simple-item label="Vorname" :value="employee.first_name" />
@@ -82,6 +92,8 @@
   import { EmployeeGroup, employeeGroupService } from '../services/employee-groups';
   import ZeitSimpleItem from '../components/ui/ZeitSimpleItem.vue';
 
+  import { isPlatform } from '@ionic/vue';
+
   export default defineComponent({
     components: {
         IonPage, IonHeader, IonTitle, IonLabel, IonSpinner,
@@ -93,6 +105,8 @@
     },
     data() {
       return {
+        isPlatform,
+
         now: undefined as Date|undefined,
         isLoaded: false,
 

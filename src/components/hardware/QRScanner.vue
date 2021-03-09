@@ -1,7 +1,7 @@
 <template>
   <teleport to="#scan-overlay">
     <ion-page>
-      <ion-header>
+      <ion-header ref="header">
         <ion-toolbar>
           <ion-buttons slot="start">
             <ion-back-button default-href="/" text="Zurück" @click="dismiss()"></ion-back-button>
@@ -53,6 +53,8 @@
 
   import { Subscription } from 'rxjs';
 
+  import { updateStatusBar, componentToHex } from '../../globals/statusbar';
+
   export default defineComponent({
     components: {
       IonButton, IonToolbar, IonButtons, IonIcon, IonBackButton, IonPage, IonHeader, IonContent,
@@ -95,7 +97,10 @@
         this.scanSubscription = QRScanner.scan().subscribe((value: string) => {
           this.$emit("scan", value);
         });
-      })
+      });
+
+      const [r, g, b] = (window.getComputedStyle((this.$refs.header as any).$el, null).getPropertyValue('background-color') as string).slice(4,-1).split(", ").map(x => Number(x));
+      updateStatusBar({transparentStatusBar: false, backgroundColor: "#" + componentToHex(r) + componentToHex(g) + componentToHex(b)});
     },
     beforeUnmount() {
       document.querySelector("body")!.classList.remove("show-scanner");
@@ -105,6 +110,8 @@
       if (this.torchEnabled) QRScanner.disableLight();
       QRScanner.hide();
       QRScanner.destroy();
+
+      updateStatusBar({transparentStatusBar: this.$route.meta.transparentStatusBar});
     },
   })
 </script>

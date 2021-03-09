@@ -12,6 +12,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
         allowGuests: true,
         hideChrome: true,
+        transparentStatusBar: true,
     },
   },
 

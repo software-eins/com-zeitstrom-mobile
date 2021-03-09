@@ -22,3 +22,12 @@ ion-card {
 ion-header {
     background: var(--ion-background-color);
 }
+
+ion-list.list-md {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+ion-card.md {
+    margin-bottom: 20px;
+}

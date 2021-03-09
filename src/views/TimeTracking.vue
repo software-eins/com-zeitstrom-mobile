@@ -5,7 +5,7 @@
 
           <ion-buttons slot="start" v-if="false"><ion-menu-button color="primary"></ion-menu-button></ion-buttons>
           <ion-title>
-            <template v-if="activeTimespan"><div class="dot-active mr-2" /> Angemeldet</template>
+            <template v-if="activeTimespan">Angemeldet <div class="dot-active ml-2" /></template>
             <template v-else-if="isLoaded">Abgemeldet</template>
             <template v-else><ion-skeleton-text animated /></template>
           </ion-title>
@@ -32,6 +32,19 @@
           </ion-text>
         </ion-toolbar>
       </ion-header>
+
+      <ion-item lines="full" class="transparent-bg" v-if="!isPlatform('ios')">
+        <div class="py-4 text-sm">
+          <ion-text color="medium">
+            <template v-if="activeTimespan">Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</template>
+            <template v-else-if="isLoaded">Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.</template>
+            <template v-else>
+              <ion-skeleton-text animated class="mb-3" />
+              <ion-skeleton-text animated class="mb-3 w-1/2" />
+            </template>
+          </ion-text>
+        </div>
+      </ion-item>
 
       <zeit-permission-request
         v-if="locationSetting == 'location_tracking_detailed'"
@@ -144,7 +157,9 @@
 
   import { formatTime, timeAgo, calendar, formatLongDate, formatDifference } from '../globals/helpers';
 
-  import { Subscription } from 'rxjs'
+  import { Subscription } from 'rxjs';
+
+  import { isPlatform } from '@ionic/vue';
 
   interface LatLong {
     accuracy: number;
@@ -162,6 +177,8 @@
     },
     data() {
       return {
+        isPlatform,
+
         now: undefined as Date|undefined,
         isLoaded: false,
 

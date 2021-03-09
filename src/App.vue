@@ -86,6 +86,7 @@ import { AxiosResponse } from 'axios';
 import ZeitTabMenu from './components/ui/ZeitTabMenu.vue';
 
 import branding from './branding';
+import { updateStatusBar } from "./globals/statusbar";
 
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
@@ -214,6 +215,9 @@ export default defineComponent({
       "$route": function(newRoute, oldRoute) {
           // Update account details if coming from an unauthenticated route
           if (oldRoute.meta.allowGuests) this.updateAccountDetails();
+          updateStatusBar({
+              transparentStatusBar: newRoute.meta.transparentStatusBar,
+          });
       },
   },
   data() {
@@ -284,6 +288,11 @@ export default defineComponent({
 
     // Lock to portrait mode
     ScreenOrientation.lock("portrait");
+
+    // Set status bar
+    updateStatusBar({
+        transparentStatusBar: this.$route.meta.transparentStatusBar,
+    });
   }
 });
 </script>

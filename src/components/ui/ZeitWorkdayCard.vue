@@ -34,18 +34,21 @@
           </h3>
           <p v-if="timespan.employee_comment">{{ timespan.employee_comment }}</p>
         </ion-label>
-        <ion-note
-          slot="end"
-          class="text-sm"
-          v-if="timespan.checkout && isLoadingTimespan != timespan.id"
-        ><zeit-promise-solver
-          :promise="formatDifference(timespan.checkin.time, timespan.checkout.time, 'seconds')"
-        /></ion-note>
+        <div slot="end" class="flex justify-end">
+          <ion-note
+            class="text-sm"
+            :class="{'mr-2': !isPlatform('ios')}"
+            v-if="timespan.checkout && isLoadingTimespan != timespan.id"
+          ><zeit-promise-solver
+            :promise="formatDifference(timespan.checkin.time, timespan.checkout.time, 'seconds')"
+          /></ion-note>
+        </div>
         <ion-spinner slot="end" v-if="isLoadingTimespan == timespan.id" />
       </ion-item>
     </ion-list>
   </ion-card>
 </template>
+
 
 <script lang="ts">
   import { defineComponent } from 'vue';
@@ -61,6 +64,8 @@
   import { Timespan, timespanService } from '../../services/timespans';
   import ZeitProjectBadge from './ZeitProjectBadge.vue';
 
+  import { isPlatform } from '@ionic/vue';
+
 
   export default defineComponent({
     components: {
@@ -74,6 +79,8 @@
     },
     data() {
       return {
+        isPlatform,
+
         timespanService,
 
         isLoadingTimespan: undefined as string|undefined,

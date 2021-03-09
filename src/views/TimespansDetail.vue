@@ -33,28 +33,28 @@
         lastLine="full"
       />
 
-      <ion-list-header lines="full">
+      <ion-list-header>
         <ion-label>Arbeitszeiten</ion-label>
       </ion-list-header>
 
       <ion-list>
         <ion-item>
           Anmeldung
-          <ion-note slot="end" class="text-sm">
+          <div slot="end" class="text-sm text-gray-400">
             {{ formatTime(remoteTimespan.checkin.time, 'seconds') }}
-          </ion-note>
+          </div>
         </ion-item>
         <ion-item>
           Abmeldung
-          <ion-note slot="end" class="text-sm" v-if="remoteTimespan.checkout">{{ formatTime(remoteTimespan.checkout.time, 'seconds') }}</ion-note>
-          <ion-note slot="end" class="text-sm" v-else>??</ion-note>
+          <div slot="end" class="text-sm text-gray-400" v-if="remoteTimespan.checkout">{{ formatTime(remoteTimespan.checkout.time, 'seconds') }}</div>
+          <div slot="end" class="text-sm text-gray-400" v-else>??</div>
         </ion-item>
         <ion-item lines="full">
           Erfasste Zeit
-          <ion-note slot="end" class="text-sm" v-if="remoteTimespan.duration">
+          <div slot="end" class="text-sm text-gray-400" v-if="remoteTimespan.duration">
             <zeit-promise-solver :promise="formatDuration(remoteTimespan.duration)" /> h
-          </ion-note>
-          <ion-note slot="end" class="text-sm" v-else>??</ion-note>
+          </div>
+          <div slot="end" class="text-sm text-gray-400" v-else>??</div>
         </ion-item>
       </ion-list>
 
@@ -74,7 +74,7 @@
   import { defineComponent } from 'vue'
   import {
       IonPage, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonButton, IonContent,
-      IonList, IonItem, IonListHeader, IonLabel, IonNote,
+      IonList, IonItem, IonListHeader, IonLabel,
 
       toastController,
   } from '@ionic/vue';
@@ -91,7 +91,7 @@
   export default defineComponent({
     components: {
       IonPage, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonButton, IonContent,
-      IonList, IonItem, IonListHeader, IonLabel, IonNote,
+      IonList, IonItem, IonListHeader, IonLabel,
 
       ZeitForm,
       ZeitPromiseSolver,

@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="w-full px-4 bg-gray-200 dark:bg-gray-800 rounded-xl mb-6">
+                <div class="w-full px-4 bg-gray-200 dark:bg-gray-800 rounded-xl mb-7">
                 <ion-input
                     type="password"
                     placeholder="Passwort"

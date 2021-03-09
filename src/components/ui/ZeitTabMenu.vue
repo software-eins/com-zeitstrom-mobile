@@ -26,7 +26,10 @@
 <style scoped>
   ion-tab-bar {
     border-top: .55px solid var(--ion-toolbar-border-color, var(--ion-border-color, var(--ion-color-step-150, rgba(0, 0, 0, 0.2))));
-    padding-top: .25rem;
+  }
+
+  ion-tab-button {
+    --padding-top: .25rem;
   }
 
   body:not(.dark) ion-tab-bar {
