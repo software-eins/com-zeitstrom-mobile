@@ -1,9 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
+    defaultConfig {
+        manifestPlaceholders = [
+            zsLabel: "$System.env.APP_LABEL",
+            zsBrand: "$System.env.APP_BRAND",
+        ]
+    }
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.zeitstrom.tamobile"
+        applicationId "$System.env.APP_PACKAGE"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

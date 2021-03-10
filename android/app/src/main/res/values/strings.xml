@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TA Zeitblick</string>
-    <string name="title_activity_main">TA Zeitblick</string>
-    <string name="package_name">com.zeitstrom.tamobile</string>
-    <string name="custom_url_scheme">com.zeitstrom.tamobile</string>
+    <string name="app_name">Zeit Generic</string>
+    <string name="title_activity_main">Zeit Generic</string>
+    <string name="package_name">com.zeitstrom.zeit-generic</string>
+    <string name="custom_url_scheme">com.zeitstrom.zeit-generic</string>
 </resources>

@@ -15,8 +15,10 @@
         <item name="android:background">@null</item>
     </style>
 
-
-    <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
-        <item name="android:background">@drawable/splash</item>
+    <style name="AppTheme.NoActionBarLaunch_red" parent="AppTheme.NoActionBar">
+        <item name="android:background">@drawable/splash_red</item>
+    </style>
+    <style name="AppTheme.NoActionBarLaunch_orange" parent="AppTheme.NoActionBar">
+        <item name="android:background">@drawable/splash_orange</item>
     </style>
 </resources>
