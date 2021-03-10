@@ -16,7 +16,7 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
-		A21BA061F1BF9694E71D8082 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		A21BA061F1BF9694E71D8082 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		AF763EB0CAAD1716404235D5 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A758E00801E708E7C0F5D284 /* Pods_App.framework */; };
 		FA1C889225F26CBC00A64E62 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
 		FA1C889625F26CBC00A64E62 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
@@ -62,7 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A21BA061F1BF9694E71D8082 /* (null) in Frameworks */,
+				A21BA061F1BF9694E71D8082 /* BuildFile in Frameworks */,
 				4FA5312DDC34ED6F61FAC1F3 /* Pods_AppOrange.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -156,7 +156,6 @@
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
 				9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */,
-				3E14B6F900063C31B203A404 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -176,7 +175,6 @@
 				FA1C889325F26CBC00A64E62 /* Frameworks */,
 				FA1C889525F26CBC00A64E62 /* Resources */,
 				92D8C65B5C43D266C688DE4C /* [CP] Embed Pods Frameworks */,
-				3882D5B56BE0196A40AEC691 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -196,7 +194,6 @@
 				FA1C88B925F4387100A64E62 /* Frameworks */,
 				FA1C88BB25F4387100A64E62 /* Resources */,
 				FA1C88C225F4387100A64E62 /* [CP] Embed Pods Frameworks */,
-				FA1C88C325F4387100A64E62 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -292,36 +289,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3882D5B56BE0196A40AEC691 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AppRed/Pods-AppRed-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3E14B6F900063C31B203A404 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AppOrange/Pods-AppOrange-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6634F4EFEBD30273BCE97C65 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -423,21 +390,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FA1C88C325F4387100A64E62 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

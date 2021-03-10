@@ -6,7 +6,10 @@
   "webDir": "dist",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 0
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "splashImmersive": true,
+      "androidSplashResourceName": "splash_orange"
     }
   },
   "cordova": {}

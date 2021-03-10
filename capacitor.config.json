@@ -6,12 +6,11 @@
   "webDir": "dist",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 0
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "splashImmersive": true,
+      "androidSplashResourceName": "splash_orange"
     }
   },
-  "cordova": {},
-  "server": {
-    "url": "http://192.168.178.60:8100",
-    "cleartext": true
-  }
+  "cordova": {}
 }
