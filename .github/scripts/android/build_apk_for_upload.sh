@@ -6,6 +6,8 @@ cd android
 rm -f ./app/build/outputs/apk/release/app-release-unsigned.apk
 rm -f ./app/build/outputs/apk/release/app.apk
 
+npx jetify
+
 ./gradlew build
 
 jarsigner -sigalg SHA1withRSA \
