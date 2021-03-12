@@ -28,7 +28,7 @@ jobs:
         run: 'npm i'
 
       - name: Install ionic
-        run : 'sudo chown -R $USER /usr/local/lib/node_modules && npm install -g @ionic/cli'
+        run : 'sudo chown -R $USER /usr/local/ && npm install -g @ionic/cli'
 
       # Orange
       - name: Orange / Create environment vars
@@ -42,10 +42,5 @@ jobs:
       - name: Orange / Build capacitor app
         run: 'source envars && ionic cap android ios'
 
-      - name: Orange / Build APK
-        run: 'cd android && ./gradlew build'
-
-      - name: Orange / Sign APK
-        run: ./.github/scripts/android/sign_apk_for_upload.sh
-
-
+      - name: Orange / Build and sign APK
+        run: ./.github/scripts/android/build_apk_for_upload.sh
