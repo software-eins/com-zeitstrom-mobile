@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e pipefail
 
+source envars
+
 cd android
 
 rm -f ./app/build/outputs/apk/release/app-release-unsigned.apk
