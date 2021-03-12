@@ -48,7 +48,7 @@ jobs:
           BASE_URL: https://api.ta-zeitblick.de
 
       - name: Orange / Build capacitor app
-        run: 'source envars && ionic cap sync android'
+        run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
 
       - name: Orange / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
