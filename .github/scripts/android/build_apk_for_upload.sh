@@ -14,6 +14,6 @@ jarsigner -sigalg SHA1withRSA \
     -keystore ../.github/secrets/android/2018-08-20-upload-keystore.jks \
     ./app/build/outputs/apk/release/app-release-unsigned.apk time_tracking
 
-zipalign -v 4 \
+/usr/local/lib/android/sdk/build-tools/30.0.3/zipalign -v 4 \
     ./app/build/outputs/apk/release/app-release-unsigned.apk \
     ./app/build/outputs/apk/release/app.apk
