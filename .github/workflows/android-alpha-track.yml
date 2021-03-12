@@ -8,48 +8,42 @@ jobs:
     name: Deploy to Android Alpha Track
     runs-on: ubuntu-20.04
     steps:
-      # - name: Checkout repository
-      #   uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      # - name: Cache node modules
-      #   uses: actions/cache@v2
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
 
-      # - name: Decrypt secrets
-      #   env:
-      #     IOS_KEYS: ${{ secrets.IOS_KEYS }}
-      #   run: ./.github/scripts/android/decrypt_secrets.sh
+      - name: Decrypt secrets
+        env:
+          IOS_KEYS: ${{ secrets.IOS_KEYS }}
+        run: ./.github/scripts/android/decrypt_secrets.sh
 
-      # - name: Install node dependencies
-      #   run: 'npm i'
+      - name: Install node dependencies
+        run: 'npm i'
 
-      # - name: Install ionic
-      #   run : 'sudo chown -R $USER /usr/local/ && npm install -g @ionic/cli'
+      - name: Install ionic
+        run : 'sudo chown -R $USER /usr/local/ && npm install -g @ionic/cli'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Debug Location 1
-        run: 'ls /usr/local/lib/android/sdk/'
-
-      - name: Debug Location 2
-        run: 'find /usr/local/lib/android/sdk/ -ls'
-
       # Orange
-      # - name: Orange / Create environment vars
-      #   run: ./.github/scripts/android/create_environment_variables.sh
-      #   env:
-      #     BRAND: orange
-      #     LABEL: 'TA Zeitblick'
-      #     PACKAGE: com.zeitstrom.ta_mobile
-      #     BASE_URL: https://api.ta-zeitblick.de
+      - name: Orange / Create environment vars
+        run: ./.github/scripts/android/create_environment_variables.sh
+        env:
+          BRAND: orange
+          LABEL: 'TA Zeitblick'
+          PACKAGE: com.zeitstrom.ta_mobile
+          BASE_URL: https://api.ta-zeitblick.de
 
-      # - name: Orange / Build capacitor app
-      #   run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
+      - name: Orange / Build capacitor app
+        run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
 
-      # - name: Orange / Build and sign APK
-      #   run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
+      - name: Orange / Build and sign APK
+        run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
