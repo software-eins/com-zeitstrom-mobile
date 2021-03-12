@@ -39,7 +39,13 @@ jobs:
           PACKAGE: com.zeitstrom.ta_mobile
           BASE_URL: https://api.ta-zeitblick.de
 
-      - name: orange / Build capacitor app
+      - name: Orange / Build capacitor app
         run: 'source envars && ionic cap android ios'
+
+      - name: Orange / Build APK
+        run: 'cd android && ./gradlew build'
+
+      - name: Orange / Sign APK
+        run: 'pwd'
 
 
