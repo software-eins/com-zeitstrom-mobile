@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'com.github.triplet.play'
+
 android {
     defaultConfig {
         manifestPlaceholders = [
