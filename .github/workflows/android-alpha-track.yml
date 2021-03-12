@@ -33,8 +33,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Debug Location
-        run: 'ls /usr/local/lib/android/sdk/cmdline-tools/latest/bin/'
+      - name: Debug Location 1
+        run: 'ls /usr/local/lib/android/sdk/'
+
+      - name: Debug Location 2
+        run: 'find /usr/local/lib/android/sdk/ -ls'
 
       # Orange
       # - name: Orange / Create environment vars
