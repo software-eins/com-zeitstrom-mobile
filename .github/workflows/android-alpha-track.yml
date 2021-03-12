@@ -1,0 +1,27 @@
+name: Testflight Deployment
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: Deploy to Android Alpha Track
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Orange / Create environment vars
+        run: ./.github/scripts/android/create_environment_variables.sh
+        env:
+          BRAND: orange
+          LABEL: 'TA Zeitblick'
+          PACKAGE: com.zeitstrom.ta_mobile
