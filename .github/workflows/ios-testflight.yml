@@ -1,4 +1,4 @@
-name: Testflight Deployment
+name: iOS / Testflight Deployment
 on:
   push:
     branches:

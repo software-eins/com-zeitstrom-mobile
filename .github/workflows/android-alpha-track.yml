@@ -1,4 +1,4 @@
-name: Testflight Deployment
+name: Android / Alpha Track Deployment
 on:
   push:
     branches:
@@ -46,6 +46,6 @@ jobs:
         run: 'cd android && ./gradlew build'
 
       - name: Orange / Sign APK
-        run: 'pwd'
+        run: ./.github/scripts/android/sign_apk_for_upload.sh
 
 
