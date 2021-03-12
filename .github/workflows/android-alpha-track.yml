@@ -28,7 +28,7 @@ jobs:
         run: 'npm i'
 
       - name: Install ionic
-        run : 'npm install -g @ionic/cli'
+        run : 'sudo chown -R $USER /usr/local/lib/node_modules && npm install -g @ionic/cli'
 
       # Orange
       - name: Orange / Create environment vars
