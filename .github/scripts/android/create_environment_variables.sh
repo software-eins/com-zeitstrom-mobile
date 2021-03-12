@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euxo pipefail
+set -e pipefail
 
 rm -f envars
 
