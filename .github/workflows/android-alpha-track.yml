@@ -19,9 +19,27 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
 
+      - name: Decrypt secrets
+        env:
+          IOS_KEYS: ${{ secrets.IOS_KEYS }}
+        run: ./.github/scripts/android/decrypt_secrets.sh
+
+      - name: Install node dependencies
+        run: 'npm i'
+
+      - name: Install ionic
+        run : 'npm install -g @ionic/cli'
+
+      # Orange
       - name: Orange / Create environment vars
         run: ./.github/scripts/android/create_environment_variables.sh
         env:
           BRAND: orange
           LABEL: 'TA Zeitblick'
           PACKAGE: com.zeitstrom.ta_mobile
+          BASE_URL: https://api.ta-zeitblick.de
+
+      - name: orange / Build capacitor app
+        run: 'source envars && ionic cap android ios'
+
+

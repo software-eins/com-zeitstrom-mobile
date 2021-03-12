@@ -12,3 +12,5 @@ echo "export APP_VERSION_CODE=`git rev-list --all --count`" >> envars
 echo "export APP_VERSION_MARKETING=3.1.`date +"%y%m%d"`" >> envars
 
 echo "export VUE_APP_BRANDING=$BRAND" >> envars
+
+echo "export VUE_APP_BASE_URL=$BASE_URL" >> envars
