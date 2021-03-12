@@ -43,4 +43,4 @@ jobs:
         run: 'source envars && ionic cap android ios'
 
       - name: Orange / Build and sign APK
-        run: ./.github/scripts/android/build_apk_for_upload.sh
+        run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
