@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: DEBUG / Git Number
-        run: echo $GITHUB_RUN_ID
+        run: echo $GITHUB_RUN_NUMBER
 
       # - name: Cache node modules
       #   uses: actions/cache@v2
