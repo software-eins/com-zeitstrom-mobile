@@ -11,63 +11,60 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: DEBUG / Git Number
-        run: echo $GITHUB_RUN_NUMBER
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
 
-      # - name: Cache node modules
-      #   uses: actions/cache@v2
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Decrypt secrets
+        env:
+          IOS_KEYS: ${{ secrets.IOS_KEYS }}
+        run: ./.github/scripts/android/decrypt_secrets.sh
 
-      # - name: Decrypt secrets
-      #   env:
-      #     IOS_KEYS: ${{ secrets.IOS_KEYS }}
-      #   run: ./.github/scripts/android/decrypt_secrets.sh
+      - name: Install node dependencies
+        run: 'npm i'
 
-      # - name: Install node dependencies
-      #   run: 'npm i'
+      - name: Install ionic
+        run : 'sudo chown -R $USER /usr/local/ && npm install -g @ionic/cli'
 
-      # - name: Install ionic
-      #   run : 'sudo chown -R $USER /usr/local/ && npm install -g @ionic/cli'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
 
-      # - name: Setup Android SDK
-      #   uses: android-actions/setup-android@v2
+      # Orange
+      - name: Orange / Create environment vars
+        run: ./.github/scripts/android/create_environment_variables.sh
+        env:
+          BRAND: orange
+          LABEL: 'TA Zeitblick'
+          PACKAGE: com.zeitstrom.ta_mobile
+          BASE_URL: https://api.ta-zeitblick.de
 
-      # # Orange
-      # - name: Orange / Create environment vars
-      #   run: ./.github/scripts/android/create_environment_variables.sh
-      #   env:
-      #     BRAND: orange
-      #     LABEL: 'TA Zeitblick'
-      #     PACKAGE: com.zeitstrom.ta_mobile
-      #     BASE_URL: https://api.ta-zeitblick.de
+      - name: Orange / Build capacitor app
+        run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
 
-      # - name: Orange / Build capacitor app
-      #   run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
+      - name: Orange / Build and sign APK
+        run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
-      # - name: Orange / Build and sign APK
-      #   run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
+      - name: Orange / Upload APK
+        run: 'source envars && cd android && ./gradlew publish'
 
-      # - name: Orange / Upload APK
-      #   run: 'source envars && cd android && ./gradlew publish'
+      # Red
+      - name: Red / Create environment vars
+        run: ./.github/scripts/android/create_environment_variables.sh
+        env:
+          BRAND: red
+          LABEL: 'Zeitstrom'
+          PACKAGE: com.zeitstrom.zs_mobile
+          BASE_URL: https://api.zeitstrom.com
 
-      # # Red
-      # - name: Red / Create environment vars
-      #   run: ./.github/scripts/android/create_environment_variables.sh
-      #   env:
-      #     BRAND: red
-      #     LABEL: 'Zeitstrom'
-      #     PACKAGE: com.zeitstrom.zs_mobile
-      #     BASE_URL: https://api.zeitstrom.com
+      - name: Red / Build capacitor app
+        run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
 
-      # - name: Red / Build capacitor app
-      #   run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
+      - name: Red / Build and sign APK
+        run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
-      # - name: Red / Build and sign APK
-      #   run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
-
-      # - name: Red / Upload APK
-      #   run: 'source envars && cd android && ./gradlew publish'
+      - name: Red / Upload APK
+        run: 'source envars && cd android && ./gradlew publish'
