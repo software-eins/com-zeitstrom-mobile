@@ -1,10 +1,16 @@
 #!/bin/sh
 set -e pipefail
 
-gpg --quiet --batch --yes --decrypt --passphrase="$IOS_KEYS" \
-    --output ./.github/secrets/android/2018-08-20-upload-keystore.jks \
-    ./.github/secrets/android/2018-08-20-upload-keystore.jks.gpg
 
-gpg --quiet --batch --yes --decrypt --passphrase="$IOS_KEYS" \
-    --output ./.github/secrets/android/2021-03-13-service-account.json \
-    ./.github/secrets/android/2021-03-13-service-account.json.gpg
+SECRETS_PATH=./.github/secrets/android
+KEYSTORE=2018-08-20-upload-keystore.jks
+SERVICE_ACCOUNT=2021-03-13-service-account.json
+
+
+gpg --quiet --batch --yes --decrypt --passphrase="$SECRETS_KEY" \
+    --output $SECRETS_PATH/$KEYSTORE \
+    $SECRETS_PATH/$KEYSTORE.gpg
+
+gpg --quiet --batch --yes --decrypt --passphrase="$SECRETS_KEY" \
+    --output $SECRETS_PATH/$SERVICE_ACCOUNT \
+    $SECRETS_PATH/$SERVICE_ACCOUNT.gpg

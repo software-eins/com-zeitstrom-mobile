@@ -13,16 +13,16 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 $RECYCLE.BIN/
 
-.env
-
+.env*
 ios/build
 
-.github/secrets/android/2021-03-13-service-account.json
+# Only add encrypted secrets to the repository
+.github/secrets/*
+!.github/secrets/*.gpg
 
 *.log
 log.txt
 npm-debug.log*
-
 /.idea
 /.ionic
 /.sass-cache

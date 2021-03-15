@@ -21,7 +21,7 @@ jobs:
 
       - name: Decrypt secrets
         env:
-          IOS_KEYS: ${{ secrets.IOS_KEYS }}
+          SECRETS_KEY: ${{ secrets.SECRETS_KEY }}
         run: ./.github/scripts/android/decrypt_secrets.sh
 
       - name: Install node dependencies
