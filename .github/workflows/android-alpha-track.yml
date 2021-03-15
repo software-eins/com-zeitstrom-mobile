@@ -33,21 +33,38 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-
       # Orange
-      - name: Orange / Create environment vars
+      # - name: Orange / Create environment vars
+      #   run: ./.github/scripts/android/create_environment_variables.sh
+      #   env:
+      #     BRAND: orange
+      #     LABEL: 'TA Zeitblick'
+      #     PACKAGE: com.zeitstrom.ta_mobile
+      #     BASE_URL: https://api.ta-zeitblick.de
+
+      # - name: Orange / Build capacitor app
+      #   run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
+
+      # - name: Orange / Build and sign APK
+      #   run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
+
+      # - name: Orange / Upload APK
+      #   run: 'source envars && cd android && ./gradlew publish'
+
+      # Red
+      - name: Red / Create environment vars
         run: ./.github/scripts/android/create_environment_variables.sh
         env:
-          BRAND: orange
-          LABEL: 'TA Zeitblick'
-          PACKAGE: com.zeitstrom.ta_mobile
-          BASE_URL: https://api.ta-zeitblick.de
+          BRAND: red
+          LABEL: 'Zeitstrom'
+          PACKAGE: com.zeitstrom.zs_mobile
+          BASE_URL: https://api.zeitstrom.com
 
-      - name: Orange / Build capacitor app
+      - name: Red / Build capacitor app
         run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
 
-      - name: Orange / Build and sign APK
+      - name: Red / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
-      - name: Orange / Upload APK
+      - name: Red / Upload APK
         run: 'source envars && cd android && ./gradlew publish'
