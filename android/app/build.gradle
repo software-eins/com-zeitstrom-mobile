@@ -26,6 +26,12 @@ android {
     }
 }
 
+play {
+    serviceAccountCredentials = file("../../.github/secrets/android/2021-03-13-service-account.json")
+    track = "internal"
+    artifactDir = file("./build/outputs/apk/release")
+}
+
 repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'

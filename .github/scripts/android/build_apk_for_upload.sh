@@ -17,3 +17,5 @@ jarsigner -sigalg SHA1withRSA \
 /usr/local/lib/android/sdk/build-tools/30.0.3/zipalign -v 4 \
     ./app/build/outputs/apk/release/app-release-unsigned.apk \
     ./app/build/outputs/apk/release/app.apk
+
+rm ./app/build/outputs/apk/release/app-release-unsigned.apk

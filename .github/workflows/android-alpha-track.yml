@@ -47,3 +47,6 @@ jobs:
 
       - name: Orange / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
+
+      - name: Orange / Upload APK
+        run: 'source envars && cd android && ./gradlew publish'

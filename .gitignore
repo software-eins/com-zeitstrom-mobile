@@ -17,6 +17,8 @@ $RECYCLE.BIN/
 
 ios/build
 
+.github/secrets/android/2021-03-13-service-account.json
+
 *.log
 log.txt
 npm-debug.log*
