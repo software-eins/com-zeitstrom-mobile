@@ -227,23 +227,26 @@ export default defineComponent({
   },
   methods: {
     loadDarkMode() {
-      if (document === null) return;
+      if (document == null) return;
+
+      const body = document.querySelector('body');
+      if (body == null) return;
 
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.querySelector('body')!.classList.add('dark')
+          body.classList.add('dark')
       } else {
-          document.querySelector('body')!.classList.remove('dark')
+          body.classList.remove('dark')
       }
 
-      // Whenever the user explicitly chooses light mode
-      localStorage.theme = 'light'
+    //   Whenever the user explicitly chooses light mode
+    //   localStorage.theme = 'light'
 
       // Whenever the user explicitly chooses dark mode
-      localStorage.theme = 'dark'
+    //   localStorage.theme = 'dark'
 
       // Whenever the user explicitly chooses to respect the OS preference
-      localStorage.removeItem('theme')
+    //   localStorage.removeItem('theme')
     },
     logout() {
       this.accountService.logout();
@@ -266,11 +269,13 @@ export default defineComponent({
         ]).then(() => this.$forceUpdate());
     },
     filteredAppPages() {
+        if (!this.account) return [];
+
         const pages = [];
         for (const appPage of this.appPages) {
             let hasPermissions = true;
             for (const perm of appPage.permissions || []) {
-                if (this.account!.permissions.indexOf(perm) == -1) {
+                if (this.account.permissions.indexOf(perm) == -1) {
                     hasPermissions = false;
                 }
             }

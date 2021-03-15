@@ -1,5 +1,7 @@
 import { Plugins, StatusBarStyle } from '@capacitor/core';
 
+import { isPlatform } from '@ionic/vue';
+
 const { StatusBar } = Plugins;
 
 
@@ -16,8 +18,6 @@ export function componentToHex(c: number): string {
 export function updateStatusBar(options?: UpdateStatusBarOptions) {
   options = options || {};
 
-  console.log("updateStatusBar", options);
-
   StatusBar.show();
   if (options.transparentStatusBar) {
       StatusBar.setBackgroundColor({ color: '#00000000' });
@@ -28,6 +28,7 @@ export function updateStatusBar(options?: UpdateStatusBarOptions) {
       StatusBar.setOverlaysWebView({ overlay: false });
       StatusBar.setBackgroundColor({ color: color });
   }
-  StatusBar.setStyle({ style: StatusBarStyle.Light });
+
+  if (isPlatform('android')) StatusBar.setStyle({ style: StatusBarStyle.Light });
 }
 
