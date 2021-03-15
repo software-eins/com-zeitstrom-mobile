@@ -28,7 +28,7 @@ android {
 
 play {
     serviceAccountCredentials = file("../../.github/secrets/android/2021-03-13-service-account.json")
-    track = "internal"
+    track = "alpha"
     artifactDir = file("./build/outputs/apk/release")
 }
 

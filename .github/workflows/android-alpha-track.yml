@@ -34,22 +34,22 @@ jobs:
         uses: android-actions/setup-android@v2
 
       # Orange
-      # - name: Orange / Create environment vars
-      #   run: ./.github/scripts/android/create_environment_variables.sh
-      #   env:
-      #     BRAND: orange
-      #     LABEL: 'TA Zeitblick'
-      #     PACKAGE: com.zeitstrom.ta_mobile
-      #     BASE_URL: https://api.ta-zeitblick.de
+      - name: Orange / Create environment vars
+        run: ./.github/scripts/android/create_environment_variables.sh
+        env:
+          BRAND: orange
+          LABEL: 'TA Zeitblick'
+          PACKAGE: com.zeitstrom.ta_mobile
+          BASE_URL: https://api.ta-zeitblick.de
 
-      # - name: Orange / Build capacitor app
-      #   run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
+      - name: Orange / Build capacitor app
+        run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
 
-      # - name: Orange / Build and sign APK
-      #   run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
+      - name: Orange / Build and sign APK
+        run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
-      # - name: Orange / Upload APK
-      #   run: 'source envars && cd android && ./gradlew publish'
+      - name: Orange / Upload APK
+        run: 'source envars && cd android && ./gradlew publish'
 
       # Red
       - name: Red / Create environment vars
