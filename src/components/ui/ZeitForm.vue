@@ -10,8 +10,8 @@
           slot="end"
           class="text-right"
           v-model="localResource[field.name]"
-        ></ion-input>
-        <ion-input v-if="(field.isReadOnly || disabled) && !field.renderer" disabled slot="end" class="text-right" :value="localResource[field.name] || field.default" />
+        />
+        <ion-input v-else-if="(field.isReadOnly || disabled) && !field.renderer" disabled slot="end" class="text-right" :value="localResource[field.name] || field.default" />
         <div v-else slot="end" class="text-right flex-grow">
             <zeit-promise-solver :promise="field.renderer(localResource)" :key="localResource[field.name]" />
         </div>
@@ -21,7 +21,7 @@
         <ion-input
           :disabled="field.isReadOnly || disabled"
           v-model="localResource[field.name]"
-        ></ion-input>
+        />
       </template>
       <template v-else-if="field.mobileType == 'select'">
         <ion-label position="stacked">{{ field.label }}</ion-label>
@@ -50,7 +50,7 @@
           class="flex-none"
           :disabled="field.isReadOnly || disabled"
           v-model="localResource[field.name]"
-        ></ion-toggle>
+        />
       </div>
       <template v-else-if="field.mobileType == 'color'">
         <ion-label position="stacked">{{ field.label }}</ion-label>
@@ -62,6 +62,23 @@
                 :class="{active: localResource[field.name] == color.code}"
                 :style="getColorStyle(color)"
                 @click="updateLocalResource(field, color.code)"></div>
+        </div>
+      </template>
+      <template v-else-if="field.mobileType == 'time'">
+        <ion-label>{{ field.label }}</ion-label>
+        <div slot="end" class="flex flex-row items-center">
+          <ion-datetime
+            :disabled="field.isReadOnly || disabled"
+            display-format="HH:mm:ss"
+            picker-format="HH:mm"
+            placeholder="Uhrzeit wählen"
+            cancelText="Abbrechen"
+            doneText="Fertig"
+            class="text-right"
+            :value="localResource[field.name]"
+            @ion-change="removeSecondsFromTime($event, field.name)"
+          />
+          <span v-if="localResource[field.name]" :class="{'opacity-30': disabled}">Uhr</span>
         </div>
       </template>
       <template v-else>
@@ -88,13 +105,13 @@
 </style>
 
 <script>
-import { IonItem, IonInput, IonLabel, IonSelect, IonToggle, IonSelectOption, IonSpinner } from '@ionic/vue';
+import { IonItem, IonInput, IonLabel, IonSelect, IonToggle, IonSelectOption, IonSpinner, IonDatetime } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { colors } from '@/globals/colors.ts';
 import ZeitPromiseSolver from '../helpers/ZeitPromiseSolver.vue';
 
 export default defineComponent({
-  components: { IonItem, IonInput, IonLabel, IonSelect, IonToggle, IonSelectOption, IonSpinner, ZeitPromiseSolver, },
+  components: { IonItem, IonInput, IonLabel, IonSelect, IonToggle, IonSelectOption, IonSpinner, ZeitPromiseSolver, IonDatetime, },
   props: {
     resource: Object,
     service: Object,
@@ -139,11 +156,16 @@ export default defineComponent({
     },
     copyRemoteResource() {
         // Copy prop resource and set mode to `create` or `edit`
-        if (this.resource.id) {
+        if (this.resource && this.resource.id) {
             this.localResource = JSON.parse(JSON.stringify(this.resource));
             this.mode = "edit";
         }
     },
+    removeSecondsFromTime(event, fieldName) {
+      const newTime = event.detail.value;
+      event.detail.value = newTime.slice(0, 17) + '00.000' + newTime.slice(23);
+      this.localResource[fieldName] = newTime.slice(0, 17) + '00.000' + newTime.slice(23);
+    }
   },
 
   watch: {

@@ -38,6 +38,7 @@
 </style>
 
 <script>
+
 import { defineComponent } from 'vue';
 import {
   IonIcon,
@@ -47,6 +48,7 @@ import {
   IonTabs,
   IonPage,
 } from '@ionic/vue';
+
 import {
   calendar, personCircle, timer,
   calendarSharp, personCircleSharp, timerSharp,

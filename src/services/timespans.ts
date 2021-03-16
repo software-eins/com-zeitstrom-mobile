@@ -1,4 +1,4 @@
-import BaseService, { FormField, PaginatedResponse } from './_base';
+import BaseService, { PaginatedResponse } from './_base';
 
 import { Timestamp } from "./timestamps";
 import { AxiosResponse } from 'axios';
@@ -43,7 +43,12 @@ class TimespanGroup {
 
     checkin(): string { return this.timespans[0].checkin.time }
 
-    checkout(): string { return this.timespans[this.timespans.length - 1].checkout!.time }
+    checkout(): string {
+        const lastTimespan = this.timespans[this.timespans.length - 1];
+        if (lastTimespan.checkout == undefined) return '??';
+
+        return lastTimespan.checkout.time
+    }
 
     stampTimespanIds() {
         this.originalTimespanIds = [];
@@ -57,6 +62,12 @@ interface TimespanSetTimesBody {
     checkin: string;
     checkout?: string;
     project_id?: string;
+}
+
+interface TimespanSetTimesEmployeeBody {
+    checkin: string;
+    checkout?: string;
+    update_reason?: string;
 }
 
 interface TimespanAddTimesBody {
@@ -108,6 +119,11 @@ class TimespanService extends BaseService<Timespan> {
 
     setTimes(resourceId: string, body: TimespanSetTimesBody): Promise<Timespan> {
         const query = resourceId + "/set-times/";
+        return this._patch(query, body) as unknown as Promise<Timespan>;
+    }
+
+    setTimesEmployee(resourceId: string, body: TimespanSetTimesEmployeeBody): Promise<Timespan> {
+        const query = resourceId + "/set-times-employee/";
         return this._patch(query, body) as unknown as Promise<Timespan>;
     }
 

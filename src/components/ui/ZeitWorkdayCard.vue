@@ -27,9 +27,10 @@
       >
         <ion-label>
           <h3>
-            {{ formatTime(timespan.checkin.time) }} –
-            <span v-if="timespan.checkout">{{ formatTime(timespan.checkout.time) }}</span>
-            <span v-else>??</span>
+            {{ formatTime(timespan.checkin.time) }}
+            <span v-if="timespan.checkout"> – {{ formatTime(timespan.checkout.time) }}</span>
+            <span v-else-if="isActiveTimespan(timespan)"><div class="dot-active ml-2" /></span>
+            <span v-else> – ??</span>
             <zeit-project-badge :projectId="timespan.project_id" class="ml-2" />
           </h3>
           <p v-if="timespan.employee_comment">{{ timespan.employee_comment }}</p>
@@ -41,6 +42,7 @@
             v-if="timespan.checkout && isLoadingTimespan != timespan.id"
           ><zeit-promise-solver
             :promise="formatDifference(timespan.checkin.time, timespan.checkout.time, 'seconds')"
+            :key="timespan.modified_at"
           /></ion-note>
         </div>
         <ion-spinner slot="end" v-if="isLoadingTimespan == timespan.id" />
@@ -96,12 +98,18 @@
       workDuration() {
         let total = 0;
 
-        for (const timespan of this.workday!.timespans) {
+        let timespans = [];
+        if (this.workday) timespans = this.workday.timespans;
+
+        for (const timespan of timespans) {
           if (!timespan.checkout) continue;
           total += moment(timespan.checkout.time).diff(moment(timespan.checkin.time)) / 1000;
         }
 
         return total;
+      },
+      isActiveTimespan(timespan: Timespan): boolean {
+          return timespan.id == this.activeTimespanId;
       },
       physicalRestDuration() {
         // Return tracked work interruptions, if they (depending on the setting)
@@ -164,7 +172,8 @@
         return this.computedRestDuration() - this.physicalRestDuration();
       },
       hasOpenTimespans() {
-        return this.workday!.timespans.some((timespan: Timespan) => !timespan.checkout);
+        if (!this.workday) return false;
+        return this.workday.timespans.some((timespan: Timespan) => !timespan.checkout);
       }
     },
   });

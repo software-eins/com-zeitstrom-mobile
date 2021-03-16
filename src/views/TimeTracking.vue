@@ -99,21 +99,6 @@
 </template>
 
 <style>
-  .dot-active {
-      width: 10px;
-      height: 10px;
-      background: rgba(var(--ion-color-success-rgb), 1);
-      display: inline-block;
-      margin-left: .5rem;
-      border-radius: 50%;
-      box-shadow: 0 0px 3px 0 rgba(var(--ion-color-success-rgb), .7);
-      animation: dot-active 1s infinite alternate;
-  }
-  @keyframes dot-active {
-    0% { opacity: 1; }
-    100% { opacity: .5; }
-  }
-
   ion-item.hero-cta {
     --inner-padding-top: 8px;
     --inner-padding-bottom: 8px;
@@ -337,7 +322,7 @@
         Promise.all([
             // Load account
             this.accountService.list().then((response: AxiosResponse<PaginatedResponse<Account>>) => {
-            this.account = response.data.results[0];
+                this.account = response.data.results[0];
             }),
             // Load institution
             this.institutionService.list().then((response: AxiosResponse<PaginatedResponse<Institution>>) => {

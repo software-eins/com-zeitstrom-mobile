@@ -3,10 +3,6 @@ ion-title.ios.title-large {
     font-size: 31px;
 }
 
-ion-toast {
-    --background: var(--ion-color-step-200, #cccccc);
-}
-
 body.show-scanner #app { display: none !important; }
 body.show-scanner { background: transparent !important; }
 body.show-scanner #scan-overlay {
@@ -30,4 +26,19 @@ ion-list.list-md {
 
 ion-card.md {
     margin-bottom: 20px;
+}
+
+.dot-active {
+    width: 10px;
+    height: 10px;
+    background: rgba(var(--ion-color-success-rgb), 1);
+    display: inline-block;
+    margin-left: .5rem;
+    border-radius: 50%;
+    box-shadow: 0 0px 3px 0 rgba(var(--ion-color-success-rgb), .7);
+    animation: dot-active 1s infinite alternate;
+}
+@keyframes dot-active {
+    0% { opacity: 1; }
+    100% { opacity: .5; }
 }

@@ -18,17 +18,21 @@ export function componentToHex(c: number): string {
 export function updateStatusBar(options?: UpdateStatusBarOptions) {
   options = options || {};
 
+  if (!isPlatform('capacitor')) return;
+
   StatusBar.show();
+
+  if (!isPlatform('android')) return;
+
   if (options.transparentStatusBar) {
       StatusBar.setBackgroundColor({ color: '#00000000' });
       StatusBar.setOverlaysWebView({ overlay: true });
   } else {
       let color = options.backgroundColor || window.getComputedStyle(document.body, null).getPropertyValue('--ion-background-color');
       color = color.trim().toLowerCase();
-      StatusBar.setOverlaysWebView({ overlay: false });
       StatusBar.setBackgroundColor({ color: color });
+      StatusBar.setOverlaysWebView({ overlay: false });
   }
-
-  if (isPlatform('android')) StatusBar.setStyle({ style: StatusBarStyle.Light });
+  StatusBar.setStyle({ style: StatusBarStyle.Light });
 }
 

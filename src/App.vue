@@ -71,7 +71,7 @@
 </style>
 
 <script lang="ts">
-import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonText, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
+import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonText, IonRouterOutlet, IonSplitPane, isPlatform } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { logOutOutline, archiveOutline, fishOutline, folderOpenOutline, peopleOutline, gridOutline, desktopOutline, archiveSharp, bookmarkOutline, bookmarkSharp, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp, helpCircleOutline, timerOutline } from 'ionicons/icons';
@@ -89,6 +89,9 @@ import branding from './branding';
 import { updateStatusBar } from "./globals/statusbar";
 
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
+
+import { Plugins, KeyboardStyle } from '@capacitor/core';
+const { Keyboard } = Plugins;
 
 
 export default defineComponent({
@@ -239,6 +242,13 @@ export default defineComponent({
           body.classList.remove('dark')
       }
 
+      if (isPlatform('capacitor') && document.body.classList.contains('dark')) {
+        Keyboard.setAccessoryBarVisible({isVisible: false});
+        Keyboard.setStyle({
+          style: KeyboardStyle.Dark,
+        })
+      }
+
     //   Whenever the user explicitly chooses light mode
     //   localStorage.theme = 'light'
 
@@ -285,6 +295,10 @@ export default defineComponent({
     },
   },
   mounted() {
+    if (isPlatform('capacitor')) {
+      Keyboard.setAccessoryBarVisible({isVisible: false});
+    }
+
     this.loadDarkMode();
     this.updateAccountDetails().then();
 
@@ -292,7 +306,9 @@ export default defineComponent({
     document.getElementsByTagName("html")[0].classList.add("brand-" + branding.id);
 
     // Lock to portrait mode
-    ScreenOrientation.lock("portrait");
+    if (isPlatform('capacitor')) {
+      ScreenOrientation.lock("portrait");
+    }
 
     // Set status bar
     updateStatusBar({

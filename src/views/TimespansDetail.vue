@@ -3,16 +3,18 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button default-href="/" text="Zurück"></ion-back-button>
+          <ion-back-button default-href="/" text="Zurück" :disabled="isSaving"></ion-back-button>
         </ion-buttons>
         <ion-title v-if="false">{{ getTitle() }}</ion-title>
         <ion-buttons slot="primary">
           <ion-button
             color="primary"
             :strong="true"
-            :disabled="!hasChanges()"
+            :disabled="!hasChanges() || requiresChangeReason()"
             @click="updateRemoteTimespan()"
+            v-if="!isSaving"
           >Speichern</ion-button>
+          <ion-spinner class="mr-2" v-if="isSaving" />
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -24,6 +26,7 @@
         :formFields="projectFields"
         @update:resource="updateLocalTimespan($event)"
         v-if="showProjectSelection"
+        :disabled="isSaving"
       />
       <zeit-form
         :resource="remoteTimespan"
@@ -31,22 +34,52 @@
         :formFields="commentFields"
         @update:resource="updateLocalTimespan($event)"
         lastLine="full"
+        :disabled="isSaving"
       />
 
       <ion-list-header>
         <ion-label>Arbeitszeiten</ion-label>
       </ion-list-header>
 
-      <ion-list>
+      <zeit-form
+        v-if="employeeSettings.employee_app_access.edit_working_times == 'edit_missing_days'"
+        :resource="remoteTimespan.checkin"
+        :service="timespanService"
+        :formFields="checkinFields"
+        @update:resource="updateLocalTimestamp('checkin', $event)"
+        :disabled="isSaving"
+      />
+      <zeit-form
+        v-if="employeeSettings.employee_app_access.edit_working_times == 'edit_missing_days'"
+        :resource="remoteTimespan.checkout"
+        :service="timespanService"
+        :formFields="checkoutFields"
+        @update:resource="updateLocalTimestamp('checkout', $event)"
+        :lastLine="showUpdateReasonField() ? 'inset' : 'full'"
+        :disabled="isSaving"
+      />
+      <zeit-form
+        v-if="showUpdateReasonField()"
+        :resource="updateFieldResource"
+        :service="timespanService"
+        :formFields="updateReasonFields"
+        @update:resource="updateUpdateReasonField($event)"
+        lastLine="full"
+        :disabled="isSaving"
+      />
+
+      <ion-list v-if="employeeSettings.employee_app_access.edit_working_times == 'disabled'">
         <ion-item>
           Anmeldung
           <div slot="end" class="text-sm text-gray-400">
-            {{ formatTime(remoteTimespan.checkin.time, 'seconds') }}
+            {{ formatTime(remoteTimespan.checkin.time, 'seconds') }} Uhr
           </div>
         </ion-item>
         <ion-item>
           Abmeldung
-          <div slot="end" class="text-sm text-gray-400" v-if="remoteTimespan.checkout">{{ formatTime(remoteTimespan.checkout.time, 'seconds') }}</div>
+          <div slot="end" class="text-sm text-gray-400" v-if="remoteTimespan.checkout">
+            {{ formatTime(remoteTimespan.checkout.time, 'seconds') }} Uhr
+          </div>
           <div slot="end" class="text-sm text-gray-400" v-else>??</div>
         </ion-item>
         <ion-item lines="full">
@@ -57,7 +90,6 @@
           <div slot="end" class="text-sm text-gray-400" v-else>??</div>
         </ion-item>
       </ion-list>
-
 
     </ion-content>
   </ion-page>
@@ -74,7 +106,7 @@
   import { defineComponent } from 'vue'
   import {
       IonPage, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonButton, IonContent,
-      IonList, IonItem, IonListHeader, IonLabel,
+      IonList, IonItem, IonListHeader, IonLabel, IonSpinner,
 
       toastController,
   } from '@ionic/vue';
@@ -82,16 +114,19 @@
   import { Timespan, timespanService } from '../services/timespans';
   import { FormField, PaginatedResponse } from '../services/_base';
   import projectService, { Project } from '../services/projects';
+  import { accountService, Account } from '../services/accounts';
+  import { employeeService } from '../services/employees';
   import { formatDuration, formatTime } from '../globals/helpers';
 
   import ZeitForm from '../components/ui/ZeitForm.vue';
   import { AxiosResponse } from 'axios';
   import ZeitPromiseSolver from '../components/helpers/ZeitPromiseSolver.vue';
+  import { Timestamp } from '../services/timestamps';
 
   export default defineComponent({
     components: {
       IonPage, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonButton, IonContent,
-      IonList, IonItem, IonListHeader, IonLabel,
+      IonList, IonItem, IonListHeader, IonLabel, IonSpinner,
 
       ZeitForm,
       ZeitPromiseSolver,
@@ -100,6 +135,10 @@
       return {
         isInitialised: false,
 
+        isSaving: false,
+
+        employeeService,
+        accountService,
         timespanService,
         projectService,
         formatTime,
@@ -107,18 +146,30 @@
 
         projectFields: [
           new FormField("project_id", "Projekt", {
-              type: 'select',
-              remoteSourceService: projectService,
-              remoteSourceListMethod: "listParams",
-              remoteSourceAttribute: 'name',
-              listPageSize: 1000,
+            type: 'select',
+            remoteSourceService: projectService,
+            remoteSourceListMethod: "listParams",
+            remoteSourceAttribute: 'name',
+            listPageSize: 1000,
           }),
         ],
         commentFields: [
           new FormField("employee_comment", "Tätigkeitsbeschreibung", {
-              mobileType: "stacked",
+            mobileType: "stacked",
           }),
         ],
+        updateReasonFields: [
+          new FormField("update_reason", "Änderungsgrund", {
+            mobileType: "stacked",
+          }),
+        ],
+        checkinFields: [new FormField('time', 'Anmeldung', {mobileType: "time" }),],
+        checkoutFields: [new FormField('time', 'Abmeldung', {mobileType: "time" }),],
+
+        account: undefined as Account|undefined,
+
+        employeeSettings: {} as any,
+        updateFieldResource: {} as {update_reason?: string},
 
         showProjectSelection: false,
 
@@ -130,8 +181,19 @@
       hasChanges() {
         return JSON.stringify(this.remoteTimespan) != JSON.stringify(this.localTimespan);
       },
-      updateRemoteTimespan() {
+      requiresChangeReason() {
+        if (!this.showUpdateReasonField()) return false;
+
+        if (this.updateFieldResource.update_reason) {
+          return false;
+        }
+
+        return true;
+      },
+      async updateRemoteTimespan() {
         if (!this.localTimespan || !this.remoteTimespan) return;
+
+        this.isSaving = true;
 
         const promises = [];
         if (this.localTimespan.employee_comment != this.remoteTimespan.employee_comment) {
@@ -147,17 +209,54 @@
           );
         }
 
-        Promise.all(promises).then(() => {
+        if (!this.localTimespan.checkin) return;
+
+        const hasTimeChange = (
+          this.localTimespan.checkin.time != this.remoteTimespan.checkin.time ||
+
+          !this.localTimespan.checkout && this.remoteTimespan.checkout ||
+          this.localTimespan.checkout && !this.remoteTimespan.checkout ||
+          // eslint-disable-next-line
+          this.localTimespan.checkout!.time != this.remoteTimespan.checkout!.time
+        );
+
+        if (hasTimeChange) {
+          let checkout = {};
+          if (this.localTimespan.checkout) checkout = {checkout: this.localTimespan.checkout.time.split("+")[0]};
+
+          let updateReason = {};
+          if (this.updateFieldResource.update_reason) {
+            updateReason = this.updateFieldResource;
+          }
+
+          promises.push(
+            this.timespanService.setTimesEmployee(this.localTimespan.id, {
+              checkin: this.localTimespan.checkin.time.split("+")[0],
+              ...checkout,
+              ...updateReason,
+            })
+          );
+        }
+
+        await Promise.all(promises).then(() => {
           this.$router.go(-1);
           toastController
             .create({
               message: 'Deine Änderungen wurden gespeichert.',
               duration: 2000
             }).then(toast => toast.present());
-        })
+        });
+
+        this.isSaving = false;
       },
       updateLocalTimespan(newTimespan: Timespan) {
         this.localTimespan = newTimespan;
+      },
+      updateLocalTimestamp(target: string, newTimestamp: Timestamp) {
+        if (!this.localTimespan) return;
+
+        if (target == "checkin") this.localTimespan.checkin = newTimestamp;
+        if (target == "checkout") this.localTimespan.checkout = newTimestamp;
       },
       loadRemoteTimespan() {
         return this.timespanService
@@ -168,18 +267,54 @@
           });
       },
       intialiseProjectVisibility() {
-          return this.projectService.list().then((response: AxiosResponse<PaginatedResponse<Project>>) => {
-            this.showProjectSelection = response.data.count > 0;
-          });
+        return this.projectService.list().then((response: AxiosResponse<PaginatedResponse<Project>>) => {
+          this.showProjectSelection = response.data.count > 0;
+        });
+      },
+      async loadSettings() {
+        if (!this.account || !this.account.employee_id) return;
+
+        const settings = await Promise.all([
+          this.employeeService.retrieveSettingValue(this.account.employee_id, 'employee_app_access', 'edit_working_times'),
+          this.employeeService.retrieveSettingValue(this.account.employee_id, 'employee_app_access', 'edit_working_times_requires_comment'),
+        ]);
+
+        this.employeeSettings = {
+          "employee_app_access": {
+            "edit_working_times": settings[0],
+            "edit_working_times_requires_comment": settings[1],
+          },
+        };
+      },
+      showUpdateReasonField() {
+        if (!this.localTimespan) return false;
+        if (!this.remoteTimespan) return false;
+
+        return (
+          this.employeeSettings.employee_app_access.edit_working_times == 'edit_missing_days' &&
+          this.employeeSettings.employee_app_access.edit_working_times_requires_comment == 'enabled' &&
+          (
+            JSON.stringify(this.remoteTimespan.checkin) != JSON.stringify(this.localTimespan.checkin) ||
+            JSON.stringify(this.remoteTimespan.checkout) != JSON.stringify(this.localTimespan.checkout)
+          )
+        )
+      },
+      updateUpdateReasonField(newUpdateFieldResource: {update_reason?: string}) {
+        this.updateFieldResource = newUpdateFieldResource;
       },
     },
-    mounted() {
-      Promise.all([
+    async mounted() {
+      await Promise.all([
         this.loadRemoteTimespan(),
         this.intialiseProjectVisibility(),
-      ]).then(() => {
-        this.isInitialised = true;
-      });
+        this.accountService.list().then((response: AxiosResponse<PaginatedResponse<Account>>) => {
+          this.account = response.data.results[0];
+        }),
+      ]);
+
+      await this.loadSettings();
+
+      this.isInitialised = true;
     },
   })
 </script>

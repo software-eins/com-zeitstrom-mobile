@@ -2,7 +2,7 @@
   <ion-page>
     <ion-content :fullscreen="true" :scroll-y="false">
         <background-drawing-top class="absolute w-1/2 top-0 right-0" />
-        <background-drawing-bottom class="absolute w-1/3 bottom-0" />
+        <background-drawing-bottom class="absolute w-1/3 bottom-0 opacity-animation" :class="{transparent: keyboardVisible}" />
 
         <div class="h-full flex flex-col items-start justify-center px-8 z-10 absolute">
             <zeit-logo style="width: 200px;" class="mb-8" />
@@ -67,6 +67,14 @@
         --background-focused: transparent;
         --background-hover: transparent;
     }
+
+    .opacity-animation {
+        transition: opacity ease 200ms;
+    }
+
+    .transparent {
+        opacity: 0;
+    }
 </style>
 
 <script lang="ts">
@@ -86,6 +94,11 @@
     import { QRScanner } from '@ionic-native/qr-scanner';
 
     import accountsService from '../../services/accounts';
+
+    import { Plugins } from '@capacitor/core';
+
+    const { Keyboard } = Plugins;
+
 
     export default defineComponent({
       components: {
@@ -120,6 +133,7 @@
 
           showScannerButton: false,
           showScanner: false,
+          keyboardVisible: false,
         }
       },
       methods: {
@@ -178,6 +192,15 @@
             if (error != "cordova_not_available") console.log(error);
           });
           this.$forceUpdate();
+
+          Keyboard.addListener('keyboardWillShow', () => {
+              this.keyboardVisible = true;
+          });
+
+          Keyboard.addListener('keyboardWillHide', () => {
+              this.keyboardVisible = false;
+          });
+
       },
     })
 </script>
