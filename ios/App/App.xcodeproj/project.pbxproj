@@ -16,7 +16,7 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
-		A21BA061F1BF9694E71D8082 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		A21BA061F1BF9694E71D8082 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		AF763EB0CAAD1716404235D5 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A758E00801E708E7C0F5D284 /* Pods_App.framework */; };
 		FA1C889225F26CBC00A64E62 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
 		FA1C889625F26CBC00A64E62 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
@@ -62,7 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A21BA061F1BF9694E71D8082 /* BuildFile in Frameworks */,
+				A21BA061F1BF9694E71D8082 /* (null) in Frameworks */,
 				4FA5312DDC34ED6F61FAC1F3 /* Pods_AppOrange.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -573,7 +573,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_PUSH";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -595,7 +595,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "2021-02-25-com-zeitstrom-tamobile";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_PUSH;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -618,7 +618,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_PUSH";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -640,7 +640,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "2021-03-04-com-zeitstrom-zsmobile";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_PUSH;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -663,7 +663,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_PUSH";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -685,7 +685,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "2021-02-25-com-zeitstrom-tamobile";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_PUSH;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
