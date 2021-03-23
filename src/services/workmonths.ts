@@ -18,6 +18,43 @@ interface WorkmonthRetrieveParams {
     verbosity?: string;
 }
 
+interface Workday {
+    id: string;
+    checkin: string;
+    checkout?: string;
+    break_duration?: number;
+    work_duration?: number;
+    note?: string;
+    history_change_count: number;
+}
+
+interface DayOffReason {
+    type: string;
+}
+
+interface MissingDay {
+    id: string;
+
+    affected_hours: number;
+    comment: string;
+    date_from: string;
+    date_to: string;
+    label: string;
+    missing_type: string;
+    target_hour_behaviour: string;
+}
+
+interface Day {
+    day?: number;
+    day_off_reasons?: Array<DayOffReason>;
+    isoformat: string;
+    missing_days?: Array<MissingDay>;
+    weekday?: string;
+    workdays?: Array<Workday>;
+
+    inactive?: boolean;
+}
+
 interface Workmonth {
     created_at: string;
     employee_id: string;
@@ -42,7 +79,7 @@ interface WorkmonthDetail {
     workday_count: number;
     worktime_count: number;
     year: number;
-    calendar: any;
+    calendar: Array<Day>;
 }
 
 interface WorkingTimeBalance {
@@ -54,6 +91,8 @@ interface WorkingTimeBalance {
 class WorkmonthService extends BaseService<Workmonth | WorkmonthDetail> {
     constructor() {
         super("/api/v2/timestamps/workmonths/");
+
+        this.cacheTimeout = 60;
     }
 
     listParams(params: WorkmonthListParams) {
@@ -102,5 +141,5 @@ class WorkmonthService extends BaseService<Workmonth | WorkmonthDetail> {
 
 const workmonthService = new WorkmonthService();
 
-export { Workmonth, WorkmonthDetail, workmonthService };
+export { Day, MissingDay, DayOffReason, Workday, Workmonth, WorkmonthDetail, workmonthService };
 

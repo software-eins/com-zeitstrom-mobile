@@ -1,6 +1,7 @@
 <template>
-  <div class="pt-4">
-    <div v-if="workmonth" class="px-4 mb-4">
+  <div>
+    <zeit-calendar-summary v-if="workmonth" :workmonth="workmonth" />
+    <div class="pt-4 px-4 mb-4">
       <div class="flex text-xs dark:text-gray-600 text-gray-400 mb-2" style="text-transform: uppercase">
         <div class="width-1-7 text-center" ref="firstDay">M</div>
         <div class="width-1-7 text-center">D</div>
@@ -10,31 +11,33 @@
         <div class="width-1-7 text-center">S</div>
         <div class="width-1-7 text-center">S</div>
       </div>
-      <div class="week flex" v-for="week of getWeeks()" :key="week.index">
-        <div
-            v-for="day of week.days"
-            :key="day.isoformat"
-            class="day flex flex-col items-center justify-center"
-            :style="{height: dayHeight + 'px'}"
-            :class="getDayClass(day)"
-            @click="selectDay(day)"
-        >
-          <ion-text :color="getTextColor(day)">{{ new Date(day.isoformat).getDate() }}</ion-text>
-          <span v-if="day.inactive" class="text-xs">&nbsp;</span>
-          <span v-else-if="getCalendarDayDuration(day) == 0 && day.workdays.length > 0" class="text-xs text-red-600">??</span>
-          <div v-else-if="day.day_off_reasons.length > 0" class="flex items-center justify-center w-full" style="height: 16px;">
-            <zeit-calendar-absence-dot v-if="getCalendarDayDuration(day) > 0" />
-            <zeit-calendar-absence-dot
-              v-for="(dor, idx) in day.day_off_reasons"
-              :key="idx"
-              :dayOffReason="dor"
-              style="margin: 0 0.125rem"
-            />
+      <div v-if="workmonth">
+        <div class="week flex" v-for="week of getWeeks()" :key="week.index">
+          <div
+              v-for="day of week.days"
+              :key="day.isoformat"
+              class="day flex flex-col items-center justify-center"
+              :style="{height: dayHeight + 'px'}"
+              :class="getDayClass(day)"
+              @click="selectDay(day)"
+          >
+            <ion-text :color="getTextColor(day)">{{ new Date(day.isoformat).getDate() }}</ion-text>
+            <span v-if="day.inactive" class="text-xs">&nbsp;</span>
+            <span v-else-if="getCalendarDayDuration(day) == 0 && day.workdays.length > 0" class="text-xs text-red-600">??</span>
+            <div v-else-if="day.day_off_reasons.length > 0" class="flex items-center justify-center w-full" style="height: 16px;">
+              <zeit-calendar-absence-dot v-if="getCalendarDayDuration(day) > 0" />
+              <zeit-calendar-absence-dot
+                v-for="(dor, idx) in day.day_off_reasons"
+                :key="idx"
+                :dayOffReason="dor"
+                style="margin: 0 0.125rem"
+              />
+            </div>
+            <span v-else-if="getCalendarDayDuration(day) > 0" class="text-xs text-gray-400">
+              <zeit-promise-solver :promise="formatDuration(getCalendarDayDuration(day))" />
+            </span>
+            <span v-else class="text-xs text-gray-400">–</span>
           </div>
-          <span v-else-if="getCalendarDayDuration(day) > 0" class="text-xs text-gray-400">
-            <zeit-promise-solver :promise="formatDuration(getCalendarDayDuration(day))" />
-          </span>
-          <span v-else class="text-xs text-gray-400">–</span>
         </div>
       </div>
     </div>
@@ -68,37 +71,12 @@
   import ZeitCalendarWorkdaySection from './ZeitCalendarWorkdaySection.vue';
   import ZeitCalendarAbsenceSection from './ZeitCalendarAbsenceSection.vue';
   import ZeitCalendarAbsenceDot from './ZeitCalendarAbsenceDot.vue';
+  import ZeitCalendarSummary from './ZeitCalendarSummary.vue';
 
   import { formatDuration } from '../../globals/helpers';
 
   import { IonText, IonItem, } from '@ionic/vue';
-
-
-  interface Workday {
-    id: string;
-    checkin: string;
-    checkout?: string;
-    break_duration?: number;
-    work_duration?: number;
-    note?: string;
-    history_change_count: number;
-  }
-
-  interface DayOffReason {
-    type: string;
-  }
-
-  interface Day {
-    day?: number;
-    isoformat: string;
-
-    weekday?: string;
-
-    inactive?: boolean;
-
-    day_off_reasons?: Array<DayOffReason>;
-    workdays?: Array<Workday>;
-  }
+  import { Day } from '../../services/workmonths';
 
   interface Week {
       index: number;
@@ -113,6 +91,7 @@
       ZeitCalendarAbsenceSection,
       ZeitPromiseSolver,
       ZeitCalendarAbsenceDot,
+      ZeitCalendarSummary,
     },
     props: {
       workmonth: Object,
@@ -127,6 +106,17 @@
         dayHeight: 50,
 
         activeDay: undefined as string|undefined,
+      }
+    },
+    watch: {
+      workmonth: {
+        handler() {
+          if ((this.$refs.firstDay as any).offsetWidth == 0) return;
+
+          const height = (this.$refs.firstDay as any).offsetWidth;
+          if (height > 0) this.dayHeight = height;
+        },
+        deep: true,
       }
     },
     methods: {
@@ -222,11 +212,11 @@
     },
     // beforeMount() {},
     mounted() {
-      this.dayHeight = (this.$refs.firstDay as any).offsetWidth;
-
       // Set initially active day
       this.activeDay = String(this.workmonth!.year) + "-" + String(this.workmonth!.month).padStart(2, "0") + "-01";
-      // this.activeDay = "2021-03-02";
+
+      const height = (this.$refs.firstDay as any).offsetWidth;
+      if (height > 0) this.dayHeight = height;
     },
   })
 </script>

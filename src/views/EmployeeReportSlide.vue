@@ -44,6 +44,13 @@
 
       ZeitCalendar,
     },
+    watch: {
+      $route: function(newRoute: any) {
+        if (this.mountedFullPath == newRoute.fullPath) {
+          this.loadWorkmonth();
+        }
+      },
+    },
     data() {
       return {
         accountService,
@@ -57,6 +64,8 @@
 
         account: undefined as Account|undefined,
         workmonth: undefined as Workmonth|undefined,
+
+        mountedFullPath: undefined as string|undefined,
       }
     },
     emits: [
@@ -99,6 +108,9 @@
     async beforeMount() {
       this.account = (await this.accountService.list()).data.results[0];
       await this.loadWorkmonth();
+    },
+    mounted() {
+      this.mountedFullPath = this.$route.fullPath;
     },
   })
 </script>

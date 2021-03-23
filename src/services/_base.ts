@@ -209,6 +209,7 @@ export class BaseService<T> {
     filterAttributes: Array<FilterAttribute>;
 
     cacheTimeout: number;
+    cacheRelatedServices: Array<BaseService<any>>;
     _cachedResponses: Map<string, CachedResponse<T>>;
 
     constructor(resourcePath: string, formFields: Array<FormField<any>> = [], filterAttributes: Array<FilterAttribute> = []) {
@@ -218,6 +219,7 @@ export class BaseService<T> {
 
         this.cacheTimeout = 0;
         this._cachedResponses = new Map<string, CachedResponse<T>>();
+        this.cacheRelatedServices = new Array<BaseService<any>>();
     }
 
     titleAttribute(resourceId?: string): Promise<any> { return Promise.resolve((resource: any) => resource.name) }
@@ -227,8 +229,14 @@ export class BaseService<T> {
     deleteResourceTitle(resourceId?: string): Promise<string> { return Promise.resolve("Entfernen") }
     deleteResourceConfirmation(resourceId?: string): Promise<string> { return Promise.resolve("Resource entfernt") }
 
-    clearCache() {
+    clearCache(cleanCacheRelatedServices=true) {
         this._cachedResponses = new Map<string, CachedResponse<T>>();
+
+        if (!cleanCacheRelatedServices) return;
+
+        for (const service of this.cacheRelatedServices) {
+            service.clearCache(false);
+        }
     }
 
     _get(pathParameters: string, useCachedResponse = true) {

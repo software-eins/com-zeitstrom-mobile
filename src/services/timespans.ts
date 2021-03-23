@@ -2,6 +2,8 @@ import BaseService, { PaginatedResponse } from './_base';
 
 import { Timestamp } from "./timestamps";
 import { AxiosResponse } from 'axios';
+import { workmonthService } from './workmonths';
+import { employeeReportService } from './reports-employees';
 
 
 interface Timespan {
@@ -82,6 +84,7 @@ class TimespanService extends BaseService<Timespan> {
         super("/api/v2/timestamps/timespans/");
 
         this.cacheTimeout = 60;
+        this.cacheRelatedServices = [workmonthService, employeeReportService];
     }
 
     listParams(params: TimespanListParams): AxiosResponse<PaginatedResponse<Timespan>> {

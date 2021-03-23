@@ -22,6 +22,8 @@ interface WorkdayReprotListParams {
 class EmployeeReportService extends BaseService<WorkdayReport> {
     constructor() {
         super("/api/v2/reports/employees/");
+
+        this.cacheTimeout = 60;
     }
 
     workdayReports(employeeId: string, params: WorkdayReprotListParams = {}) {

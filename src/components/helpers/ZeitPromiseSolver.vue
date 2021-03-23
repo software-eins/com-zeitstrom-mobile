@@ -1,7 +1,7 @@
 <template>
   <span>
     <ion-skeleton-text v-if="!isSolved" :style="getPlaceholderStyle()" animated></ion-skeleton-text>
-    {{ value }}
+    <template v-if="isSolved">{{ value }}</template>
   </span>
 </template>
 

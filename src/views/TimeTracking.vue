@@ -90,7 +90,8 @@
             v-for="workday of getWorkdays()"
             :activeTimespanId="activeTimespan ? activeTimespan.id : undefined"
             :key="workday.id"
-            :workday="workday"
+            :workdays="[workday]"
+            :employeeId="account.employee_id"
         />
       </template>
 

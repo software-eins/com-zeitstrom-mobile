@@ -1,16 +1,25 @@
 <template>
   <div v-if="!isLoading">
+
     <zeit-workday-card
-      v-for="workdayReport of workdayReports"
-      :key="workdayReport.id"
-      :workday="workdayReport"
+      :employeeId="employeeId"
+      :workdays="workdayReports"
+      :day="day"
+      :displayHeader="false"
+      :displayFooter="true"
     />
 
-    <div class="px-4 mb-4" v-if="workdayReports.length == 0 && day.day_off_reasons.length == 0">
-        <ion-text color="medium">Du hast noch keine Zeiten für diesen Arbeitstag erfasst.</ion-text>
-    </div>
+    <ion-item v-if="workdayReports.length == 0 && day.day_off_reasons.length == 0" lines="none" class="transparent-bg text-xs">
+      <ion-text color="medium">Du hast noch keine Zeiten für diesen Arbeitstag erfasst.</ion-text>
+    </ion-item>
   </div>
 </template>
+
+<style scoped>
+  ion-item.transparent-bg {
+    --background: transparent;
+  }
+</style>
 
 <script lang="ts">
   import { defineComponent } from 'vue';
@@ -24,7 +33,7 @@
     components: {
       ZeitWorkdayCard,
 
-      IonText,
+      IonText, IonItem,
     },
     props: {
       day: Object,
