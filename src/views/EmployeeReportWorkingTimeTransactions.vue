@@ -139,6 +139,8 @@
         this.month = Number(this.$route.params.month);
       },
       totalWorkingTime() {
+        if (!this.workingTimeBalancePreviousMonths || !this.workingTimeBalanceCurrentMonth) return 0;
+
         let result = this.workingTimeBalancePreviousMonths + this.workingTimeBalanceCurrentMonth;
 
         for (const wtt of this.workingTimeTransactions.filter((wtt: WorkingTimeTransaction) => wtt.type != 'workmonth')) {
@@ -147,7 +149,7 @@
 
         return result;
       },
-      async loadWorkingTimeTransactions(event) {
+      async loadWorkingTimeTransactions(event?: any) {
         if (!this.year || !this.month || !this.employeeId) return;
 
         // Load previous working time balance
