@@ -104,14 +104,6 @@
     --inner-padding-top: 8px;
     --inner-padding-bottom: 8px;
   }
-
-  ion-list.transparent-bg {
-    background: transparent !important;
-  }
-  ion-toolbar.transparent-bg,
-  ion-item.transparent-bg {
-    --background: transparent;
-  }
 </style>
 
 <script lang="ts">

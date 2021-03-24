@@ -139,6 +139,18 @@ const routes: Array<RouteRecordRaw> = [
 
   // Reports
   {
+    name: 'reports:employee:working-time-transactions',
+    path: '/reports/employees/:year/:month/:employeeId/working-time-transactions/',
+    component: () => import('../views/EmployeeReportWorkingTimeTransactions.vue'),
+    meta: { permissionSpace: 'monthly_report' },
+  },
+  {
+      name: 'reports:employee:params',
+      path: '/reports/employees/:year/:month/:employeeId/',
+      component: () => import('../views/EmployeeReport.vue'),
+      meta: { permissionSpace: 'monthly_report' },
+  },
+  {
     path: '/reports/employees/',
     component: () => import('../views/EmployeeReport.vue'),
       meta: { permissionSpace: 'monthly_report' },

@@ -19,14 +19,6 @@
 </template>
 
 <style scoped>
-  ion-list.transparent-bg {
-    background: transparent !important;
-  }
-  ion-toolbar.transparent-bg,
-  ion-item.transparent-bg {
-    --background: transparent;
-  }
-
   .list-ios-lines-full .item.first {
       --border-width: 0.55px 0;
   }

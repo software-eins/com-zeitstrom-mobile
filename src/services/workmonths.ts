@@ -129,9 +129,9 @@ class WorkmonthService extends BaseService<Workmonth | WorkmonthDetail> {
         return this._get(query) as unknown as Promise<Workmonth | WorkmonthDetail>;
     }
 
-    workingTimeBalance(resourceId: string): Promise<WorkingTimeBalance> {
+    workingTimeBalance(resourceId: string): Promise<AxiosResponse<WorkingTimeBalance>> {
         const endpoint = resourceId + "/working-time-balance/";
-        return this._get(endpoint) as unknown as Promise<WorkingTimeBalance>;
+        return this._get(endpoint) as unknown as Promise<AxiosResponse<WorkingTimeBalance>>;
     }
 
     getDownloadLink(resourceId: string): string {
@@ -141,5 +141,5 @@ class WorkmonthService extends BaseService<Workmonth | WorkmonthDetail> {
 
 const workmonthService = new WorkmonthService();
 
-export { Day, MissingDay, DayOffReason, Workday, Workmonth, WorkmonthDetail, workmonthService };
+export { Day, MissingDay, DayOffReason, Workday, Workmonth, WorkmonthDetail, WorkingTimeBalance, workmonthService };
 

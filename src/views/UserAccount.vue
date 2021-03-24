@@ -66,12 +66,6 @@
   </ion-page>
 </template>
 
-<style scoped>
-  ion-item.transparent-bg {
-    --background: transparent;
-  }
-</style>
-
 <script lang="ts">
   import { defineComponent } from 'vue';
   import {

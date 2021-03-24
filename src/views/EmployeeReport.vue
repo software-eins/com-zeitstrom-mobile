@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true" ref="header" :class="{hideHeader}">
+    <ion-header :translucent="true" ref="header" :class="{hideHeader}" v-if="isInitialised">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary"></ion-menu-button>
@@ -15,7 +15,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content fullscreen :scrollY="false">
+    <ion-content fullscreen :scrollY="false" v-if="isInitialised">
       <swiper
         v-if="showSwiper"
         :slides-per-view="1"
@@ -44,7 +44,7 @@
     </ion-content>
 
     <ion-datetime
-        v-if="pickerValue && months"
+        v-if="isInitialised && pickerValue && months"
         ref="monthPicker"
         display-format="MMMM YYYY"
         :value="pickerValue"
@@ -86,7 +86,7 @@
   import { defineComponent } from 'vue';
   import { chevronDownOutline, chevronDownSharp, } from 'ionicons/icons';
 
-  import { formatDatetime } from '../globals/helpers';
+  import { formatDatetime, sortedJsonString } from '../globals/helpers';
 
   import { accountService, Account } from '../services/accounts';
   import { timespanService, Timespan } from '../services/timespans';
@@ -109,6 +109,8 @@
     },
     data() {
       return {
+        isInitialised: false,
+
         chevronDownOutline, chevronDownSharp,
 
         accountService,
@@ -116,6 +118,7 @@
 
         formatDatetime,
 
+        employeeId: undefined as string|undefined,
         year: undefined as number|undefined,
         month: undefined as number|undefined,
 
@@ -144,6 +147,21 @@
       },
     },
     methods: {
+      loadStateFromUrl() {
+        this.employeeId = this.$route.params.employeeId as string;
+        this.year = Number(this.$route.params.year);
+        this.month = Number(this.$route.params.month);
+      },
+      async loadUrlFromState() {
+        const params = {
+          employeeId: this.employeeId as string,
+          year: String(this.year as number),
+          month: String(this.month as number).padStart(2, '0'),
+        };
+        if (sortedJsonString(params) == sortedJsonString(this.$route.params)) return false;
+        await this.$router.replace({name: 'reports:employee:params', params});
+        return true;
+      },
       onSwiperInit(swiper: any) {
         this.swiper = swiper;
       },
@@ -168,12 +186,13 @@
         this.year = year;
         this.month = month;
 
+        await this.loadUrlFromState();
         await this.updateAvailableMonths();
       },
       getMaxMonth() {
-        // One year after today
+        // Two years after today
         const today = new Date();
-        const year = today.getFullYear() + 100;
+        const year = today.getFullYear() + 2;
         const month = today.getMonth() + 1;
 
         return String(year + 1) + "-" + String(month).padStart(2, "0");
@@ -191,9 +210,8 @@
         ];
 
         // Find earliest month
-        const account = (await this.accountService.list()).data.results[0];
         const firstTimespan = (await timespanService.listParams({
-          employeeIds: [account.employee_id!],
+          employeeIds: [this.employeeId!],
           order: ['checkin__time'],
           verbosity: 'detail',
         })).data.results[0];
@@ -238,25 +256,45 @@
       loadData() {
         return this.updateAvailableMonths();
       },
+      async setUrlDefaults(): Promise<boolean> {
+        const today = new Date();
+        const params = JSON.parse(JSON.stringify(this.$route.params));
+        params.year = params.year || String(today.getFullYear());
+        params.month = params.month || String(today.getMonth() + 1).padStart(2, '0');
+
+        if (!params.employeeId) {
+          const account = (await this.accountService.list()).data.results[0];
+          params.employeeId = account.employee_id!;
+        }
+
+        if (sortedJsonString(params) == sortedJsonString(this.$route.params)) return false;
+
+        await this.$router.replace({name: 'reports:employee:params', params});
+
+        return true
+      },
+      async initialise() {
+        const hasUrlChange = await this.setUrlDefaults();
+        if (hasUrlChange) return;
+
+        this.loadStateFromUrl();
+
+        this.updatePickerValue();
+        this.mountedFullPath = this.$route.fullPath;
+
+        await this.loadData();
+
+        this.isInitialised = true;
+
+        setTimeout(() => {
+          this.showSwiper = true;
+          this.hideHeader = false;
+        }, 100);
+      },
     },
-    beforeMount() {
-      const today = new Date();
-
-      this.year = today.getFullYear();
-      this.month = today.getMonth() + 1;
-
-      this.updatePickerValue();
-    },
-    async mounted() {
-      this.mountedFullPath = this.$route.fullPath;
-
-      await this.loadData();
-
-      setTimeout(() => {
-        this.showSwiper = true;
-        this.hideHeader = false;
-      }, 100);
-
+    mounted() {
+      console.log("mount employee report");
+      this.initialise();
     },
   })
 </script>

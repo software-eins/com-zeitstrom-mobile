@@ -106,15 +106,6 @@
   </ion-card>
 </template>
 
-<style>
-  ion-list.transparent-bg {
-    background: transparent !important;
-  }
-  ion-item.transparent-bg {
-    --background: transparent;
-  }
-</style>
-
 
 <script lang="ts">
   import { defineComponent } from 'vue';

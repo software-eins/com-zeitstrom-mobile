@@ -42,3 +42,11 @@ ion-card.md {
     0% { opacity: 1; }
     100% { opacity: .5; }
 }
+
+ion-list.transparent-bg {
+    background: transparent !important;
+}
+ion-toolbar.transparent-bg,
+ion-item.transparent-bg {
+    --background: transparent;
+}

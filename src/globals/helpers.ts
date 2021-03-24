@@ -94,4 +94,8 @@ const timeAgo = function(value: Date): string {
     return result
 }
 
-export { formatDatetime, formatDifference, formatDuration, formatLongDate, formatTime, timeAgo, calendar }
+const sortedJsonString = function(obj: any) {
+    return JSON.stringify(obj, Object.keys(obj).sort());
+}
+
+export { formatDatetime, formatDifference, formatDuration, formatLongDate, formatTime, timeAgo, calendar, sortedJsonString }

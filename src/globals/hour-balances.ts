@@ -37,3 +37,31 @@ export function getDailyWorkTime(workmonth: WorkmonthDetail): number {
 
   return targetWorktime / Math.max(workdayCount, 1);
 }
+
+export function getCreditHoursTill(reportData: WorkmonthDetail, tillDay: Day) {
+    let result = 0;
+    for (const day of reportData.calendar) {
+        if (isWorkDay(day)) result += getDailyWorkTime(reportData);
+        for (const missingDay of day.missing_days || []) {
+            if (missingDay.target_hour_behaviour != 'add_to_debit_hours') {
+                result -= missingDay.affected_hours * 3600;
+            }
+        }
+        if (day == tillDay) break;
+    }
+    return result
+}
+
+export function getDebitHoursTill(reportData: WorkmonthDetail, tillDay: Day) {
+    let result = 0;
+    for (const day of reportData.calendar) {
+        for (const workday of day.workdays || []) result += workday.work_duration || 0;
+        for (const missingDay of day.missing_days || []) {
+            if (missingDay.target_hour_behaviour == 'add_to_debit_hours') {
+                result += missingDay.affected_hours * 3600;
+            }
+        }
+        if (day == tillDay) break;
+    }
+    return result
+}
