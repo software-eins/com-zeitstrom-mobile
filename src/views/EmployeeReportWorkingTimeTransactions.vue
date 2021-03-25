@@ -139,7 +139,8 @@
         this.month = Number(this.$route.params.month);
       },
       totalWorkingTime() {
-        if (!this.workingTimeBalancePreviousMonths || !this.workingTimeBalanceCurrentMonth) return 0;
+        if (this.workingTimeBalancePreviousMonths == undefined) return 0;
+        if (this.workingTimeBalanceCurrentMonth == undefined) return 0;
 
         let result = this.workingTimeBalancePreviousMonths + this.workingTimeBalanceCurrentMonth;
 

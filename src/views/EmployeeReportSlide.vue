@@ -3,9 +3,9 @@
     <ion-refresher slot="fixed" @ionRefresh="loadWorkmonth($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
-    <ion-header :collapse="hideHeader ? false : 'condense'">
+    <ion-header collapse="condense">
       <ion-toolbar>
-        <ion-title size="large" @click="$emit('selectMonth')">
+        <ion-title size="large" @click="$emit('selectMonth')" :class="{hideHeader}">
             <div class="flex items-center">
             <div class="mr-2">{{ formatDatetime(new Date(year, month - 1).toISOString(), "MMMM YYYY") }}</div>
             <ion-icon :md="chevronDownOutline" :ios="chevronDownSharp" />
@@ -18,12 +18,18 @@
   </ion-content>
 </template>
 
+<style scoped>
+  .hideHeader {
+    opacity: 0;
+  }
+</style>
+
 <script lang="ts">
   import { defineComponent } from 'vue';
   import { chevronDownOutline, chevronDownSharp, } from 'ionicons/icons';
 
   import { accountService, Account } from '../services/accounts';
-  import { employeeService, Employee } from '../services/employees';
+  import { employeeService } from '../services/employees';
 
   import { workmonthService, Workmonth } from '../services/workmonths';
 
@@ -32,9 +38,8 @@
   import { formatDatetime } from '../globals/helpers';
 
   import {
-    IonPage, IonHeader, IonToolbar, IonButtons, IonIcon,
-    IonMenuButton, IonTitle, IonContent, IonDatetime, IonSlides, IonSlide,
-    IonRefresher, IonRefresherContent,
+    IonHeader, IonToolbar, IonIcon, IonTitle, IonContent, IonRefresher,
+    IonRefresherContent,
   } from '@ionic/vue';
 
   export default defineComponent({
@@ -78,13 +83,17 @@
     },
     methods: {
       loadWorkmonth: async function(event?: any) {
-        let employeeId = undefined;
-        if (this.account!.employee_id) employeeId = this.account!.employee_id;
+        if (!this.year) return;
+        if (!this.month) return;
+        if (!this.account) return;
+        if (!this.account.employee_id) return;
+
+        const employeeId = this.account.employee_id;
 
         const listParams = {
-          years: [this.year!],
-          months: [this.month!],
-          employeeIds: [employeeId as string],
+          years: [this.year],
+          months: [this.month],
+          employeeIds: [employeeId],
           verbosity: 'detail',
         }
 

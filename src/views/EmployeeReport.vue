@@ -37,6 +37,7 @@
             :year="Number(month.split('-')[0])"
             :month="Number(month.split('-')[1])"
             @selectMonth="openMonthSelector()"
+            :hideHeader="!isActiveMonth(month) || hideHeader"
           />
 
         </swiper-slide>
@@ -88,12 +89,12 @@
 
   import { formatDatetime, sortedJsonString } from '../globals/helpers';
 
-  import { accountService, Account } from '../services/accounts';
-  import { timespanService, Timespan } from '../services/timespans';
+  import { accountService } from '../services/accounts';
+  import { timespanService } from '../services/timespans';
 
   import {
     IonPage, IonHeader, IonToolbar, IonButtons, IonIcon,
-    IonMenuButton, IonTitle, IonContent, IonDatetime, IonSlides, IonSlide,
+    IonMenuButton, IonTitle, IonContent, IonDatetime,
   } from '@ionic/vue';
 
   import EmployeeReportSlide from './EmployeeReportSlide.vue';
@@ -139,13 +140,6 @@
         mountedFullPath: undefined as string|undefined,
       }
     },
-    watch: {
-      $route: function(newRoute) {
-        if (this.mountedFullPath == newRoute.fullPath) {
-          this.loadData();
-        }
-      },
-    },
     methods: {
       loadStateFromUrl() {
         this.employeeId = this.$route.params.employeeId as string;
@@ -165,10 +159,10 @@
       onSwiperInit(swiper: any) {
         this.swiper = swiper;
       },
-      onStartTransition(event: any) {
+      onStartTransition() {
         this.hideHeader = true;
       },
-      onEndTransition(event: any) {
+      onEndTransition() {
         setTimeout(() => {
           this.hideHeader = false;
         }, 500);
@@ -178,6 +172,12 @@
       },
       updatePickerValue() {
         this.pickerValue = String(this.year) + "-" + String(this.month).padStart(2, "0") + "-01T20:00:00Z";
+      },
+      isActiveMonth(month: string) {
+        return (
+          Number(month.slice(0, 4)) == this.year &&
+          Number(month.slice(5, 7)) == this.month
+        )
       },
       async updateMonth(event: any) {
         const selectedMonth = this.months[event.activeIndex];
@@ -198,6 +198,10 @@
         return String(year + 1) + "-" + String(month).padStart(2, "0");
       },
       async updateAvailableMonths() {
+        if (!this.employeeId) return;
+        if (!this.year) return;
+        if (!this.month) return;
+
         // Add at least the three previous months
         const today = new Date();
         const year = today.getFullYear();
@@ -211,7 +215,7 @@
 
         // Find earliest month
         const firstTimespan = (await timespanService.listParams({
-          employeeIds: [this.employeeId!],
+          employeeIds: [this.employeeId],
           order: ['checkin__time'],
           verbosity: 'detail',
         })).data.results[0];
@@ -229,14 +233,17 @@
 
         const nextMonths = [...previousMonths, ...newMonths];
 
-        if (!this.showSwiper)
-        this.initialSlide = nextMonths.length - 1;
-
         // Add future months
-        const tillFutureMonth = (new Date(this.year!, this.month! + 1, 15)).toISOString().slice(0, 7);
+        const tillFutureMonth = (new Date(this.year, this.month + 1, 15)).toISOString().slice(0, 7);
         while (nextMonths[nextMonths.length - 1] < tillFutureMonth) {
           const [year, month] = nextMonths[nextMonths.length - 1].split("-").map((x: string) => Number(x));
           nextMonths.push((new Date(year, month, 15)).toISOString().slice(0, 7));
+        }
+
+        // Set index if swiper is not shown yet
+        if (!this.showSwiper) {
+            const selectedMonth = String(this.year) + "-" + String(this.month).padStart(2, "0");
+            this.initialSlide = Math.max(nextMonths.indexOf(selectedMonth), 0);
         }
 
         this.months = nextMonths;
@@ -264,7 +271,9 @@
 
         if (!params.employeeId) {
           const account = (await this.accountService.list()).data.results[0];
-          params.employeeId = account.employee_id!;
+          if (!account.employee_id) return false;
+
+          params.employeeId = account.employee_id;
         }
 
         if (sortedJsonString(params) == sortedJsonString(this.$route.params)) return false;
@@ -292,9 +301,14 @@
         }, 100);
       },
     },
-    mounted() {
-      console.log("mount employee report");
+    created() {
       this.initialise();
+    },
+    ionViewWillEnter() {
+      this.hideHeader = true;
+    },
+    ionViewDidEnter() {
+      this.hideHeader = false;
     },
   })
 </script>
