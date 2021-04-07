@@ -62,7 +62,7 @@
 		A758E00801E708E7C0F5D284 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8FF4969EEFE1EC05FFB16EB /* Pods_AppOrange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AppOrange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA1C88A125F26CBC00A64E62 /* Zeitstrom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zeitstrom.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FA1C88C725F4387100A64E62 /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA1C88C725F4387100A64E62 /* Zeit Development.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zeit Development.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAF4EDD6261DA0B900EB2288 /* UTAX Zeitblick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UTAX Zeitblick.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -128,7 +128,7 @@
 			children = (
 				504EC3041FED79650016851F /* TA Zeitblick.app */,
 				FA1C88A125F26CBC00A64E62 /* Zeitstrom.app */,
-				FA1C88C725F4387100A64E62 /* App.app */,
+				FA1C88C725F4387100A64E62 /* Zeit Development.app */,
 				FAF4EDD6261DA0B900EB2288 /* UTAX Zeitblick.app */,
 			);
 			name = Products;
@@ -219,7 +219,7 @@
 			);
 			name = App;
 			productName = App;
-			productReference = FA1C88C725F4387100A64E62 /* App.app */;
+			productReference = FA1C88C725F4387100A64E62 /* Zeit Development.app */;
 			productType = "com.apple.product-type.application";
 		};
 		FAF4EDC5261DA0B900EB2288 /* AppBlack */ = {
@@ -754,7 +754,7 @@
 				MARKETING_VERSION = 3.1.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zeitstrom.debug;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Zeit Development";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_PUSH";
 				SWIFT_VERSION = 5.0;
@@ -776,7 +776,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 3.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zeitstrom.debug;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Zeit Development";
 				PROVISIONING_PROFILE_SPECIFIER = "2021-02-25-com-zeitstrom-tamobile";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_PUSH;
 				SWIFT_VERSION = 5.0;
