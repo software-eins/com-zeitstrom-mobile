@@ -743,7 +743,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9311C5D60908F2FACC1680FB /* Pods-App.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconOrange;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconBlack;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3.1.0;
@@ -753,7 +753,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 3.1.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zeitstrom.tamobile;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeitstrom.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_PUSH";
@@ -766,7 +766,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0EDCF9889D7EEC1E9A63DC00 /* Pods-App.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconOrange;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconBlack;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 3.1.0;
@@ -775,7 +775,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 3.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zeitstrom.tamobile;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeitstrom.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "2021-02-25-com-zeitstrom-tamobile";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_PUSH;
