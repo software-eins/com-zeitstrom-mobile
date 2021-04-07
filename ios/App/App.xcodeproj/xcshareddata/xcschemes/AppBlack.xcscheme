@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FA1C888F25F26CBC00A64E62"
-               BuildableName = "Zeitstrom.app"
-               BlueprintName = "AppRed"
+               BlueprintIdentifier = "FAF4EDC5261DA0B900EB2288"
+               BuildableName = "UTAX Zeitblick.app"
+               BlueprintName = "AppBlack"
                ReferencedContainer = "container:App.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,6 +47,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "FAF4EDC5261DA0B900EB2288"
+            BuildableName = "UTAX Zeitblick.app"
+            BlueprintName = "AppBlack"
+            ReferencedContainer = "container:App.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -33,8 +33,8 @@ jobs:
       - name: Set version number
         run: ./.github/scripts/ios/set_version_number.sh
 
-      # Orange
-      - name: Orange / Build capacitor app
+      # Black
+      - name: Black / Build capacitor app
         run: 'ionic cap sync ios'
         env:
           VUE_APP_OAUTH_CLIENT_ID: nyXOY94HtiiEgNCTaSJ8RSDjxXCc0kGJnPVBrPZi
@@ -43,50 +43,79 @@ jobs:
           VUE_APP_BASE_URL: https://api.ta-zeitblick.de
           VUE_APP_BRANDING: orange
 
-      - name: Orange / Archive project
+      - name: Black / Archive project
         timeout-minutes: 10
         env:
-          TARGET: Orange
+          TARGET: Black
         run: ./.github/scripts/ios/archive_app.sh
 
-      - name: Orange / Export .ipa
+      - name: Black / Export .ipa
         run: ./.github/scripts/ios/export_ipa.sh
         env:
-          TARGET: Orange
+          TARGET: Black
 
-      - name: Orange / Publish app
+      - name: Black / Publish app
         if: success()
         env:
           APPLEID_USERNAME: ${{ secrets.APPLEID_USERNAME }}
           APPLEID_PASSWORD: ${{ secrets.APPLEID_PASSWORD }}
-          PRODUCT: 'TA Zeitblick'
+          PRODUCT: 'UTAX Zeitblick'
         run: ./.github/scripts/ios/publish_testflight.sh
+
+      # Orange
+      # - name: Orange / Build capacitor app
+      #   run: 'ionic cap sync ios'
+      #   env:
+      #     VUE_APP_OAUTH_CLIENT_ID: nyXOY94HtiiEgNCTaSJ8RSDjxXCc0kGJnPVBrPZi
+      #     VUE_APP_OAUTH_CLIENT_SECRET: cZhCRsP1E2erEF6EJInRlWxBz6xu5ZiO2P5Fq5QUAZkYr99chWDmdWdZ2KDtUj8PuarEjyev9YoqR6NjUF6ZhAgu8YyMVZxna6pRbThLG0IyyleV6bkJgWYvIfJua2hR
+      #     VUE_APP_DEBUG: false
+      #     VUE_APP_BASE_URL: https://api.ta-zeitblick.de
+      #     VUE_APP_BRANDING: orange
+
+      # - name: Orange / Archive project
+      #   timeout-minutes: 10
+      #   env:
+      #     TARGET: Orange
+      #   run: ./.github/scripts/ios/archive_app.sh
+
+      # - name: Orange / Export .ipa
+      #   run: ./.github/scripts/ios/export_ipa.sh
+      #   env:
+      #     TARGET: Orange
+
+      # - name: Orange / Publish app
+      #   if: success()
+      #   env:
+      #     APPLEID_USERNAME: ${{ secrets.APPLEID_USERNAME }}
+      #     APPLEID_PASSWORD: ${{ secrets.APPLEID_PASSWORD }}
+      #     PRODUCT: 'TA Zeitblick'
+      #   run: ./.github/scripts/ios/publish_testflight.sh
 
       # Red
-      - name: Red / Build capacitor app
-        run: 'ionic cap sync ios'
-        env:
-          VUE_APP_OAUTH_CLIENT_ID: nyXOY94HtiiEgNCTaSJ8RSDjxXCc0kGJnPVBrPZi
-          VUE_APP_OAUTH_CLIENT_SECRET: cZhCRsP1E2erEF6EJInRlWxBz6xu5ZiO2P5Fq5QUAZkYr99chWDmdWdZ2KDtUj8PuarEjyev9YoqR6NjUF6ZhAgu8YyMVZxna6pRbThLG0IyyleV6bkJgWYvIfJua2hR
-          VUE_APP_DEBUG: false
-          VUE_APP_BASE_URL: https://api.zeitstrom.com
-          VUE_APP_BRANDING: red
+      # - name: Red / Build capacitor app
+      #   run: 'ionic cap sync ios'
+      #   env:
+      #     VUE_APP_OAUTH_CLIENT_ID: nyXOY94HtiiEgNCTaSJ8RSDjxXCc0kGJnPVBrPZi
+      #     VUE_APP_OAUTH_CLIENT_SECRET: cZhCRsP1E2erEF6EJInRlWxBz6xu5ZiO2P5Fq5QUAZkYr99chWDmdWdZ2KDtUj8PuarEjyev9YoqR6NjUF6ZhAgu8YyMVZxna6pRbThLG0IyyleV6bkJgWYvIfJua2hR
+      #     VUE_APP_DEBUG: false
+      #     VUE_APP_BASE_URL: https://api.zeitstrom.com
+      #     VUE_APP_BRANDING: red
 
-      - name: Red / Archive project
-        timeout-minutes: 10
-        env:
-          TARGET: Red
-        run: ./.github/scripts/ios/archive_app.sh
+      # - name: Red / Archive project
+      #   timeout-minutes: 10
+      #   env:
+      #     TARGET: Red
+      #   run: ./.github/scripts/ios/archive_app.sh
 
-      - name: Red / Export .ipa
-        run: ./.github/scripts/ios/export_ipa.sh
-        env:
-          TARGET: Red
+      # - name: Red / Export .ipa
+      #   run: ./.github/scripts/ios/export_ipa.sh
+      #   env:
+      #     TARGET: Red
 
-      - name: Red / Publish app
-        if: success()
-        env:
-          APPLEID_USERNAME: ${{ secrets.APPLEID_USERNAME }}
-          APPLEID_PASSWORD: ${{ secrets.APPLEID_PASSWORD }}
-          PRODUCT: 'Zeitstrom'
-        run: ./.github/scripts/ios/publish_testflight.sh
+      # - name: Red / Publish app
+      #   if: success()
+      #   env:
+      #     APPLEID_USERNAME: ${{ secrets.APPLEID_USERNAME }}
+      #     APPLEID_PASSWORD: ${{ secrets.APPLEID_PASSWORD }}
+      #     PRODUCT: 'Zeitstrom'
+      #   run: ./.github/scripts/ios/publish_testflight.sh

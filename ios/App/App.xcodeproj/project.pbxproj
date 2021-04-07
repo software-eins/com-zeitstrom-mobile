@@ -32,6 +32,14 @@
 		FA1C88BF25F4387100A64E62 /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		FA1C88C025F4387100A64E62 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
 		FA1C88C125F4387100A64E62 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
+		FAF4EDC8261DA0B900EB2288 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
+		FAF4EDCA261DA0B900EB2288 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A758E00801E708E7C0F5D284 /* Pods_App.framework */; };
+		FAF4EDCC261DA0B900EB2288 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
+		FAF4EDCD261DA0B900EB2288 /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		FAF4EDCE261DA0B900EB2288 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
+		FAF4EDCF261DA0B900EB2288 /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
+		FAF4EDD0261DA0B900EB2288 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
+		FAF4EDD1261DA0B900EB2288 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +63,7 @@
 		D8FF4969EEFE1EC05FFB16EB /* Pods_AppOrange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AppOrange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA1C88A125F26CBC00A64E62 /* Zeitstrom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zeitstrom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA1C88C725F4387100A64E62 /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAF4EDD6261DA0B900EB2288 /* UTAX Zeitblick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UTAX Zeitblick.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +89,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				AF763EB0CAAD1716404235D5 /* Pods_App.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAF4EDC9261DA0B900EB2288 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAF4EDCA261DA0B900EB2288 /* Pods_App.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +129,7 @@
 				504EC3041FED79650016851F /* TA Zeitblick.app */,
 				FA1C88A125F26CBC00A64E62 /* Zeitstrom.app */,
 				FA1C88C725F4387100A64E62 /* App.app */,
+				FAF4EDD6261DA0B900EB2288 /* UTAX Zeitblick.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -204,6 +222,25 @@
 			productReference = FA1C88C725F4387100A64E62 /* App.app */;
 			productType = "com.apple.product-type.application";
 		};
+		FAF4EDC5261DA0B900EB2288 /* AppBlack */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAF4EDD3261DA0B900EB2288 /* Build configuration list for PBXNativeTarget "AppBlack" */;
+			buildPhases = (
+				FAF4EDC6261DA0B900EB2288 /* [CP] Check Pods Manifest.lock */,
+				FAF4EDC7261DA0B900EB2288 /* Sources */,
+				FAF4EDC9261DA0B900EB2288 /* Frameworks */,
+				FAF4EDCB261DA0B900EB2288 /* Resources */,
+				FAF4EDD2261DA0B900EB2288 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AppBlack;
+			productName = App;
+			productReference = FAF4EDD6261DA0B900EB2288 /* UTAX Zeitblick.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -224,6 +261,9 @@
 					FA1C88B525F4387100A64E62 = {
 						ProvisioningStyle = Automatic;
 					};
+					FAF4EDC5261DA0B900EB2288 = {
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */;
@@ -241,6 +281,7 @@
 			targets = (
 				504EC3031FED79650016851F /* AppOrange */,
 				FA1C888F25F26CBC00A64E62 /* AppRed */,
+				FAF4EDC5261DA0B900EB2288 /* AppBlack */,
 				FA1C88B525F4387100A64E62 /* App */,
 			);
 		};
@@ -283,6 +324,19 @@
 				FA1C88BF25F4387100A64E62 /* capacitor.config.json in Resources */,
 				FA1C88C025F4387100A64E62 /* Main.storyboard in Resources */,
 				FA1C88C125F4387100A64E62 /* config.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAF4EDCB261DA0B900EB2288 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAF4EDCC261DA0B900EB2288 /* LaunchScreen.storyboard in Resources */,
+				FAF4EDCD261DA0B900EB2288 /* public in Resources */,
+				FAF4EDCE261DA0B900EB2288 /* Assets.xcassets in Resources */,
+				FAF4EDCF261DA0B900EB2288 /* capacitor.config.json in Resources */,
+				FAF4EDD0261DA0B900EB2288 /* Main.storyboard in Resources */,
+				FAF4EDD1261DA0B900EB2288 /* config.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +446,39 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		FAF4EDC6261DA0B900EB2288 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-App-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FAF4EDD2261DA0B900EB2288 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -416,6 +503,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA1C88B825F4387100A64E62 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAF4EDC7261DA0B900EB2288 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAF4EDC8261DA0B900EB2288 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -689,6 +784,51 @@
 			};
 			name = Release;
 		};
+		FAF4EDD4261DA0B900EB2288 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9311C5D60908F2FACC1680FB /* Pods-App.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconBlack;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3.1.0;
+				DEVELOPMENT_TEAM = 6PL683D69K;
+				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 3.1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeitstrom.utaxmobile;
+				PRODUCT_NAME = "UTAX Zeitblick";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_PUSH";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		FAF4EDD5261DA0B900EB2288 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0EDCF9889D7EEC1E9A63DC00 /* Pods-App.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconBlack;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 3.1.0;
+				DEVELOPMENT_TEAM = 6PL683D69K;
+				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 3.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeitstrom.utaxmobile;
+				PRODUCT_NAME = "UTAX Zeitblick";
+				PROVISIONING_PROFILE_SPECIFIER = "2021-04-07-com-zeitstrom-utaxmobile";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_PUSH;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -724,6 +864,15 @@
 			buildConfigurations = (
 				FA1C88C525F4387100A64E62 /* Debug */,
 				FA1C88C625F4387100A64E62 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAF4EDD3261DA0B900EB2288 /* Build configuration list for PBXNativeTarget "AppBlack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAF4EDD4261DA0B900EB2288 /* Debug */,
+				FAF4EDD5261DA0B900EB2288 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
