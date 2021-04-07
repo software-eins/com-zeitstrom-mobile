@@ -33,6 +33,25 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
+      # Black
+      - name: Black / Create environment vars
+        run: ./.github/scripts/android/create_environment_variables.sh
+        env:
+          BRAND: black
+          LABEL: 'UTAX Zeitblick'
+          PACKAGE: com.zeitstrom.utax_mobile
+          BASE_URL: https://api.ta-zeitblick.de
+
+      - name: Black / Build capacitor app
+        run: 'source envars && npm install jetifier && npx jetify && ionic cap sync android'
+
+      - name: Black / Build and sign APK
+        run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
+
+      - name: Black / Upload APK
+        run: 'source envars && cd android && ./gradlew publish'
+
+
       # Orange
       - name: Orange / Create environment vars
         run: ./.github/scripts/android/create_environment_variables.sh
@@ -68,3 +87,4 @@ jobs:
 
       - name: Red / Upload APK
         run: 'source envars && cd android && ./gradlew publish'
+

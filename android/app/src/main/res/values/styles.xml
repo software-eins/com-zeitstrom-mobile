@@ -21,4 +21,7 @@
     <style name="AppTheme.NoActionBarLaunch_orange" parent="AppTheme.NoActionBar">
         <item name="android:background">@drawable/splash_orange</item>
     </style>
+    <style name="AppTheme.NoActionBarLaunch_black" parent="AppTheme.NoActionBar">
+        <item name="android:background">@drawable/splash_black</item>
+    </style>
 </resources>
