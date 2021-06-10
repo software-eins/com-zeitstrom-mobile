@@ -59,7 +59,7 @@
               <ion-button color="primary" @click="removeAttachmentIdx(activeImageIdx)">
                 <ion-icon slot="icon-only" :ios="trashOutline" :md="trashOutline"></ion-icon>
               </ion-button>
-              <ion-button color="primary" @click="uploadPdf()">Hochladen</ion-button>
+              <ion-button color="primary" @click="uploadPdf()">Fertig</ion-button>
             </ion-buttons>
             <ion-buttons slot="end" v-if="isUploading">
               <ion-button color="primary">
@@ -162,6 +162,7 @@
   import { Capacitor } from '@capacitor/core';
 
   import { Camera, CameraOptions } from '@ionic-native/camera';
+  import { File } from '@ionic-native/file';
 
   import * as pdfMake from 'pdfmake/build/pdfmake';
   import * as pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -292,7 +293,7 @@
         }
       },
       getUrl(filePath: string): string {
-        if (filePath.indexOf('http') == 0 || filePath.indexOf('/') == 0) return filePath;
+        if (filePath.indexOf('http') == 0 || filePath.indexOf('/') == 0 || filePath.indexOf('capacitor') == 0) return filePath;
 
         return Capacitor.convertFileSrc(filePath);
       },
@@ -301,19 +302,23 @@
 
         this.isUploading = true;
 
-        // const attachments: Array<string> = [
-        // "http://localhost:8100/img/cv.71b5e1bc.jpg",
-        // "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        // "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        // "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        // ]
+        const attachments: Array<string> = [
+        "http://localhost:8100/img/cv.71b5e1bc.jpg",
+        "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
+        "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
+        "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
+        ]
+
+        console.log(this.attachments);
 
         const images: { [key: string]: string } = {};
         const content: Content = [];
 
         let idx = 0;
         for (const attachment of this.attachments) {
-          images[String(idx)] = attachment;
+          const fileParts = attachment.split("/");
+          images[String(idx)] = await File.readAsDataURL(fileParts.slice(0, -1).join("/"), fileParts[fileParts.length - 1]);
+          // images[String(idx)] = attachment;
           content.push({
             image: String(idx),
             fit: [600, 1000],
@@ -328,7 +333,7 @@
           images,
         };
 
-        (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+        (pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs;
         const pdf = pdfMake.createPdf(dd);
 
         const s3UploadMeta = (await absenceApplicationService.uploadAttachmentToken(this.account.employee_id)).data;
@@ -372,6 +377,8 @@
 
       // Initially set pdf url from props
       if (this.modelValue) this.pdfUrl = this.modelValue;
+
+      console.log(File);
 
       // this.activeImageIdx = 0;
       // this.isUploading = true;
