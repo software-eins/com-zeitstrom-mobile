@@ -75,7 +75,7 @@
 
   import { formatDuration } from '../../globals/helpers';
 
-  import { IonText, IonItem, } from '@ionic/vue';
+  import { IonText, } from '@ionic/vue';
   import { Day } from '../../services/workmonths';
 
   interface Week {
@@ -121,10 +121,12 @@
     },
     methods: {
       getWeeks: function(): Array<Week> {
+        if (!this.workmonth) return [];
+
         const extraPreDays = [];
         const extraPostDays = [];
 
-        const days = this.workmonth!.calendar;
+        const days = this.workmonth.calendar;
 
         let i = 0;
         const firstDay = new Date(days[0].isoformat);
@@ -199,7 +201,9 @@
       },
 
       getActiveDay() {
-        for (const day of this.workmonth!.calendar) {
+        if (!this.workmonth) return;
+
+        for (const day of this.workmonth.calendar) {
           if (day.isoformat == this.activeDay) return day;
         }
       },
@@ -212,8 +216,10 @@
     },
     // beforeMount() {},
     mounted() {
+      if (!this.workmonth) return;
+
       // Set initially active day
-      this.activeDay = String(this.workmonth!.year) + "-" + String(this.workmonth!.month).padStart(2, "0") + "-01";
+      this.activeDay = String(this.workmonth.year) + "-" + String(this.workmonth.month).padStart(2, "0") + "-01";
 
       const height = (this.$refs.firstDay as any).offsetWidth;
       if (height > 0) this.dayHeight = height;

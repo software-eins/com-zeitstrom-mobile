@@ -11,18 +11,6 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
 
-  interface DayOffReason {
-    type: string;
-    name?: string;
-  }
-
-  class Dot {
-    colorClasses: string;
-
-    constructor(colorClasses: string) {
-      this.colorClasses = colorClasses;
-    }
-  }
 
   export default defineComponent({
     props: {

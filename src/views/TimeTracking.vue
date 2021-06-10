@@ -296,7 +296,6 @@
               };
             }
           },
-          error: (err) => console.log(err),
         })
       },
       waitingForAddress() {

@@ -69,7 +69,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 
-import { IonModal, IonNote, IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonTitle, IonIcon, IonContent, IonList, IonItem, IonLabel, IonToggle, modalController } from '@ionic/vue';
+import { IonModal, IonNote, IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonTitle, IonContent, IonList, IonItem, IonLabel, IonToggle, modalController } from '@ionic/vue';
 import { FilterAttribute } from '../../services/_base';
 import ZeitSelect from './ZeitSelect.vue';
 
@@ -99,11 +99,13 @@ export default defineComponent({
             modalController.dismiss();
         },
         resetFilters() {
+            if (!this.localFilters) return;
+
             for (const filterAttribute of this.cleanFilterAttributes) {
                 let defaultValue = filterAttribute.defaultValue;
                 if (defaultValue) defaultValue = JSON.parse(JSON.stringify(defaultValue));
 
-                this.localFilters![filterAttribute.id] = defaultValue;
+                this.localFilters[filterAttribute.id] = defaultValue;
             }
         },
         resetFiltersAndCloseModal() {
@@ -112,17 +114,19 @@ export default defineComponent({
             this.closeModal();
         },
         updateFilter(filterAttribute: FilterAttribute, newValue: any, dismissModal=false) {
+            if (!this.localFilters) return;
+
             if (dismissModal) this.selectModals[filterAttribute.id] = false;
 
-            this.localFilters![filterAttribute.id] = newValue;
+            this.localFilters[filterAttribute.id] = newValue;
             this.$emit("onFilterUpdate", this.localFilters);
         },
         openSelectModal(filterAttribute: FilterAttribute) {
-            if (!(filterAttribute!.id in this.selectModals)) {
-                this.selectModals[filterAttribute!.id] = ref(false);
+            if (!(filterAttribute.id in this.selectModals)) {
+                this.selectModals[filterAttribute.id] = ref(false);
             }
 
-            this.selectModals[filterAttribute!.id] = true;
+            this.selectModals[filterAttribute.id] = true;
         },
         updateFilterAttributes() {
           // Check for visible filter attributes

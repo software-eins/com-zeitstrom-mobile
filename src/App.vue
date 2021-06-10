@@ -121,7 +121,7 @@ import { IonApp, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, Io
 import { defineComponent, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import {
-  logOutOutline, archiveOutline, fishOutline, folderOpenOutline, peopleOutline, gridOutline, desktopOutline, archiveSharp,
+  logOutOutline, archiveOutline, folderOpenOutline, peopleOutline, gridOutline, desktopOutline, archiveSharp,
   bookmarkOutline, bookmarkSharp, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp,
   trashOutline, trashSharp, warningOutline, warningSharp, helpCircleOutline, timerOutline, personCircleOutline, lockClosedOutline, documentTextOutline, business,
 } from 'ionicons/icons';
@@ -138,7 +138,7 @@ import { updateStatusBar } from "./globals/statusbar";
 
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
-import { Plugins, KeyboardStyle, StatusBarStyle } from '@capacitor/core';
+import { Plugins, KeyboardStyle } from '@capacitor/core';
 const { Keyboard, StatusBar } = Plugins;
 
 

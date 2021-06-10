@@ -16,8 +16,8 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import { accountService, Account } from '../services/accounts';
-    import { employeeService, Employee } from '../services/employees';
+    import { accountService } from '../services/accounts';
+    import { employeeService } from '../services/employees';
 
     import {
         IonPage, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonContent,

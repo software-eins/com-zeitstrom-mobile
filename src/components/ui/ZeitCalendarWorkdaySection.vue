@@ -27,7 +27,7 @@
   import { employeeReportService, WorkdayReport } from '../../services/reports-employees';
   import ZeitWorkdayCard from './ZeitWorkdayCard.vue';
 
-  import { IonLabel, IonItem, IonText, IonContent, } from '@ionic/vue';
+  import { IonItem, IonText, } from '@ionic/vue';
 
   export default defineComponent({
     components: {
@@ -61,11 +61,14 @@
 
     methods: {
       async updateWorkdayReports() {
+        if (!this.day) return;
+        if (!this.employeeId) return;
+
         this.isLoading = true;
-        const day = this.day!.isoformat;
+        const day = this.day.isoformat;
         const nextDay = new Date(Number(day.slice(0, 4)), Number(day.slice(5, 7)) - 1, Number(day.slice(8, 10)) + 1, 12);
         const workdayReportsResponse = await this.employeeReportService.workdayReports(
-          this.employeeId!, {
+          this.employeeId, {
             daterange: [day, nextDay.toISOString().slice(0, 10)],
           });
 

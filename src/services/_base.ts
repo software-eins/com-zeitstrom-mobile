@@ -166,7 +166,6 @@ export class FormField<T> {
         const func = (this.remoteSourceService as any)[name];
 
         return func().bind(this.remoteSourceService).then((response: AxiosResponse<any>) => {
-            console.log(response);
             return response;
         })
     }

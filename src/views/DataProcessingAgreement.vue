@@ -164,7 +164,6 @@ ion-toolbar.transparent {
 import download from 'downloadjs';
 
 import { defineComponent, reactive } from 'vue';
-import { IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonLabel, IonContent, IonToolbar, IonItem, IonText, IonNote} from '@ionic/vue';
 
 import ZeitForm from '../components/ui/ZeitForm.vue';
 import ZeitButton from '../components/ui/ZeitButton.vue';

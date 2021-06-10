@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosTransformer } from 'axios';
+import axios, { AxiosTransformer } from 'axios';
 // import router from './router';
 
 const zsAxios = axios.create({

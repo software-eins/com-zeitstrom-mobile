@@ -50,8 +50,8 @@
     methods: {
       getDayOffDescription(dayOffReason: DayOffReason) {
         if (dayOffReason.type == "no-work-day") return "Kein Arbeitstag";
-        if (dayOffReason.type == "missing-day") return dayOffReason.name!;
-        if (dayOffReason.type == "public-holiday") return dayOffReason.name!;
+        if (dayOffReason.type == "missing-day" && dayOffReason.name) return dayOffReason.name;
+        if (dayOffReason.type == "public-holiday" && dayOffReason.name) return dayOffReason.name;
 
         return JSON.stringify(dayOffReason)
       }

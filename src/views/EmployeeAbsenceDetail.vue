@@ -72,8 +72,9 @@
                 ]);
 
                 let workingDayCount = 0;
-                for (const [weekday, isWorking] of Object.entries(workingDays)) {
-                  if (isWorking) workingDayCount += 1;
+                for (const entry of Object.entries(workingDays)) {
+                  // is working?
+                  if (entry[1]) workingDayCount += 1;
                 }
 
                 absenceApplication.affected_hours = weeklyWorkingTime / workingDayCount;

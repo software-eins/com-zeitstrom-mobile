@@ -42,7 +42,7 @@ import { defineComponent } from 'vue';
 import ZeitGrid from './ZeitGrid.vue';
 
 import {
-    IonSearchbar, IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonTitle, IonContent, IonList, modalController,
+    IonSearchbar, IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonTitle, IonContent,
 } from '@ionic/vue';
 
 export default defineComponent({

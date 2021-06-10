@@ -28,7 +28,7 @@
 
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import { accountService, Account } from '../services/accounts';
+  import { accountService } from '../services/accounts';
 
   import ZeitButton from '../components/ui/ZeitButton.vue';
 

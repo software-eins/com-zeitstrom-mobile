@@ -14,10 +14,8 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import { star } from 'ionicons/icons';
     import ZeitList from '../components/ui/ZeitList.vue';
     import physicalTokenService from '../services/physical-tokens';
-    import { formatDuration } from '../globals/helpers';
 
     export default defineComponent({
         title: "Token",

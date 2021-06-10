@@ -187,9 +187,8 @@
           }
           QRScanner.getStatus().then(() => {
             this.showScannerButton = true;
-          }).catch(error => {
+          }).catch(() => {
             this.showScannerButton = false;
-            if (error != "cordova_not_available") console.log(error);
           });
           this.$forceUpdate();
 

@@ -82,10 +82,10 @@
       "projectSelected",
     ],
     watch: {
-      projectQueryString: function(newQueryString) {
+      projectQueryString: function() {
         this.loadProjects();
       },
-      activeProjectId: function(newProjectId) {
+      activeProjectId: function() {
         this.loadActiveProject();
       },
     },

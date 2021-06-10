@@ -9,8 +9,6 @@ export async function getWorkmonth(date: string, employeeId: string): Promise<Wo
   }
 
   const response = await workmonthService.listParams(listParams);
-  if (response.data.count == 0) console.error("[zs] Expected workmonth, but does not exist.");
-
   return response.data.results[0];
 }
 

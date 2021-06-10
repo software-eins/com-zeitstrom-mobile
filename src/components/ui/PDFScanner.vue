@@ -1,7 +1,6 @@
 <template>
   <div class="flex items-center w-full" @click="handleItemClick()">
     <div class="hidden">
-      <img src="../../_testdata/cv.jpg" />
       <img src="../../_testdata/receipt.jpg" />
     </div>
 
@@ -166,7 +165,6 @@
 
   import * as pdfMake from 'pdfmake/build/pdfmake';
   import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-  import * as AWS from 'aws-sdk';
 
   import * as pdfjs from 'pdfjs-dist-sig/es5/build/pdf.js';
   // import PdfjsWorker from 'worker-loader!pdfjs-dist-sig/es5/build/pdf.worker.js';
@@ -178,7 +176,7 @@
   import { absenceApplicationService } from '../../services/absence-applications';
   import { Account, accountService } from '../../services/accounts';
 
-  import axios, { AxiosResponse } from 'axios';
+  import { AxiosResponse } from 'axios';
   import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
   import { PaginatedResponse } from '../../services/_base';
 
@@ -302,14 +300,12 @@
 
         this.isUploading = true;
 
-        const attachments: Array<string> = [
-        "http://localhost:8100/img/cv.71b5e1bc.jpg",
-        "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        ]
-
-        console.log(this.attachments);
+        // const attachments: Array<string> = [
+        //   "http://localhost:8100/img/cv.71b5e1bc.jpg",
+        //   "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
+        //   "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
+        //   "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
+        // ]
 
         const images: { [key: string]: string } = {};
         const content: Content = [];
@@ -378,8 +374,7 @@
       // Initially set pdf url from props
       if (this.modelValue) this.pdfUrl = this.modelValue;
 
-      console.log(File);
-
+      // console.log(File);
       // this.activeImageIdx = 0;
       // this.isUploading = true;
       // await this.uploadPdf();

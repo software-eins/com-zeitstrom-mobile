@@ -33,8 +33,6 @@
   import { PaginatedResponse } from '../../services/_base';
   import { AxiosResponse } from 'axios';
 
-  import { getCreditHoursTill, getDebitHoursTill } from '../../globals/hour-balances';
-  import { Day, WorkmonthDetail } from '../../services/workmonths';
 
   export default defineComponent({
     components: {
@@ -117,13 +115,15 @@
         )
       },
       async openWorkingTimeTransactionDetals() {
+        if (!this.workmonth) return;
+
         this.isWorkingTimeTransactionBalanceLoading = true;
         await this.$router.push({
           name: 'reports:employee:working-time-transactions',
           params: {
-            year: String(this.workmonth!.year),
-            month: String(this.workmonth!.month).padStart(2, '0'),
-            employeeId: this.workmonth!.employee_id,
+            year: String(this.workmonth.year),
+            month: String(this.workmonth.month).padStart(2, '0'),
+            employeeId: this.workmonth.employee_id,
           }
         });
         this.isWorkingTimeTransactionBalanceLoading = false;

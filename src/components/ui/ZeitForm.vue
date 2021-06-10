@@ -344,7 +344,6 @@ export default defineComponent({
         deep: true,
         handler(newResource) {
           this.$emit('update:resource', newResource);
-          console.log("updated", newResource);
         },
     },
   },
@@ -376,10 +375,10 @@ export default defineComponent({
         if (appendCurrentEntry) {
           if (field.remoteSourceAttribute == "id") {
             choices.push({id: this.localResource[field.name]});
-          } else {
+          } // else {
             // TODO: Load external resource with this id
-            console.warn("Field not loaded");
-          }
+            // console.warn("Field not loaded");
+          // }
         }
 
         // Add remote results

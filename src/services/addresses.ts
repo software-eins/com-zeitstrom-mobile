@@ -1,5 +1,4 @@
-import { AxiosResponse } from 'axios';
-import { BaseService, FormField, PaginatedResponse } from './_base';
+import { BaseService } from './_base';
 
 
 interface Address {

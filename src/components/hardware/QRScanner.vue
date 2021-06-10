@@ -90,7 +90,10 @@
       }
     },
     mounted() {
-      document.querySelector("body")!.classList.add("show-scanner");
+      const body = document.querySelector("body");
+      if (!body) return;
+
+      body.classList.add("show-scanner");
 
       QRScanner.prepare().then(() => {
         QRScanner.show();
@@ -103,7 +106,10 @@
       updateStatusBar({transparentStatusBar: false, backgroundColor: "#" + componentToHex(r) + componentToHex(g) + componentToHex(b)});
     },
     beforeUnmount() {
-      document.querySelector("body")!.classList.remove("show-scanner");
+      const body = document.querySelector("body");
+      if (!body) return;
+
+      body.classList.remove("show-scanner");
 
       if (this.scanSubscription) this.scanSubscription.unsubscribe();
 
