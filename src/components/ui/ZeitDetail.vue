@@ -3,7 +3,7 @@
     <ion-header :translucent="true" v-if="isMobile">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button default-href="/" text="Zurück"></ion-back-button>
+          <ion-back-button default-href="/" :text="backLabel"></ion-back-button>
         </ion-buttons>
         <ion-title v-if="false">{{ getTitle() }}</ion-title>
         <ion-buttons slot="primary">
@@ -155,6 +155,10 @@ export default defineComponent({
         backUrl: {
           type: String,
           default: undefined,
+        },
+        backLabel: {
+          type: String,
+          default: 'Zurück',
         },
     },
     data() {

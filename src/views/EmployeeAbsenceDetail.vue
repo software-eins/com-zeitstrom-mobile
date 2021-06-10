@@ -4,6 +4,7 @@
     :service="absenceApplicationService"
     :formFields="employeeAbsenceForm"
     backUrl="/my-absences/"
+    backLabel="Abwesenheiten"
   />
 </template>
 
