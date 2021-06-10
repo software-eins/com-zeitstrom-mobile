@@ -243,7 +243,8 @@
           toastController
             .create({
               message: 'Deine Änderungen wurden gespeichert.',
-              duration: 2000
+              duration: 2000,
+              color: 'dark',
             }).then(toast => toast.present());
         });
 

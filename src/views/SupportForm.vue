@@ -61,7 +61,8 @@ export default defineComponent({
                 toastController
                     .create({
                         message: "Nachricht versendet.",
-                        duration: 2000
+                        duration: 2000,
+                        color: 'dark'
                     }).then(toast => toast.present());
             })
             .catch(() => {

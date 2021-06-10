@@ -12,5 +12,8 @@
 			"androidSplashResourceName": "splash_orange"
 		}
 	},
-	"cordova": {}
+	"cordova": {},
+	"server": {
+		"url": "http://172.20.10.2:8100"
+	}
 }

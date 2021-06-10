@@ -133,7 +133,8 @@
                         employeeService.delete(employee.id).then(() => {
                             toastController.create({
                                 message: 'Mitarbeiter gelöscht.',
-                                duration: 2000
+                                duration: 2000,
+                                color: 'dark',
                             }).then(toast => toast.present());
                             this.showResults = true;
                         });
@@ -150,7 +151,8 @@
                         employeeService.archive(employee.id).then(() => {
                             toastController.create({
                                 message: 'Mitarbeiter archiviert.',
-                                duration: 2000
+                                duration: 2000,
+                                color: 'dark',
                             }).then(toast => toast.present());
                             this.showResults = true;
                         });

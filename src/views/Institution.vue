@@ -131,7 +131,8 @@
           toastController
             .create({
               message: 'Deine Unternehmensangaben wurden aktualisiert',
-              duration: 2000
+              duration: 2000,
+              color: 'dark'
             }).then(toast => toast.present());
         } catch(e) {
           if (e.response.status == 400) {

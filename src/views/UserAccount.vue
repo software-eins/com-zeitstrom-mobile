@@ -220,7 +220,8 @@
           toastController
             .create({
               message: 'Dein Passwort wurde aktualisiert',
-              duration: 2000
+              duration: 2000,
+              color: 'dark',
             }).then(toast => toast.present());
         } catch(e) {
           if (e.response.status == 400) {
@@ -250,7 +251,8 @@
           toastController
             .create({
               message: 'Deine Daten wurden aktualisiert',
-              duration: 2000
+              duration: 2000,
+              color: 'dark'
             }).then(toast => toast.present());
         } catch(e) {
           if (e.response.status == 400) {

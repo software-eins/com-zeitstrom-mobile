@@ -7,18 +7,19 @@
     <div class="flex-grow">
       <ion-label>{{ label }}</ion-label>
     </div>
+
+    <div v-if="!pdfUrl" class="text-gray-400 flex items-center pr-2">
+      Scannen
+    </div>
+
     <ion-icon
       class="text-gray-400"
       :ios="chevronForwardOutline"
       :md="chevronForwardOutline"
-      v-if="pdfUrl && !isLoadingPreview"
+      v-if="!isLoadingPreview"
     ></ion-icon>
 
     <ion-spinner v-if="isLoadingPreview" />
-
-    <div v-if="!pdfUrl" class="text-gray-400 flex items-center pr-2">
-      <div class="text-sm">Hinzufügen</div>
-    </div>
 
     <teleport to="#scan-overlay" v-if="pdfUrl && previewPdf">
       <ion-page>

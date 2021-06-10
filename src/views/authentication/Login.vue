@@ -169,7 +169,8 @@
             if (scanResultParts.length != 2) {
                 toastController.create({
                   message: 'Ungültiger QR-Code.',
-                  duration: 2000
+                  duration: 2000,
+                  color: 'dark',
                 }).then(toast => toast.present());
 
                 return;

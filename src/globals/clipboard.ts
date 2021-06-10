@@ -11,7 +11,8 @@ const textToClipboard = function(text: string, successMessage = 'Kopiert.') {
     toastController
         .create({
             message: successMessage,
-            duration: 2000
+            duration: 2000,
+            color: 'dark',
         })
         .then(toast => toast.present());
 }

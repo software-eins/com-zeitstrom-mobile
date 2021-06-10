@@ -61,6 +61,9 @@ class AbsenceApplicationService extends BaseService<AbsenceApplication> {
     deleteResourceConfirmation(resourceId?: string): Promise<string> {
       return Promise.resolve("Abwesenheitsanfrage entfernt");
     }
+    newResourceConfirmation(resourceId?: string): Promise<string> {
+      return Promise.resolve("Abwesenheitsanfrage erstellt");
+    }
 
     uploadAttachmentToken(employeeId: string): Promise<AxiosResponse<S3UploadToken>> {
       const url = "upload-attachment-token/";

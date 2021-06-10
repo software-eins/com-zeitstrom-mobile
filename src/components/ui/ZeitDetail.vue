@@ -218,7 +218,8 @@ export default defineComponent({
                 toastController
                   .create({
                     message: 'Deine Änderungen wurden gespeichert',
-                    duration: 2000
+                    duration: 2000,
+                    color: 'dark'
                   }).then(toast => toast.present());
               }).catch((error: any) => {
                 if (error.response.status == 400) {
@@ -241,7 +242,8 @@ export default defineComponent({
               toastController
                 .create({
                   message: this.newResourceConfirmation,
-                  duration: 2000
+                  duration: 2000,
+                  color: 'dark'
                 }).then(toast => toast.present());
             }).catch((error: any) => {
               if (error.response.status == 400) {
@@ -286,7 +288,8 @@ export default defineComponent({
                         this.$router.go(-1);
                         toastController.create({
                           message: this.deleteResourceConfirmation,
-                          duration: 2000
+                          duration: 2000,
+                          color: 'dark'
                         }).then(toast => toast.present());
                     });
                 },
