@@ -15,7 +15,7 @@
       />
     </ion-modal>
 
-    <ion-header :translucent="true">
+    <ion-header :translucent="true" v-if="isMobile">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary"></ion-menu-button>
@@ -27,7 +27,7 @@
             v-for="option of segmentFilter.options"
             :key="option.value"
             :value="option.value"
-            @click="filterSegmenChanged(option.value)"
+            @click="filterSegmentChanged(option.value)"
           >
             {{ option.label }}
           </ion-segment-button>
@@ -42,7 +42,7 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
+      <ion-header collapse="condense" v-if="isMobile">
         <ion-toolbar>
           <ion-title size="large">{{ resourceType }}</ion-title>
         </ion-toolbar>
@@ -72,7 +72,7 @@
       </ion-header>
 
       <zeit-grid
-        v-if="totalResultCount > 0"
+        v-if="isMobile && totalResultCount > 0 && showResults"
         :service="service"
         :listMethod="listMethod"
         :columns="fields"
@@ -81,6 +81,32 @@
         :basePath="basePath"
         :showDetail="showDetail"
       />
+
+      <div v-if="!isMobile" class="mt-7 mr-8 max-w-5xl ml-2 mb-12">
+        <zeit-desktop-header
+          :title="resourceType"
+          :options="segmentFilter ? segmentFilter.options : []"
+          :activeOption="segmentFilterValue"
+          :addRoute="hasAddPermission() ? basePath + 'add/' : undefined"
+          :addResourceLabel="addResourceLabel"
+          :searchPlaceholder="searchPlaceholder"
+          :searchQuery="gridSearchQuery"
+          @updateOption="segmentFilterValue = $event"
+          @updateSearchQuery="gridSearchQuery = $event"
+        />
+
+        <zeit-desktop-grid
+          v-if="totalResultCount > 0 && showResults"
+          :service="service"
+          :listMethod="listMethod"
+          :columns="fields"
+          :searchQuery="gridSearchQuery"
+          :listParameters="getListParameters()"
+          :basePath="basePath"
+          :showDetail="showDetail"
+          :detailActions="detailActions"
+        />
+      </div>
 
     </ion-content>
   </ion-page>
@@ -98,9 +124,15 @@
 
     import ZeitGrid from './ZeitGrid.vue';
     import ZeitListFilter from './ZeitListFilter.vue';
+    import ZeitDesktopHeader from './ZeitDesktopHeader.vue';
+    import ZeitDesktopGrid from './ZeitDesktopGrid.vue';
     import { FilterAttribute } from '../../services/_base';
     import { Account, accountService } from '../../services/accounts';
     import { AxiosResponse } from 'axios';
+
+    import { shortcut, KeyCode } from '../../globals/shortcuts';
+    import { Subscription } from 'rxjs';
+    import { DetailAction } from './ZeitDetail.vue';
 
     export default defineComponent({
         components: {
@@ -108,14 +140,22 @@
           IonPage, IonTitle, IonToolbar, IonSearchbar, IonModal, IonText, IonSegment,
           IonSegmentButton,
 
+          ZeitDesktopHeader,
+          ZeitDesktopGrid,
+
           ZeitGrid, ZeitListFilter,
         },
+        inject: [
+          "isMobile",
+        ],
         props: {
           resourceType: String,
           basePath: String,
           searchPlaceholder: String,
           service: Object,
           fields: Array,
+
+          addResourceLabel: String,
 
           totalResultCountPromise: {
             type: Function,
@@ -131,6 +171,12 @@
 
           showSearch: { type: Boolean, default: true},
           showDetail: { type: Boolean, default: true},
+          showResults: { type: Boolean, default: true},
+
+          detailActions: {
+            type: Array,
+            default: () => [] as Array<DetailAction>,
+          },
         },
         data() {
           return {
@@ -152,6 +198,8 @@
             segmentFilterValue: undefined,
 
             totalResultCount: undefined as (number | undefined),
+
+            subscriptions: [] as Array<Subscription>,
           }
         },
         watch: {
@@ -160,8 +208,24 @@
                   this.updateTotalResultCount();
               }
           },
+          gridSearchQuery: function() {
+            this.updateUrlFromState();
+          },
         },
         methods: {
+          updateUrlFromState() {
+            this.$router.replace({query: {
+              ...this.$route.query,
+              q: this.gridSearchQuery || undefined,
+            }});
+          },
+          updateStateFromUrl() {
+            if (this.$route.query.q) {
+              this.gridSearchQuery = this.$route.query.q as string;
+            } else {
+              this.gridSearchQuery = '';
+            }
+          },
           hasAddPermission() {
             const addPermission = this.$route.meta.permissionSpace + ":add";
             return (
@@ -179,15 +243,19 @@
             this.gridParameters = {...this.gridParameters, ...params};
           },
           appliedFilterCount() {
+            if (!this.filterAttributes) return;
+
             let count = 0;
             const exclusionFilters = this.getExclusionFilters()
-            const cleanedAttributes = this.filterAttributes!.filter((a: FilterAttribute) => exclusionFilters.indexOf(a.id) == -1);
+            const cleanedAttributes = this.filterAttributes.filter((a: FilterAttribute) => exclusionFilters.indexOf(a.id) == -1);
             for (const filterAttribute of cleanedAttributes) {
               if (JSON.stringify(this.gridParameters[filterAttribute.id]) != JSON.stringify(filterAttribute.defaultValue)) count += 1;
             }
             return count;
           },
           updateTotalResultCount() {
+            if (!this.service) return;
+
             if (this.totalResultCountPromise) {
               return this.totalResultCountPromise().then((totalResultCount: number) => {
                 this.totalResultCount = totalResultCount;
@@ -195,14 +263,16 @@
               });
             }
 
-            return this.service![this.listMethod](this.listParameters).then((result: AxiosResponse<any>) => {
+            return this.service[this.listMethod](this.listParameters).then((result: AxiosResponse<any>) => {
                 this.totalResultCount = result.data.count;
                 return this.totalResultCount;
             });
           },
-          filterSegmenChanged(value: any) {
+          filterSegmentChanged(value: any) {
+            if (!this.segmentFilter) return;
+
             this.segmentFilterValue = value;
-            this.gridParameters[this.segmentFilter!.filterAttributeId] = value;
+            this.gridParameters[this.segmentFilter.filterAttributeId] = value;
           },
           getExclusionFilters() {
             const exclude = [];
@@ -213,7 +283,9 @@
           },
           updateFilterAttributes() {
             // Check for visible filter attributes
-            const filterAttributes = this.service!.filterAttributes;
+            let filterAttributes = [] as Array<FilterAttribute>;
+            if (this.service) filterAttributes = this.service.filterAttributes;
+
             return Promise.all(
               filterAttributes.map((fa: FilterAttribute) => fa.visible)
             ).then(filterAttributeVisibilities => {
@@ -231,9 +303,11 @@
           }
         },
         beforeMount() {
+          this.updateStateFromUrl();
+
           this.updateFilterAttributes().then(() => {
             // Set default modal filter values
-            for (const filterAttribute of this.filterAttributes!) {
+            for (const filterAttribute of (this.filterAttributes || [])) {
               this.gridParameters[filterAttribute.id] = this.gridParameters[filterAttribute.id] || filterAttribute.defaultValue;
             }
           });
@@ -250,7 +324,19 @@
           this.updateTotalResultCount();
         },
         mounted() {
-            this.mountedFullPath = this.$route.fullPath;
+          this.mountedFullPath = this.$route.fullPath;
+
+          // Shortcut Plus: Add new entry
+          this.subscriptions.push(shortcut([KeyCode.Period]).subscribe(() => {
+            if (!this.hasAddPermission()) return;
+            this.$router.push({path: this.basePath + 'add/'});
+          }));
+
+        },
+        unmounted() {
+          for (const subscription of this.subscriptions) {
+            subscription.unsubscribe();
+          }
         },
     })
 </script>

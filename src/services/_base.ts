@@ -1,6 +1,8 @@
 import axios from "@/axios"
 import { AxiosError, AxiosResponse } from 'axios';
 
+import { Account } from './accounts';
+
 
 export class FormFieldCondition {
     name: string;
@@ -24,8 +26,27 @@ export interface PaginatedResponse<T = any> {
     results: Array<T>;
 }
 
+interface S3UploadTokenFields {
+    key: string;
+    policy: string;
+    "x-amz-algorithm": string;
+    "x-amz-credential": string;
+    "x-amz-date": string;
+    "x-amz-signature": string;
+}
+
+export interface S3UploadToken {
+    fields: S3UploadTokenFields;
+    url: string;
+}
+
+export interface SignedUrl {
+    presigned_url: string;
+}
+
 export interface FormFieldParams<T> {
     type?: string;
+    inputType?: string;
     mobileType?: string;
     label?: string;
     autofocus?: boolean;
@@ -37,9 +58,12 @@ export interface FormFieldParams<T> {
     isReadOnly?: boolean;
     isSelectedValueInOptionList?: boolean;
     allowNull?: boolean;
+
     conditions?: Array<FormFieldCondition>;
-    default?: string;
+
+    default?: string|((resource: T) => void);
     renderer?: (resource: any) => Promise<string>;
+    retrieveS3UploadMeta?: (account: Account) => Promise<AxiosResponse<S3UploadToken>>;
 
     showCreate?: boolean;
     showEdit?: boolean;
@@ -53,6 +77,9 @@ export interface FormFieldParams<T> {
 export class FormField<T> {
     type: string;
     mobileType: string;
+
+    inputType: string;
+
     name: string;
     label: string;
     autofocus: boolean;
@@ -67,8 +94,9 @@ export class FormField<T> {
 
     conditions: Array<FormFieldCondition>;
 
-    default?: string;
+    default?: string | ((resource: T) => void);
     renderer?: (resource: any) => Promise<string>;
+    retrieveS3UploadMeta?: (account: Account) => Promise<AxiosResponse<S3UploadToken>>;
 
     isReadOnly: boolean;
 
@@ -87,6 +115,7 @@ export class FormField<T> {
         this.name = name;
         this.label = label;
         this.type = params.type !== undefined ? params.type : 'text';
+        this.inputType = params.inputType !== undefined ? params.inputType : 'text';
         this.mobileType = params.mobileType !== undefined ? params.mobileType : this.type;
         this.autofocus = params.autofocus !== undefined ? params.autofocus : false;
         this.description = params.description !== undefined ? params.description : null;
@@ -102,6 +131,7 @@ export class FormField<T> {
         this.conditions = params.conditions || [];
         this.default = params.default;
         this.renderer = params.renderer;
+        this.retrieveS3UploadMeta = params.retrieveS3UploadMeta;
         this.step = params.step || 1;
         this.minimum = params.minimum || 0;
         this.maximum = params.maximum || 20;

@@ -1,10 +1,12 @@
 <template>
     <zeit-list
+        v-if="isActive"
         resourceType="Projekte"
         basePath="/projects/"
         searchPlaceholder="Suche nach Name oder Code"
         :service="projectService"
         :fields="fields"
+        addResourceLabel="Neues Projekt"
     >
         <template v-slot:no-results>Es existieren aktuell keine Projekte.</template>
         <template v-slot:no-results-add>Sobald du ein Projekt erstellst, können Arbeitszeiten Projekten zugewiesen werden.</template>
@@ -20,16 +22,26 @@
     import { RowIcon } from '../components/ui/ZeitGrid.vue';
 
     export default defineComponent({
+        title: "Projekte",
         components: {
             ZeitList,
         },
         data() {
             return {
+                isActive: false,
                 projectService,
                 fields: [
                     {
                         id: "name",
                         label: "Name",
+                        formatter: (e: any) => {
+                            if (e.highlighted) return '<div class="flex items-center">' + e.name + '<img class="ml-1 h-4 w-4 opacity-50" src="' + new RowIcon(star).icon + '" /></div>';
+                            return e.name
+                        }
+                    },
+                    {
+                        id: "name",
+                        hideDesktop: true,
                         mobileLevel: "h2",
                     },
                     {
@@ -50,6 +62,9 @@
                         id: "color",
                         label: "Projektfarbe",
                         mobileLevel: "colorborder",
+                        formatter: (e: any) => {
+                            return '<div style="width: 58px; height: 25px; background: #' + e.color + '" class="rounded" />';
+                        }
                     },
                     {
                         id: "total_duration",
@@ -61,6 +76,15 @@
                     },
                 ],
             }
+        },
+        beforeMount() {
+            this.isActive = true;
+        },
+        ionViewWillLeave() {
+            this.isActive = false;
+        },
+        ionViewWillEnter() {
+            this.isActive = true;
         },
     })
 </script>

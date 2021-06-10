@@ -62,7 +62,7 @@ class EmployeeService extends BaseService<Employee> {
             }),
             new FormField<PhysicalToken>("physical_token_id", "Token-Nummer", {
                 type: 'select',
-                description: "Die ausgewählte Token-Nummer kann zur Authentifizierung am Zeiterfassungs-Terminal verwendet werden. Nur nicht bereits zugewiesene Nummern werden angezeigt. <a target='_blank' href='/tokens/'>Token verwalten</a>",
+                description: "Die ausgewählte Token-Nummer kann zur Authentifizierung am Zeiterfassungs-Terminal verwendet werden. Nur nicht bereits zugewiesene Nummern werden angezeigt. <a target='_blank' class='text-primary' href='/tokens/'>Token verwalten</a>",
                 remoteSourceService: physicalTokenService,
                 remoteSourceListMethod: "listAvailable",
                 remoteSourceAttribute: 'id',

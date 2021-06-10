@@ -1,5 +1,8 @@
 <template>
-  <zeit-detail :service="projectService" />
+  <zeit-detail
+    v-if="isActive"
+    :service="projectService"
+  />
 </template>
 
 <script lang="ts">
@@ -13,8 +16,18 @@
     },
     data() {
       return {
+        isActive: true,
         projectService,
       }
+    },
+    beforeMount() {
+      this.isActive = true;
+    },
+    ionViewWillLeave() {
+      this.isActive = false;
+    },
+    ionViewWillEnter() {
+      this.isActive = true;
     },
   })
 </script>

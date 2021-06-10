@@ -1,5 +1,5 @@
 <template>
-  <ion-card class="mt-0" v-if="workmonth">
+  <ion-card class="mt-0 shadow" :class="cardClasses" v-if="workmonth">
     <ion-list class="transparent-bg">
       <ion-item class="flex items-center justify-center w-full transparent-bg" lines="full" v-if="displayHeader">
         <ion-label class="flex-grow">
@@ -138,7 +138,7 @@
         type: Array,
         default: () => [] as Array<Workday>,
       },
-      activeTimespanId: String,
+      activeTimespan: Object,
       employeeId: String,
 
       day: {
@@ -153,6 +153,11 @@
       displayFooter: {
         type: Boolean,
         default: false,
+      },
+
+      cardClasses: {
+        type: String,
+        default: '',
       },
     },
     data() {
@@ -232,7 +237,7 @@
         return this.creditHours() != 0;
       },
       isActiveTimespan(timespan: Timespan): boolean {
-        return timespan.id == this.activeTimespanId;
+        return this.activeTimespan !== undefined && timespan.id == this.activeTimespan.id;
       },
       physicalRestDuration(workday: WorkdayReport) {
         // Return tracked work interruptions, if they (depending on the setting)

@@ -1,40 +1,57 @@
 <template>
   <ion-app>
-    <ion-split-pane content-id="main-content" v-if="false">
-      <ion-menu  v-if="account" ref="menu" content-id="main-content" type="overlay" :class="{hide: $route.meta.hideChrome}">
-        <background-drawing-bottom class="fixed w-1/2 flip-y z-10" />
+    <ion-split-pane when="md" content-id="main-content" v-if="showSidemenu">
+      <div class="bg-primary w-full h-full absolute top-0 left-0" />
+      <ion-menu
+        ref="menu"
+        content-id="main-content"
+        type="overlay"
+        :class="{hide: $route.meta.hideChrome}"
+        @ionWillOpen="onMenuOpen()"
+        @ionDidClose="onMenuClose()"
+        @click="closeMenu()"
+      >
+          <div class="pt-4 flex flex-col justify-end w-full" :class="{'pt-10': isMobile}">
 
-        <ion-item color="light" lines="full">
-          <div class="flex  pb-4 pt-16 w-full items-center justify-center">
-            <div class="flex flex-grow flex-col">
-                <ion-text color="dark" v-if="account" class="heading-navigation">{{ account.full_name }}</ion-text>
-                <ion-text color="medium" v-if="roleLabel">{{ roleLabel }}</ion-text>
+            <div style="padding-right:20px;" class="ml-4 w-full">
+              <zeit-logo
+                :show-name="true"
+                class="w-32 ml-4 mt-4"
+                :class="isMobile ? 'mb-4' : 'mb-8'"
+              />
             </div>
-            <div class="flex-none">
-                <zeit-avatar :account="account" />
+
+            <div v-if="isMobile" class="w-full border-b border-gray-300 mb-4" />
+
+            <div style="padding-right:20px;" class="ml-4 w-full">
+              <ion-list v-for="(category, cidx) in filteredAppPages()" :key="cidx">
+                <p class="text-xs font-semibold text-gray-400 tracking-wider mb-2 px-4 uppercase">{{ category.label }}</p>
+
+                <div class="flex flex-col text-gray-800">
+                  <router-link :to="p.url" v-for="(p, pidx) in category.pages" :key="pidx"
+                    class="flex items-center font-medium text-lg py-1 px-4 mb-1 rounded-md"
+                    :class="{
+                      'bg-primary text-white shadow-md': $route.fullPath.startsWith(p.url),
+                      'hover:bg-gray-200 text-gray-700': !$route.fullPath.startsWith(p.url),
+                      'mr-4': isMobile,
+                    }"
+                  >
+                    <ion-icon slot="start" :ios="p.iosIcon" :md="p.mdIcon" />
+                    <div class="ml-4"><ion-label>{{ p.title }}</ion-label></div>
+                  </router-link>
+                </div>
+              </ion-list>
             </div>
           </div>
-        </ion-item>
-        <ion-content>
-          <ion-list id="inbox-list" class="mt-4">
 
-            <ion-menu-toggle auto-hide="false" v-for="(p, i) in filteredAppPages()" :key="i">
-              <ion-item @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
-                <ion-icon slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
-                <ion-label>
-                  {{ p.title }}
-                </ion-label>
-              </ion-item>
-            </ion-menu-toggle>
 
-            <ion-menu-toggle @click="logout()">
+            <ion-menu-toggle @click="logout()" v-if="false">
                 <ion-item detail="false" lines="none">
                     <ion-icon slot="start" :ios="logOutOutline" :md="logOutOutline"></ion-icon>
                     <ion-label>Abmelden</ion-label>
                 </ion-item>
             </ion-menu-toggle>
 
-          </ion-list>
 
           <ion-list id="labels-list">
             <!-- <ion-list-header>Labels</ion-list-header> -->
@@ -45,42 +62,73 @@
             </ion-item> -->
 
           </ion-list>
-        </ion-content>
       </ion-menu>
-      <ion-router-outlet id="main-content"></ion-router-outlet>
+      <ion-router-outlet id="main-content" :animated="false"></ion-router-outlet>
     </ion-split-pane>
 
-    <ion-router-outlet v-if="$route.meta.hideChrome"></ion-router-outlet>
-    <zeit-tab-menu v-if="!$route.meta.hideChrome" />
+    <ion-router-outlet v-if="$route.meta.hideChrome && !showSidemenu" :animated="false"></ion-router-outlet>
+    <zeit-tab-menu v-if="!$route.meta.hideChrome && !showSidemenu" />
 
   </ion-app>
 </template>
 
 <style scoped>
-    .flip-y {
-        transform: scaleY(-1);
-    }
-    ion-list {
-        padding-top: 0 !important;
-    }
-    zeit-tab-menu.hide,
-    ion-menu.hide {
-        pointer-events: none;
-        display: none;
-    }
+  ion-split-pane {
+    --side-max-width: 20%;
+    --side-width: 100%;
+    --side-min-width: 100%;
+  }
+
+  ion-split-pane.split-pane-visible {
+    --side-min-width: 200px;
+  }
+
+  ion-menu {
+    --max-width: 20%;
+    --width: 100%;
+    --min-width: 300px;
+  }
+  ion-menu.menu-pane-visible {
+    --max-width: 100%;
+    --min-width: 200px;
+  }
+
+  .flip-y {
+      transform: scaleY(-1);
+  }
+  ion-list {
+      padding-top: 0 !important;
+      padding-bottom: 1.5rem !important;
+  }
+  zeit-tab-menu.hide,
+  ion-menu.hide {
+      pointer-events: none;
+      display: none;
+  }
+
+  ion-list {
+    --ion-item-background: 'transparent';
+  }
+
+  ion-list.md ion-item {
+    margin-left: -10px;
+  }
+
 </style>
 
 <script lang="ts">
-import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonText, IonRouterOutlet, IonSplitPane, isPlatform } from '@ionic/vue';
-import { defineComponent, ref } from 'vue';
+import { IonApp, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonRouterOutlet, IonSplitPane, isPlatform, menuController, } from '@ionic/vue';
+import { defineComponent, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { logOutOutline, archiveOutline, fishOutline, folderOpenOutline, peopleOutline, gridOutline, desktopOutline, archiveSharp, bookmarkOutline, bookmarkSharp, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp, helpCircleOutline, timerOutline } from 'ionicons/icons';
-
-import ZeitAvatar from './components/ui/ZeitAvatar.vue';
+import {
+  logOutOutline, archiveOutline, fishOutline, folderOpenOutline, peopleOutline, gridOutline, desktopOutline, archiveSharp,
+  bookmarkOutline, bookmarkSharp, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp,
+  trashOutline, trashSharp, warningOutline, warningSharp, helpCircleOutline, timerOutline, personCircleOutline, lockClosedOutline, documentTextOutline, business,
+} from 'ionicons/icons';
 
 import { accountService, Account } from './services/accounts';
 import { institutionService, Institution } from './services/institutions';
-import BackgroundDrawingBottom from './components/graphics/BackgroundDrawingBottom.vue';
+import ZeitLogo from './components/graphics/Logo.vue';
 import { ChoiceField, PaginatedResponse } from './services/_base';
 import { AxiosResponse } from 'axios';
 import ZeitTabMenu from './components/ui/ZeitTabMenu.vue';
@@ -90,88 +138,140 @@ import { updateStatusBar } from "./globals/statusbar";
 
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
-import { Plugins, KeyboardStyle } from '@capacitor/core';
-const { Keyboard } = Plugins;
+import { Plugins, KeyboardStyle, StatusBarStyle } from '@capacitor/core';
+const { Keyboard, StatusBar } = Plugins;
 
 
 export default defineComponent({
   name: 'App',
   components: {
     IonApp,
-    IonContent,
+    // IonContent,
     IonIcon,
     IonItem,
     IonLabel,
     IonList,
-    IonText,
+    // IonText,
     IonMenu,
     IonMenuToggle,
     IonRouterOutlet,
     IonSplitPane,
-    BackgroundDrawingBottom,
-    ZeitAvatar,
+    // BackgroundDrawingBottom,
+    // ZeitAvatar,
     ZeitTabMenu,
+    ZeitLogo,
   },
   setup() {
     const selectedIndex = ref(0);
+
     const appPages = [
       {
-        title: 'Stechuhr',
-        url: '/time-tracking/',
-        iosIcon: timerOutline,
-        mdIcon: timerOutline,
-        permissions: ['tracking-employees:add-current-timestamp'],
+        label: "Erfassung",
+        pages: [
+          {
+            title: 'Stechuhr',
+            url: '/time-tracking/',
+            iosIcon: timerOutline,
+            mdIcon: timerOutline,
+            permissions: ['tracking-employees:add-current-timestamp'],
+          },
+        ]
       },
       {
-        title: 'Projekte',
-        url: '/projects/',
-        iosIcon: folderOpenOutline,
-        mdIcon: folderOpenOutline,
-        permissions: ['projects:edit'],
+        label: "Verwaltung",
+        pages: [
+          {
+            title: 'Projekte',
+            url: '/projects/',
+            iosIcon: folderOpenOutline,
+            mdIcon: folderOpenOutline,
+            permissions: ['projects:edit'],
+          },
+          {
+            title: 'Abteilungen',
+            url: '/departments/',
+            iosIcon: gridOutline,
+            mdIcon: gridOutline,
+            permissions: ['employee_groups:edit'],
+          },
+          {
+            title: 'Mitarbeiter',
+            url: '/employees/',
+            iosIcon: peopleOutline,
+            mdIcon: peopleOutline,
+            permissions: ['employees:edit'],
+          },
+          {
+            title: 'Hardware',
+            url: '/devices/',
+            iosIcon: desktopOutline,
+            mdIcon: desktopOutline,
+            permissions: ['devices:edit'],
+          },
+        ]
       },
       {
-        title: 'Abteilungen',
-        url: '/departments/',
-        iosIcon: gridOutline,
-        mdIcon: gridOutline,
-        permissions: ['employee_groups:edit'],
+        label: "Sonstiges",
+        pages: [
+          // {
+          //   title: '_Token',
+          //   url: '/tokens/',
+          //   iosIcon: fishOutline,
+          //   mdIcon: fishOutline,
+          //   permissions: ['physical_tokens:view'],
+          // },
+          // {
+          //   title: '_Debug',
+          //   url: '/debug/',
+          //   iosIcon: fishOutline,
+          //   mdIcon: fishOutline,
+          // },
+        ]
       },
       {
-        title: 'Mitarbeiter',
-        url: '/employees/',
-        iosIcon: peopleOutline,
-        mdIcon: peopleOutline,
-        permissions: ['employees:edit'],
+        label: "Administration",
+        pages: [
+          {
+            title: 'Konto',
+            url: '/account/profile/',
+            iosIcon: personCircleOutline,
+            mdIcon: personCircleOutline,
+            // permissions: ['support_tickets:edit'],
+          },
+          {
+            title: 'Unternehmen',
+            url: '/account/institution/',
+            iosIcon: business,
+            mdIcon: business,
+            // permissions: ['support_tickets:edit'],
+          },
+          {
+            title: 'Lizenzen',
+            url: '/account/license/',
+            iosIcon: documentTextOutline,
+            mdIcon: documentTextOutline,
+            permissions: ['licenses:view'],
+          },
+          {
+            title: 'Datenschutz',
+            url: '/account/data-processing-agreement/',
+            iosIcon: lockClosedOutline,
+            mdIcon: lockClosedOutline,
+            permissions: ['contracts:view'],
+          },
+        ]
       },
       {
-        title: 'Hardware',
-        url: '/devices/',
-        iosIcon: desktopOutline,
-        mdIcon: desktopOutline,
-        permissions: ['devices:edit'],
-      },
-
-      {
-        title: '_Token',
-        url: '/tokens/',
-        iosIcon: fishOutline,
-        mdIcon: fishOutline,
-        permissions: ['physical_tokens:edit'],
-      },
-      {
-        title: '_Debug',
-        url: '/debug/',
-        iosIcon: fishOutline,
-        mdIcon: fishOutline,
-      },
-
-
-      {
-        title: 'Support',
-        url: '/support/',
-        iosIcon: helpCircleOutline,
-        mdIcon: helpCircleOutline,
-        permissions: ['support_tickets:edit'],
+        label: "Hilfe",
+        pages: [
+          {
+            title: 'Support',
+            url: '/support/',
+            iosIcon: helpCircleOutline,
+            mdIcon: helpCircleOutline,
+            permissions: ['support_tickets:add'],
+          },
+        ]
       },
     ];
 
@@ -225,12 +325,33 @@ export default defineComponent({
   },
   data() {
       return {
+        isMobile: isPlatform("capacitor") || navigator.userAgent.indexOf("iPhone") > -1,
+
         branding,
+        isPlatform,
+        showSidemenu: true,
       }
   },
+  provide() {
+    return {
+      showSidemenu: computed(() => this.showSidemenu),
+      isMobile: isPlatform("capacitor") || navigator.userAgent.indexOf("iPhone") > -1,
+    }
+  },
   methods: {
+    closeMenu() {
+      menuController.close();
+    },
+    onMenuOpen() {
+      if (isPlatform("capacitor")) StatusBar.hide();
+    },
+    onMenuClose() {
+      if (isPlatform("capacitor")) StatusBar.show();
+    },
     loadDarkMode() {
       if (document == null) return;
+
+      if (!this.isMobile) return;
 
       const body = document.querySelector('body');
       if (body == null) return;
@@ -242,7 +363,7 @@ export default defineComponent({
           body.classList.remove('dark')
       }
 
-      if (isPlatform('capacitor') && document.body.classList.contains('dark')) {
+      if (isPlatform("capacitor") && document.body.classList.contains('dark')) {
         Keyboard.setAccessoryBarVisible({isVisible: false});
         Keyboard.setStyle({
           style: KeyboardStyle.Dark,
@@ -279,34 +400,46 @@ export default defineComponent({
         ]).then(() => this.$forceUpdate());
     },
     filteredAppPages() {
-        if (!this.account) return [];
+      if (!this.account) return [];
 
+      const categories = [];
+      for (const category of this.appPages) {
         const pages = [];
-        for (const appPage of this.appPages) {
-            let hasPermissions = true;
-            for (const perm of appPage.permissions || []) {
-                if (this.account.permissions.indexOf(perm) == -1) {
-                    hasPermissions = false;
-                }
-            }
-            if (hasPermissions) pages.push(appPage);
+        for (const page of category.pages) {
+          let hasPermissions = true;
+          for (const perm of page.permissions || []) {
+              if (this.account.permissions.indexOf(perm) == -1) {
+                  hasPermissions = false;
+              }
+          }
+          if (hasPermissions) pages.push(page);
         }
-        return pages;
+        if (pages.length > 0) {
+          categories.push({
+            label: category.label,
+            pages: pages,
+          });
+        }
+      }
+      return categories;
     },
   },
   mounted() {
-    if (isPlatform('capacitor')) {
+    if (isPlatform("capacitor")) {
       Keyboard.setAccessoryBarVisible({isVisible: false});
     }
 
     this.loadDarkMode();
-    this.updateAccountDetails().then();
+    this.updateAccountDetails().then(() => {
+      if (!this.account) return;
+      this.showSidemenu = !this.isMobile || this.account.role != 'employee';
+    });
 
     // Add branding to html tag
     document.getElementsByTagName("html")[0].classList.add("brand-" + branding.id);
 
     // Lock to portrait mode
-    if (isPlatform('capacitor')) {
+    if (isPlatform("capacitor")) {
       ScreenOrientation.lock("portrait");
     }
 
@@ -314,7 +447,10 @@ export default defineComponent({
     updateStatusBar({
         transparentStatusBar: this.$route.meta.transparentStatusBar,
     });
-  }
+  },
+  activated() {
+    this.loadDarkMode();
+  },
 });
 </script>
 

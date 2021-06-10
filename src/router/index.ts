@@ -1,3 +1,4 @@
+import branding from '@/branding';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 
@@ -100,6 +101,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { permissionSpace: 'employees' },
   },
   {
+    name: 'employees:list',
     path: '/employees/',
     component: () => import('../views/Employees.vue'),
     meta: { permissionSpace: 'employees' },
@@ -111,6 +113,11 @@ const routes: Array<RouteRecordRaw> = [
   },
 
   // Tokens
+  {
+    path: '/tokens/add/',
+    component: () => import('../views/TokensAdd.vue'),
+    meta: { permissionSpace: 'physical_tokens' },
+  },
   {
     path: '/tokens/',
     component: () => import('../views/Tokens.vue'),
@@ -125,6 +132,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { permissionSpace: 'support_tickets' },
   },
   {
+    name: 'support',
     path: '/support/',
     component: () => import('../views/Support.vue'),
     meta: { permissionSpace: 'support_tickets' },
@@ -135,6 +143,28 @@ const routes: Array<RouteRecordRaw> = [
     path: '/account/profile/',
     component: () => import('../views/UserAccount.vue'),
     // meta: { permissionSpace: 'acc' },
+  },
+  {
+    path: '/account/institution/',
+    component: () => import('../views/Institution.vue'),
+    // meta: { permissionSpace: 'acc' },
+  },
+
+  // Absences
+  {
+    path: '/my-absences/applications/add/',
+    component: () => import('../views/EmployeeAbsenceDetail.vue'),
+    meta: { permissionSpace: 'absence-applications' },
+  },
+  {
+    path: '/my-absences/applications/:id/',
+    component: () => import('../views/EmployeeAbsenceDetail.vue'),
+    meta: { permissionSpace: 'absence-applications' },
+  },
+  {
+    path: '/my-absences/',
+    component: () => import('../views/EmployeeAbsence.vue'),
+    meta: { permissionSpace: 'absence' },
   },
 
   // Reports
@@ -172,6 +202,20 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
 
+  // Account
+  {
+    name: 'license',
+    path: '/account/license/',
+    component: () => import('../views/License.vue'),
+    meta: { permissionSpace: 'licenses' },
+  },
+  {
+    name: 'data-processing-agreement',
+    path: '/account/data-processing-agreement/',
+    component: () => import('../views/DataProcessingAgreement.vue'),
+    meta: { permissionSpace: 'contracts' },
+  },
+
   // Startpage
   {
     path: '',
@@ -207,11 +251,30 @@ router.beforeEach(async (to, _from, next) => {
 
   const account = (await accountService.list()).data.results[0];
   if (!account || !account.employee_id) {
-    next({ name: 'errors', params: { type: 'no-employee-assigned' } });
+      next({ name: 'employees:list' });
     return
   }
 
   next();
+});
+
+// Set title
+const setTitle = function(c: any) {
+    const title = c.title;
+    if (!title) return;
+    document.title = title + " – " + branding.name;
+}
+
+router.beforeEach((to, _from, next) => {
+    // console.log(to.matched[0]);
+    const component = (to.matched[0].components.default as any);
+    if (typeof component == 'function') {
+        component().then((c: any) => setTitle(c.default))
+    } else {
+        setTitle(component)
+    }
+
+    next();
 });
 
 export default router

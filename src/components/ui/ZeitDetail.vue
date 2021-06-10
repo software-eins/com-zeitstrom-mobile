@@ -1,6 +1,6 @@
 <template>
   <ion-page v-if="isInitialised">
-    <ion-header :translucent="true">
+    <ion-header :translucent="true" v-if="isMobile">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-back-button default-href="/" text="Zurück"></ion-back-button>
@@ -29,7 +29,19 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
+
+      <div v-if="!isMobile" class="mt-7 mr-8 ml-4">
+        <div class="relative pb-5 sm:pb-0 mb-8">
+          <div class="md:flex md:items-center md:justify-between mb-8">
+            <h3 class="text-3xl font-medium text-gray-900">
+              {{ getTitle() }}
+            </h3>
+          </div>
+        </div>
+      </div>
+
       <slot name="before-form" />
+
       <zeit-form
         ref="form"
         :resource="localResource"
@@ -38,8 +50,35 @@
         @update:resource="updateLocalResource($event)"
         :errors="formErrors"
         :disabled="!hasEditPermissions()"
+        :mobileLineTop="false"
+        lastLine="full"
       />
+
       <slot name="after-form"></slot>
+
+      <div class="py-8 ml-4 text-right max-w-lg" v-if='!isMobile'>
+        <zeit-button
+          class="mr-4"
+          color="light"
+          @click="goBack($event)"
+          :disabled="isLoading"
+        >Abbrechen</zeit-button>
+
+        <zeit-button
+          v-if="!remoteResource.id && hasCreatePermissions()"
+          :disabled="!hasChanges()"
+          @click="createRemoteResource()"
+          :isLoading="isLoading"
+        >Hinzufügen</zeit-button>
+
+        <zeit-button
+          v-if="remoteResource.id && hasEditPermissions()"
+          :disabled="!hasChanges()"
+          @click="updateRemoteResource()"
+          :isLoading="isLoading"
+        >Speichern</zeit-button>
+      </div>
+
     </ion-content>
   </ion-page>
 </template>
@@ -55,31 +94,46 @@ import {
 import { ellipsisHorizontalCircle, ellipsisHorizontal } from 'ionicons/icons';
 
 import ZeitForm from './ZeitForm.vue';
+import ZeitButton from './ZeitButton.vue';
 import { AxiosResponse } from "axios";
 
 import { Account, accountService } from '../../services/accounts';
 
+import { shortcut, KeyCode } from '../../globals/shortcuts';
+
+import { Subscription } from 'rxjs';
+
+
 interface DetailActionHandler {
-    (resource: any): void;
+  (resource: any): void;
+}
+
+interface IsVisibleHandler {
+  (resource: any): boolean;
 }
 
 export class DetailAction {
-    text: string;
-    handler: DetailActionHandler;
-    role?: string;
+  text: string;
+  handler: DetailActionHandler;
+  role?: string;
+  isVisible: IsVisibleHandler;
 
-    constructor(text: string, handler: DetailActionHandler, role?: string) {
-        this.text = text;
-        this.handler = handler;
-        this.role = role;
-    }
+  constructor(text: string, handler: DetailActionHandler, role?: string, isVisible?: IsVisibleHandler) {
+    this.text = text;
+    this.handler = handler;
+    this.role = role;
+    this.isVisible = isVisible || (() => true);
+  }
 }
 
 export default defineComponent({
     components: {
         IonPage, IonHeader, IonToolbar, IonIcon, IonButton, IonButtons, IonBackButton, IonTitle, IonContent,
-        ZeitForm,
+        ZeitForm, ZeitButton,
     },
+    inject: [
+      "isMobile",
+    ],
     props: {
         service: Object,
         extraQueryParams: Object,
@@ -97,11 +151,16 @@ export default defineComponent({
         editPermission: {
             type: String,
             default: "edit",
-        }
+        },
+        backUrl: {
+          type: String,
+          default: undefined,
+        },
     },
     data() {
         return {
             isInitialised: false,
+            isLoading: false,
 
             ellipsisHorizontalCircle,
             ellipsisHorizontal,
@@ -119,6 +178,7 @@ export default defineComponent({
             deleteResourceMethod: '',
             deleteResourceTitle: '',
             deleteResourceConfirmation: '',
+            subscriptions: [] as Array<Subscription>,
         }
     },
     methods: {
@@ -127,7 +187,9 @@ export default defineComponent({
             return  this.titleAttribute(this.remoteResource);
         },
         reloadRemoteResource() {
-            return this.service!
+            if (!this.service) return;
+
+            return this.service
                 .retrieve(this.$route.params.id as string, this.extraQueryParams)
                 .then((response: AxiosResponse<any>) => {
                     this.remoteResource = response.data;
@@ -141,12 +203,44 @@ export default defineComponent({
             this.localResource = newResource;
         },
         updateRemoteResource() {
+            if (!this.service) return;
+            if (!this.localResource) return;
+
+            this.isLoading = true;
             this.formErrors = undefined;
-            this.service!.update(this.localResource!.id, this.localResource!).then(() => {
-              this.$router.go(-1);
-              const toast = toastController
+            this.service.update(this.localResource.id, this.localResource)
+              .then((response: AxiosResponse<any>) => {
+                this.remoteResource = response.data;
+                this.localResource = JSON.parse(JSON.stringify(response.data)) as unknown as any;
+
+                this.isLoading = false;
+                this.goBack();
+                toastController
+                  .create({
+                    message: 'Deine Änderungen wurden gespeichert',
+                    duration: 2000
+                  }).then(toast => toast.present());
+              }).catch((error: any) => {
+                if (error.response.status == 400) {
+                  this.formErrors = error.response.data;
+                }
+                this.isLoading = false;
+              });
+        },
+        createRemoteResource() {
+          if (!this.service) return;
+          if (!this.localResource) return;
+
+          this.formErrors = undefined;
+          this.service.create(this.localResource)
+            .then((response: AxiosResponse<any>) => {
+              this.remoteResource = response.data;
+              this.localResource = JSON.parse(JSON.stringify(response.data)) as unknown as any;
+
+              this.goBack();
+              toastController
                 .create({
-                  message: 'Deine Änderungen wurden gespeichert.',
+                  message: this.newResourceConfirmation,
                   duration: 2000
                 }).then(toast => toast.present());
             }).catch((error: any) => {
@@ -154,21 +248,6 @@ export default defineComponent({
                 this.formErrors = error.response.data;
               }
             });
-        },
-        createRemoteResource() {
-          this.formErrors = undefined;
-          this.service!.create(this.localResource!).then(() => {
-            this.$router.go(-1);
-            toastController
-              .create({
-                message: this.newResourceConfirmation,
-                duration: 2000
-              }).then(toast => toast.present());
-          }).catch((error: any) => {
-            if (error.response.status == 400) {
-              this.formErrors = error.response.data;
-            }
-          });
         },
         hasPermission(name: string) {
             if (!this.account) return false;
@@ -187,11 +266,13 @@ export default defineComponent({
 
             // Add extra actions
             for (const action of this.extraActions) {
-                actions.push({
-                    text: action.text,
-                    role: action.role,
-                    handler: () => action.handler(this.remoteResource),
-                });
+              if (!action.isVisible(this.localResource)) continue;
+
+              actions.push({
+                text: action.text,
+                role: action.role,
+                handler: () => action.handler(this.remoteResource),
+              });
             }
 
             // Add destructive action
@@ -199,12 +280,13 @@ export default defineComponent({
                 text: this.deleteResourceTitle,
                 role: 'destructive',
                 handler: () => {
-                    this.service![this.deleteResourceMethod](this.localResource!.id).then(() => {
+                    if (!this.service) return;
+                    if (!this.localResource) return;
+                    this.service[this.deleteResourceMethod](this.localResource.id).then(() => {
                         this.$router.go(-1);
-                        const toast = toastController
-                        .create({
-                            message: this.deleteResourceConfirmation,
-                            duration: 2000
+                        toastController.create({
+                          message: this.deleteResourceConfirmation,
+                          duration: 2000
                         }).then(toast => toast.present());
                     });
                 },
@@ -224,14 +306,33 @@ export default defineComponent({
                 });
             return actionSheet.present();
         },
+        goBack() {
+          if (this.backUrl) {
+            this.$router.push({path: this.backUrl});
+            return;
+          }
+
+          let id = this.$route.params.id as string;
+          if (!id) id = 'add';
+
+          const url = this.$route.fullPath.split(id)[0];
+
+          if (window.history.state.back && window.history.state.back.startsWith(url + '?')) {
+            this.$router.go(-1);
+          } else {
+            this.$router.push({path: url});
+          }
+        },
     },
     beforeMount() {
+        if (!this.service) return;
+
         const resourceId = this.$route.params.id;
         let promises = [];
 
         // Load account
         promises.push(this.accountService.list().then(response => {
-            this.account = response.data.results[0];
+          this.account = response.data.results[0];
         }));
 
         // Load resource
@@ -244,17 +345,36 @@ export default defineComponent({
 
         // Load labels
         promises = promises.concat([
-            this.service!.titleAttribute(resourceId).then((v: any) => { this.titleAttribute = v }),
-            this.service!.newResourceTitle(resourceId).then((v: string) => { this.newResourceTitle = v }),
-            this.service!.newResourceConfirmation(resourceId).then((v: string) => { this.newResourceConfirmation = v }),
-            this.service!.deleteResourceMethod(resourceId).then((v: string) => { this.deleteResourceMethod = v }),
-            this.service!.deleteResourceTitle(resourceId).then((v: string) => { this.deleteResourceTitle = v }),
-            this.service!.deleteResourceConfirmation(resourceId).then((v: string) => { this.deleteResourceConfirmation = v }),
+            this.service.titleAttribute(resourceId).then((v: any) => { this.titleAttribute = v }),
+            this.service.newResourceTitle(resourceId).then((v: string) => { this.newResourceTitle = v }),
+            this.service.newResourceConfirmation(resourceId).then((v: string) => { this.newResourceConfirmation = v }),
+            this.service.deleteResourceMethod(resourceId).then((v: string) => { this.deleteResourceMethod = v }),
+            this.service.deleteResourceTitle(resourceId).then((v: string) => { this.deleteResourceTitle = v }),
+            this.service.deleteResourceConfirmation(resourceId).then((v: string) => { this.deleteResourceConfirmation = v }),
         ]);
 
         // Wait for all promises to finish
         Promise.all(promises).then(() => { this.isInitialised = true });
 
+        // Shortcut Enter: Create or Update
+        this.subscriptions.push(shortcut([KeyCode.Enter]).subscribe(() => {
+          // Do not listen to enter if there is a submit element focused, the
+          // browser will take care of it already
+          if (document.activeElement && document.activeElement.tagName == "BUTTON") return;
+
+          if (!this.remoteResource.id && this.hasCreatePermissions() && this.hasChanges()) this.createRemoteResource();
+          if (this.remoteResource.id && this.hasEditPermissions() && this.hasChanges()) this.updateRemoteResource();
+        }));
+
+        // Shortcut Escape: Cancel
+        this.subscriptions.push(shortcut([KeyCode.Escape]).subscribe(() => {
+          this.goBack();
+        }));
     },
+    unmounted() {
+      for (const subscription of this.subscriptions) {
+        subscription.unsubscribe();
+      }
+    }
 });
 </script>

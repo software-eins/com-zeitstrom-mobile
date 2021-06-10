@@ -12,6 +12,15 @@ interface Institution {
     name: string;
     flags: Array<string>;
     config: any;
+
+    contact_person: string;
+    address: string;
+    number: string;
+    address_2: string;
+    zip_code: string;
+    city: string;
+    country: string;
+    brand: string;
 }
 
 

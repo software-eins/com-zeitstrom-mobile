@@ -16,8 +16,12 @@ const zsAxios = axios.create({
 });
 
 zsAxios.interceptors.response.use(response => response, function (error: any) {
-    console.log(error);
-    console.log(error.response);
+    if (error.response.status == 403 && localStorage.accessToken) {
+        delete localStorage.accessToken;
+        window.location.href = "/authentication/login/";
+    }
+    // console.log(error);
+    // console.log(error.response);
     // TODO
     // if (error.response && error.response.status == 401) {
     //     router.push('/authentication/login/');

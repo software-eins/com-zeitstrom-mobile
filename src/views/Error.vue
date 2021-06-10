@@ -2,6 +2,7 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
+        <ion-buttons slot="start" v-if="showSidemenu"><ion-menu-button color="primary"></ion-menu-button></ion-buttons>
         <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -45,13 +46,14 @@
 
   export default defineComponent({
     components: {
-      IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonText, ZeitButton,
+      IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonText, ZeitButton, IonButtons, IonMenuButton,
     },
     data() {
       return {
         accountService,
       }
     },
+    inject: ['showSidemenu'],
     computed: {
       title() {
         const type = this.$route.params.type as string;

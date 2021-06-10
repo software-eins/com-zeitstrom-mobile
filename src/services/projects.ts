@@ -5,6 +5,9 @@ interface ProjectListParams {
     ids?: Array<string>;
     includeArchived?: boolean;
     highlighted?: boolean;
+    page?: number;
+    pagesize?: number;
+    query?: string;
 }
 
 interface Project {
@@ -51,8 +54,12 @@ class ProjectService extends BaseService<Project> {
     deleteResourceTitle(resourceId?: string): Promise<string> { return Promise.resolve("Archivieren") }
     deleteResourceConfirmation(resourceId?: string): Promise<string> { return Promise.resolve("Projekt archiviert") }
 
-    listParams(page=1, pagesize=50, query='', params: ProjectListParams): Promise<AxiosResponse<PaginatedResponse<Project>>> {
+    listParams(params: ProjectListParams): Promise<AxiosResponse<PaginatedResponse<Project>>> {
         params = params || {};
+
+        const pagesize = params.pagesize || 50;
+        const page = params.page || 1;
+        const query = params.query || '';
 
         let url =
             '?limit=' + String(pagesize) +

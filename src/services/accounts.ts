@@ -111,6 +111,6 @@ class AccountService extends BaseService<Account> {
 
 const accountService = new AccountService();
 
-export { AccountService, accountService, Account }
+export { AccountService, accountService, Account, SetPasswordBody }
 
 export default accountService;

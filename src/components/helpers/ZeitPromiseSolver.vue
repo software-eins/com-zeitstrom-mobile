@@ -29,12 +29,8 @@
       },
     },
     watch: {
-      promise: function(newPromise) {
-        this.isSolved = false;
-        newPromise.then((result: any) => {
-          this.value = result;
-          this.isSolved = true;
-        });
+      promise: function() {
+        this.subscribe();
       },
     },
     data() {
@@ -50,6 +46,18 @@
           display: 'inline-block',
         }
       },
+      subscribe() {
+        if (!this.promise) return;
+
+        this.isSolved = false;
+        this.promise.then((result: any) => {
+          this.value = result;
+          this.isSolved = true;
+        });
+      }
+    },
+    mounted() {
+      this.subscribe();
     }
   });
 </script>

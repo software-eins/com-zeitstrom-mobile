@@ -1,4 +1,4 @@
-import { BaseService, FormField, PaginatedResponse } from './_base';
+import { BaseService, FormField } from './_base';
 
 
 interface SupportTicket {
@@ -13,7 +13,7 @@ class SupportTicketService extends BaseService<SupportTicket> {
         super("/api/v2/support/tickets/");
         this.formFields = [
             new FormField("subject", "Dein Anliegen", { autofocus: true }),
-            new FormField("body", "Detaillierte Beschreibung", {}),
+            new FormField("body", "Detaillierte Beschreibung", {type: 'textarea'}),
         ];
     }
 }

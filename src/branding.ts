@@ -7,7 +7,7 @@ brands.set("orange", {
     name: "TA Zeitblick",
     url: "ta-zeitblick.de",
     colors: {
-        primary: '#FF8200',
+        primary: '#F7941D',
         success: '#28C76F',
         danger: '#EA5455',
         warning: '#FF9F43',
@@ -23,7 +23,7 @@ brands.set("black", {
     name: "UTAX Zeitblick",
     url: "utax-zeitblick.de",
     colors: {
-        primary: '#FF8200',
+        primary: '#F7941D',
         success: '#28C76F',
         danger: '#EA5455',
         warning: '#FF9F43',
@@ -46,6 +46,8 @@ brands.set("red", {
         dark: '#1E1E1E',
     },
     isMobile: process.env.VUE_APP_IS_MOBILE == 'true',
+    // supportPhone: '+49 1806 456326',
+    // supportPhoneFootnote: 'Mo-Do 7 – 17 Uhr, Fr 7 - 16 Uhr, 20 Cent aus dem deutschen Festnetz, Mobilfunkpreise können abweichen, maximal jedoch 60 Cent pro Anruf',
     supportPhone: undefined,
     supportPhoneFootnote: undefined,
 });

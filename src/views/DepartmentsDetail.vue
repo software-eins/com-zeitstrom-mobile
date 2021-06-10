@@ -1,6 +1,6 @@
 <template>
-  <zeit-detail :service="employeeGroupService">
-      <template v-slot:after-form v-if="$route.params.id">
+  <zeit-detail :service="employeeGroupService" v-if="isActive">
+      <template v-slot:after-form v-if="$route.params.id && isMobile">
         <ion-item button :detail="!isLoadingEmployees" @click="showEmployees()">
             <ion-label>Mitarbeiter anzeigen</ion-label>
             <ion-spinner slot="end" v-if="isLoadingEmployees" />
@@ -24,8 +24,13 @@
       IonItem,
       IonLabel,
     },
+    inject: [
+      "isMobile",
+    ],
     data() {
       return {
+        isActive: false,
+
         employeeGroupService,
         employeeService,
 
@@ -43,6 +48,15 @@
                 });
             });
         },
+    },
+    beforeMount() {
+        this.isActive = true;
+    },
+    ionViewWillLeave() {
+        this.isActive = false;
+    },
+    ionViewWillEnter() {
+        this.isActive = true;
     },
   })
 </script>

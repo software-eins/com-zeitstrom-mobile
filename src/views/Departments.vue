@@ -1,10 +1,12 @@
 <template>
     <zeit-list
+        v-if="isActive"
         resourceType="Abteilungen"
         basePath="/departments/"
         searchPlaceholder="Suche nach Abteilungsname"
         :service="employeeGroupService"
         :fields="fields"
+        addResourceLabel="Neue Abteilung"
     >
         <template v-slot:no-results>Es existieren aktuell keine Abteilungen.</template>
         <template v-slot:no-results-add>Erstelle Abteilungen, um deine Mitarbeiter zu gruppieren und einfacher zu verwalten.</template>
@@ -19,11 +21,14 @@
     import { formatDuration } from '../globals/helpers';
 
     export default defineComponent({
+        title: "Abteilungen",
         components: {
             ZeitList,
         },
         data() {
             return {
+                isActive: false,
+
                 employeeGroupService,
                 fields: [
                     // {
@@ -47,6 +52,15 @@
                     },
                 ],
             }
+        },
+        beforeMount() {
+            this.isActive = true;
+        },
+        ionViewWillLeave() {
+            this.isActive = false;
+        },
+        ionViewWillEnter() {
+            this.isActive = true;
         },
     })
 </script>

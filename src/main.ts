@@ -26,7 +26,7 @@ import './theme/tailwind.css';
 import './theme/variables.css';
 import './theme/custom.css';
 
-import Sticky from 'vue-sticky-directive'
+import Sticky from 'vue-sticky-directive';
 
 
 const app = createApp(App)
@@ -34,6 +34,7 @@ const app = createApp(App)
   .use(router)
   .use(Sticky);
 
+
 router.isReady().then(() => {
-    app.mount('#app');
+  app.mount('#app');
 });

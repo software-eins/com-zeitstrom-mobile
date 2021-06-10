@@ -20,11 +20,12 @@
                     >Keine auswählen</ion-button>
                 </ion-item>
                 <ion-item
-                    v-for="entry of entries" :key="entry.id"
+                    v-for="(entry, index) of entries" :key="entry.id"
                     :detail="isLoadingEntry != entry.id && showDetail"
                     button
                     @click="handleItemClick(entry)"
                     :style="getBorderStyle(entry)"
+                    :lines="index == entries.length - 1 ? lastLineStyle : undefined"
                 >
                     <ion-checkbox
                         slot="start"
@@ -59,11 +60,11 @@
                 </ion-item>
             </ion-list>
 
-            <div v-if="entries.length > 0 && pagination.total <= entries.length" class="mx-2 my-4 flex justify-center text-gray-500">
+            <div v-if="showPagination && entries.length > 0 && pagination.total <= entries.length" class="mx-2 my-4 flex justify-center text-gray-500">
                 {{ entries.length }}&nbsp;<span v-if="entries.length == 1">Eintrag</span><span v-else>Einträge</span>
             </div>
 
-            <div v-if="pagination.total == 0" class="mx-2 my-4 flex justify-center text-gray-500">
+            <div v-if="showPagination && pagination.total == 0" class="mx-2 my-4 flex justify-center text-gray-500">
                 Keine Ergebnisse
             </div>
 
@@ -178,6 +179,14 @@ export default defineComponent({
         refreshEnabled: {
             type: Boolean,
             default: true,
+        },
+        showPagination: {
+            type: Boolean,
+            default: true,
+        },
+        lastLineStyle: {
+            type: String,
+            default: undefined,
         },
     },
     data() {

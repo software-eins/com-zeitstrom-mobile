@@ -2,11 +2,13 @@
     <zeit-list
         resourceType="Token"
         basePath="/tokens/"
+        searchPlaceholder="Suche nach Token"
         :service="physicalTokenService"
         :listParameters="listParameters"
         :fields="fields"
         :showDetail="false"
         :showSearch="false"
+        addResourceLabel="Neue Token anlegen"
     ></zeit-list>
 </template>
 
@@ -18,6 +20,7 @@
     import { formatDuration } from '../globals/helpers';
 
     export default defineComponent({
+        title: "Token",
         components: {
             ZeitList,
         },

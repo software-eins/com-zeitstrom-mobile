@@ -32,7 +32,7 @@ class PhysicalTokenService extends BaseService<PhysicalToken> {
         return this._get(params) as unknown as Promise<AxiosResponse<PaginatedResponse<PhysicalToken>>>;
     }
 
-    listParams(this: PhysicalTokenService, params: PhysicalTokenListParams): Promise<PaginatedResponse<PhysicalToken>> {
+    listParams(this: PhysicalTokenService, params: PhysicalTokenListParams): Promise<AxiosResponse<PaginatedResponse<PhysicalToken>>> {
         params = params || {};
 
         params.pagesize = params.pagesize || 1000;
@@ -48,7 +48,7 @@ class PhysicalTokenService extends BaseService<PhysicalToken> {
             '&fields=' + params.fields.join("|") +
             '&ids=' + params.ids.join("|");
 
-        return this._get(query) as unknown as Promise<PaginatedResponse<PhysicalToken>>;
+        return this._get(query) as unknown as Promise<AxiosResponse<PaginatedResponse<PhysicalToken>>>;
     }
 
     listCreate(this: PhysicalTokenService, ids: Array<string>) {

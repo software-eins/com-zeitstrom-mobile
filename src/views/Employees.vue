@@ -1,6 +1,6 @@
 <template>
     <zeit-list
-        v-if="isLoaded"
+        v-if="isLoaded && isActive"
         resourceType="Mitarbeiter"
         basePath="/employees/"
         searchPlaceholder="Suche nach Name oder Token"
@@ -8,6 +8,9 @@
         :fields="fields"
         :totalResultCountPromise="totalResultCountPromise"
         :segmentFilter="segmentFilterOptions"
+        addResourceLabel="Neuer Mitarbeiter"
+        :detailActions="detailActions"
+        :showResults="showResults"
     >
         <template v-slot:no-results>Es existieren aktuell keine Mitarbeiter.</template>
         <template v-slot:no-results-add>Erstelle Mitarbeiter, welche Zugriff zu {{ branding.name }} erhalten dürfen.</template>
@@ -17,19 +20,26 @@
 <script lang="ts">
     import { defineComponent } from 'vue';
     import { archive } from 'ionicons/icons';
+    import { toastController } from '@ionic/vue';
     import ZeitList from '../components/ui/ZeitList.vue';
-    import employeeService from '../services/employees';
+    import { DetailAction } from '../components/ui/ZeitDetail.vue';
+    import employeeService, { Employee } from '../services/employees';
     import { RowIcon } from '../components/ui/ZeitGrid.vue';
     import branding from '../branding';
     import { AxiosResponse } from 'axios';
 
+    import { textToClipboard } from '../globals/clipboard';
+
     export default defineComponent({
+        title: "Mitarbeiter",
         components: {
             ZeitList,
         },
         data() {
             return {
                 isLoaded: false,
+                isActive: false,
+                showResults: true,
 
                 branding,
                 employeeService,
@@ -52,6 +62,7 @@
                     },
                     {
                         id: "employee_group_name",
+                        label: "Abteilung",
                         mobileLevel: 'p',
                         default: 'Keine Abteilung',
                     },
@@ -63,6 +74,7 @@
                     },
                     {
                         id: "archived_at",
+                        label: "Archiviert am",
                         hideDesktop: true,
                         mobileLevel: "h2-icons",
                         formatter: (e: any) => {
@@ -74,10 +86,10 @@
                 segmentFilterOptions: {
                     filterAttributeId: 'showArchived',
                     options: [
-                        {label: 'Aktiv', value: false},
-                        {label: 'Archiviert', value: true},
+                        {label: 'Aktiv', value: 'active'},
+                        {label: 'Archiviert', value: 'archived'},
                     ],
-                    default: false,
+                    default: 'active',
                 } as any,
                 totalResultCountPromise: function() {
                     return Promise.all([
@@ -91,9 +103,66 @@
                         return resultCounts[0] + resultCounts[1];
                     });
                 },
+                detailActions: [] as Array<DetailAction>,
             }
         },
         beforeMount() {
+            this.detailActions = [
+                new DetailAction(
+                    'Zugangsdaten kopieren',
+                    (employee: Employee) => {
+                        textToClipboard(
+                            employee.username + "\n" + employee.initial_password,
+                            'Zugangsdaten kopiert.'
+                        )
+                    }
+                ),
+                new DetailAction(
+                    'Passwort zurücksetzen',
+                    (employee: Employee) => {
+                        employeeService.resetPassword(employee.id).then((response: AxiosResponse<Employee>) => {
+                            employee.initial_password = response.data.initial_password;
+                            textToClipboard(employee.initial_password, "Neues Passwort kopiert.");
+                        })
+                    }
+                ),
+                new DetailAction(
+                    'Mitarbeiter löschen',
+                    (employee: Employee) => {
+                        this.showResults = false;
+                        employeeService.delete(employee.id).then(() => {
+                            toastController.create({
+                                message: 'Mitarbeiter gelöscht.',
+                                duration: 2000
+                            }).then(toast => toast.present());
+                            this.showResults = true;
+                        });
+                    },
+                    'destructive',
+                    (employee: Employee) => {
+                        return employee.can_be_deleted;
+                    }
+                ),
+                new DetailAction(
+                    'Mitarbeiter archivieren',
+                    (employee: Employee) => {
+                        this.showResults = false;
+                        employeeService.archive(employee.id).then(() => {
+                            toastController.create({
+                                message: 'Mitarbeiter archiviert.',
+                                duration: 2000
+                            }).then(toast => toast.present());
+                            this.showResults = true;
+                        });
+                    },
+                    'destructive',
+                    (employee: Employee) => {
+                        return !employee.can_be_deleted && !employee.archived_at;
+                    }
+                ),
+            ];
+
+            this.isActive = true;
             return Promise.all([
                 employeeService.listParams({}).then((result: AxiosResponse<any>) => {
                     return result.data.count;
@@ -115,6 +184,12 @@
                 }
                 this.isLoaded = true;
             });
+        },
+        ionViewWillLeave() {
+            this.isActive = false;
+        },
+        ionViewWillEnter() {
+            this.isActive = true;
         },
     })
 </script>

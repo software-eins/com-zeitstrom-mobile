@@ -6,12 +6,17 @@
 
         <ion-tab-button tab="tracking" href="/time-tracking/">
           <ion-icon :md="timer" :ios="timerSharp"></ion-icon>
-          <ion-label>Stempeln</ion-label>
+          <ion-label>Stempeluhr</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="report" href="/reports/employees/">
           <ion-icon :md="calendar" :ios="calendarSharp"></ion-icon>
           <ion-label>Bericht</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="absence" href="/my-absences/">
+          <ion-icon :md="glasses" :ios="glasses"></ion-icon>
+          <ion-label>Abwesenheit</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="account" href="/account/profile/">
@@ -52,6 +57,7 @@ import {
 import {
   calendar, personCircle, timer,
   calendarSharp, personCircleSharp, timerSharp,
+  glasses,
 } from 'ionicons/icons';
 
 export default defineComponent({
@@ -62,6 +68,7 @@ export default defineComponent({
     return {
       calendar, personCircle, timer,
       calendarSharp, personCircleSharp, timerSharp,
+      glasses,
     }
   },
 });

@@ -1,6 +1,6 @@
 <template>
   <zeit-detail
-    v-if="isLoaded"
+    v-if="isLoaded && isActive"
     :service="employeeService"
     :extraActions="extraActions"
     :isEditable="!employee || !employee.archived_at"
@@ -42,10 +42,11 @@
         employeeService,
         employee: undefined as Employee|undefined,
         isLoaded: false,
+        isActive: false,
         extraActions: [
             new DetailAction(
                 'Zugangsdaten kopieren',
-                (employee: Employee) => { textToClipboard(employee.username + " " + employee.initial_password) }
+                (employee: Employee) => { textToClipboard(employee.username + "\n" + employee.initial_password) }
             ),
             new DetailAction(
                 'Passwort zurücksetzen',
@@ -64,6 +65,7 @@
       }
     },
     beforeMount() {
+      this.isActive = true;
       if (this.$route.params.id) {
         this.employeeService.retrieve(this.$route.params.id as string)
           .then((response: AxiosResponse<Employee>) => {
@@ -75,6 +77,12 @@
       } else {
         this.isLoaded = true;
       }
+    },
+    ionViewWillLeave() {
+        this.isActive = false;
+    },
+    ionViewWillEnter() {
+        this.isActive = true;
     },
   })
 </script>

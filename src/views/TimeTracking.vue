@@ -1,60 +1,46 @@
 <template>
-  <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
+  <zeit-page
+    :hasRefresher="true"
+    @refresh="loadData($event)"
+  >
 
-          <ion-buttons slot="start" v-if="false"><ion-menu-button color="primary"></ion-menu-button></ion-buttons>
-          <ion-title>
-            <template v-if="activeTimespan">Angemeldet <div class="dot-active ml-2" /></template>
-            <template v-else-if="isLoaded">Abgemeldet</template>
-            <template v-else><ion-skeleton-text animated /></template>
-          </ion-title>
+    <zeit-time-tracking-panel class="mb-12" @timeTracked="loadData(true)" v-if="!isMobile" />
 
-      </ion-toolbar>
-    </ion-header>
 
-    <ion-content :fullscreen="true">
-      <ion-refresher slot="fixed" @ionRefresh="loadData($event)">
-        <ion-refresher-content></ion-refresher-content>
-      </ion-refresher>
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Hallo {{ getName() }}</ion-title>
-        </ion-toolbar>
-        <ion-toolbar class="px-3 pb-4">
-          <ion-text color="medium">
-            <template v-if="activeTimespan">Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</template>
-            <template v-else-if="isLoaded">Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.</template>
-            <template v-else>
-              <ion-skeleton-text animated class="mb-3" />
-              <ion-skeleton-text animated class="mb-3 w-1/2" />
-            </template>
-          </ion-text>
-        </ion-toolbar>
-      </ion-header>
-
-      <ion-item lines="full" class="transparent-bg" v-if="!isPlatform('ios')">
-        <div class="py-4 text-sm">
-          <ion-text color="medium">
-            <template v-if="activeTimespan">Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</template>
-            <template v-else-if="isLoaded">Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.</template>
-            <template v-else>
-              <ion-skeleton-text animated class="mb-3" />
-              <ion-skeleton-text animated class="mb-3 w-1/2" />
-            </template>
-          </ion-text>
+    <template v-slot:title v-if="isMobile">
+        <div v-if="activeTimespan" class="inline-block">
+          <div class="flex items-center">
+            <div class="mr-1 inline-block">Angemeldet</div>
+            <div class="dot-active inline-block" />
+          </div>
         </div>
-      </ion-item>
+        <template v-else-if="isLoaded">Abgemeldet</template>
+        <template v-else><ion-skeleton-text animated /></template>
+    </template>
 
-      <zeit-permission-request
-        v-if="locationSetting == 'location_tracking_detailed'"
-        feature="location"
-        description="Dein Arbeitgeber benötigt den genauen Standort zur Erfassung von Arbeitszeiten."
-        notEnabledDescription="Leider unterstützt dein Gerät keine Standortfreigabe. Du kannst daher keine Zeiten erfassen."
-        cta="Standort jetzt freigeben"
-        @isAvailable="handleLocationPermissionChange($event)"
-      />
+    <template v-slot:subheader v-if="isMobile">
+      <ion-title size="large" v-if="false">Hallo {{ getName() }}</ion-title>
 
+      <ion-text color="medium">
+        <template v-if="activeTimespan">Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</template>
+        <template v-else-if="isLoaded">Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.</template>
+        <template v-else>
+          <ion-skeleton-text animated class="mb-3" />
+          <ion-skeleton-text animated class="mb-3 w-1/2" />
+        </template>
+      </ion-text>
+    </template>
+
+    <zeit-permission-request
+      v-if="locationSetting == 'location_tracking_detailed'"
+      feature="location"
+      description="Dein Arbeitgeber benötigt den genauen Standort zur Erfassung von Arbeitszeiten."
+      notEnabledDescription="Leider unterstützt dein Gerät keine Standortfreigabe. Du kannst daher keine Zeiten erfassen."
+      cta="Standort jetzt freigeben"
+      @isAvailable="handleLocationPermissionChange($event)"
+    />
+
+    <template v-if="isMobile">
       <ion-item  v-if="isLoaded" lines="full" class="hero-cta mb-4" @click="addTimestamp()">
 
         <ion-label v-if="activeTimespan">
@@ -84,19 +70,26 @@
           <p><ion-skeleton-text animated class="w-40" /></p>
         </ion-label>
       </ion-item>
+    </template>
 
-      <template v-if="isLoaded">
-        <zeit-workday-card
-            v-for="workday of getWorkdays()"
-            :activeTimespanId="activeTimespan ? activeTimespan.id : undefined"
-            :key="workday.id"
-            :workdays="[workday]"
-            :employeeId="account.employee_id"
-        />
-      </template>
+    <p class="text-sm text-gray-400 font-semibold mb-4 uppercase tracking-wide" v-if="!isMobile">
+      Deine erfassten Zeiten
+    </p>
 
-    </ion-content>
-  </ion-page>
+    <div :class="{'mx-4': isMobile}" v-if="isLoaded">
+      <zeit-workday-card
+          v-for="workday of getWorkdays()"
+          :activeTimespan="activeTimespan"
+          :key="workday.id"
+          :workdays="[workday]"
+          :employeeId="account.employee_id"
+          cardClasses="mx-0"
+      />
+    </div>
+
+
+
+  </zeit-page>
 </template>
 
 <style>
@@ -109,17 +102,18 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   import {
-    IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonIcon, IonLabel,
-    IonContent, IonToolbar, IonItem, IonText, IonSpinner, IonSkeletonText, getPlatforms,
-    IonRefresher, IonRefresherContent,
+    IonTitle, IonIcon, IonLabel,
+    IonItem, IonText, IonSpinner, IonSkeletonText, getPlatforms,
   } from '@ionic/vue';
 
   import { Geolocation, Geoposition } from '@ionic-native/geolocation';
 
   import { playOutline, logOutOutline } from 'ionicons/icons';
 
+  import ZeitPage from '../components/ui/ZeitPage.vue';
   import ZeitWorkdayCard from '../components/ui/ZeitWorkdayCard.vue';
   import ZeitPermissionRequest from '../components/ui/ZeitPermissionRequest.vue';
+  import ZeitTimeTrackingPanel from '../components/ui/ZeitTimeTrackingPanel.vue';
 
   import { accountService, Account } from '../services/accounts';
   import { institutionService, Institution } from '../services/institutions';
@@ -147,12 +141,12 @@
 
   export default defineComponent({
     components: {
-        IonPage, IonHeader, IonButtons, IonMenuButton, IonTitle, IonIcon, IonLabel,
-        IonContent, IonToolbar, IonItem, IonText, IonSpinner, IonSkeletonText,
-        IonRefresher, IonRefresherContent,
+        IonTitle, IonIcon, IonLabel,
+        IonItem, IonText, IonSpinner, IonSkeletonText,
 
-        ZeitWorkdayCard, ZeitPermissionRequest,
+        ZeitWorkdayCard, ZeitPermissionRequest, ZeitPage, ZeitTimeTrackingPanel,
     },
+    inject: ['showSidemenu', 'isMobile'],
     data() {
       return {
         isPlatform,
@@ -187,7 +181,7 @@
         mountedFullPath: undefined as string|undefined,
         activeTimespan: undefined as Timespan|undefined,
         isLoadingAddTimestamp: false,
-        timer: undefined as number|undefined,
+        timer: undefined as any,
         positionSubscription: undefined as Subscription|undefined,
         coordinates: undefined as LatLong|undefined,
         formattedAddress: undefined as string|undefined,
@@ -252,15 +246,17 @@
         this.trackingService.addTimestamp(employeeId, undefined, undefined, meta).then(() => {
           this.updateWorkingStatus().then(() => {
             this.isLoadingAddTimestamp = false;
-            this.loadWorkdayReports();
+            this.loadWorkdayReports(true);
           });
         });
       },
-      loadWorkdayReports() {
+      loadWorkdayReports(clearCache = false) {
         if (this.account === undefined) return;
         if (this.account.employee_id === undefined) return;
 
         const employeeId = this.account.employee_id;
+
+        if (clearCache) this.employeeReportService.clearCache();
 
         return this.employeeReportService.workdayReports(employeeId).then((result: AxiosResponse<PaginatedResponse<WorkdayReport>>) => {
           this.workdays = result.data.results;
@@ -310,6 +306,7 @@
         if (event) {
           this.accountService.clearCache();
           this.institutionService.clearCache();
+          this.employeeReportService.clearCache();
         }
 
         Promise.all([

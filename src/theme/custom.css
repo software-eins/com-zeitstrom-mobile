@@ -1,3 +1,7 @@
+body {
+    font-family: Inter, Roboto, 'Helvetica Neue', sans-serif;
+}
+
 ion-title.ios.title-large {
     line-height: 1.6 !important;
     font-size: 31px;
@@ -49,4 +53,23 @@ ion-list.transparent-bg {
 ion-toolbar.transparent-bg,
 ion-item.transparent-bg {
     --background: transparent;
+}
+
+.item-lines-full,
+.header-ios ion-toolbar:last-of-type,
+.list-ios-lines-full .item, .list-ios .item-lines-full {
+    --border-width: 0 0 .7px 0;
+}
+
+ion-item.h-0 {
+    height: 1px !important;
+    --min-height: 0px;
+}
+
+input::selection {
+    background: rgba(0, 0, 0, .1);
+}
+
+[type='text']:focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus {
+    --tw-ring-color: transparent;
 }
