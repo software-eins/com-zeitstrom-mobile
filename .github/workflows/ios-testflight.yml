@@ -107,8 +107,8 @@ jobs:
           VUE_APP_BASE_URL: https://api.zeitstrom.com
           VUE_APP_BRANDING: red
 
-     - name: Red / Delete source map files
-       run: 'rm ios/App/public/js/*.map'
+      - name: Red / Delete source map files
+        run: 'rm ios/App/public/js/*.map'
 
       - name: Red / Archive project
         timeout-minutes: 10
