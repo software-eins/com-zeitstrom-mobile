@@ -43,6 +43,9 @@ jobs:
           VUE_APP_BASE_URL: https://api.ta-zeitblick.de
           VUE_APP_BRANDING: black
 
+      - name: Black / Delete source map files
+        run: 'rm ios/App/public/js/*.map'
+
       - name: Black / Archive project
         timeout-minutes: 10
         env:
@@ -72,6 +75,9 @@ jobs:
           VUE_APP_BASE_URL: https://api.ta-zeitblick.de
           VUE_APP_BRANDING: orange
 
+     - name: Orange / Delete source map files
+        run: 'rm ios/App/public/js/*.map'
+
       - name: Orange / Archive project
         timeout-minutes: 10
         env:
@@ -100,6 +106,9 @@ jobs:
           VUE_APP_DEBUG: false
           VUE_APP_BASE_URL: https://api.zeitstrom.com
           VUE_APP_BRANDING: red
+
+     - name: Red / Delete source map files
+        run: 'rm ios/App/public/js/*.map'
 
       - name: Red / Archive project
         timeout-minutes: 10
