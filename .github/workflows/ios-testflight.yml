@@ -75,8 +75,8 @@ jobs:
           VUE_APP_BASE_URL: https://api.ta-zeitblick.de
           VUE_APP_BRANDING: orange
 
-     - name: Orange / Delete source map files
-      run: 'rm ios/App/public/js/*.map'
+      - name: Orange / Delete source map files
+        run: 'rm ios/App/public/js/*.map'
 
       - name: Orange / Archive project
         timeout-minutes: 10
