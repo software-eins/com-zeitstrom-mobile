@@ -8,9 +8,8 @@
       <ion-label>{{ label }}</ion-label>
     </div>
 
-    <div v-if="!pdfUrl" class="text-gray-400 flex items-center pr-2">
-      Scannen
-    </div>
+    <div v-if="!pdfUrl" class="text-gray-400 flex items-center pr-2">Scannen</div>
+    <div v-else-if="!isLoadingPreview" class="text-gray-400 flex items-center pr-2">Anzeigen</div>
 
     <ion-icon
       class="text-gray-400"
@@ -156,7 +155,7 @@
 
   import { defineComponent } from 'vue';
 
-  import { IonIcon, IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonLabel, IonSpinner, } from '@ionic/vue';
+  import { IonIcon, IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonLabel, IonSpinner, toastController, } from '@ionic/vue';
   import { addCircleOutline, trashOutline, chevronForwardOutline } from 'ionicons/icons';
 
   import { Capacitor } from '@capacitor/core';
@@ -359,6 +358,13 @@
         this.pdfUrl = (await absenceApplicationService.signAttachmentUrl(s3UploadMeta.fields.key)).data.presigned_url;
         this.activeImageIdx = -1;
         this.isUploading = false;
+
+        toastController.create({
+          message: 'Dein Dokument wurde hochgeladen',
+          duration: 2000,
+          color: 'dark'
+        }).then(toast => toast.present());
+
       },
       async showPDFPreview() {
         this.isLoadingPreview = true;
