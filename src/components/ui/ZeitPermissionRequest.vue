@@ -1,5 +1,9 @@
 <template>
-  <ion-item color="warning" v-if="available == false">
+  <ion-item
+    :color="mode == 'inline' ? '' : 'warning'"
+    :class="mode == 'inline' ? 'ion-no-padding' : ''"
+    v-if="available == false"
+  >
     <div class="flex flex-col py-4">
       <p class="text-sm mb-2">{{ description }}</p>
 
@@ -48,7 +52,16 @@
         Diagnostic.isLocationAvailable(),
       ],
       requestPermission: () => Diagnostic.requestLocationAuthorization(),
-    }
+    },
+    camera: {
+      authorizationStatus: () => Diagnostic.getCameraAuthorizationStatus(),
+      permissions: () => [
+        Diagnostic.isCameraPresent(),
+        Diagnostic.isCameraAuthorized(),
+        Diagnostic.isCameraAvailable(),
+      ],
+      requestPermission: () => Diagnostic.isCameraAvailable(),
+    },
   }
 
   export default defineComponent({
@@ -74,11 +87,12 @@
       notEnabledDescription: String,
       cta: String,
       feature: String,
+      mode: String,
     },
     watch: {
       enabled: function(newValue) { this.$emit("isEnabled", newValue) },
       authorized: function(newValue) { this.$emit("isAuthorized", newValue) },
-      available: function(newValue) { this.$emit("isAvailable", newValue) },
+      available: function(newValue) { console.log(newValue); this.$emit("isAvailable", newValue) },
     },
     methods: {
       showCta() {

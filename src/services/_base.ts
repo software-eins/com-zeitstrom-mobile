@@ -60,6 +60,8 @@ export interface FormFieldParams<T> {
     allowNull?: boolean;
 
     conditions?: Array<FormFieldCondition>;
+    isVisible?: ((resource: T) => boolean);
+    onChange?: ((formFields: Array<FormField<T>>, resource: T) => void);
 
     default?: string|((resource: T) => void);
     renderer?: (resource: any) => Promise<string>;
@@ -93,6 +95,8 @@ export class FormField<T> {
     allowNull: boolean;
 
     conditions: Array<FormFieldCondition>;
+    isVisible?: ((resource: T) => boolean);
+    onChange?: ((formFields: Array<FormField<T>>, resource: T) => void);
 
     default?: string | ((resource: T) => void);
     renderer?: (resource: any) => Promise<string>;
@@ -129,6 +133,8 @@ export class FormField<T> {
         this.showEdit = params.showEdit !== undefined ? params.showEdit : true;
         this.allowNull = params.allowNull !== undefined ? params.allowNull : true;
         this.conditions = params.conditions || [];
+        this.isVisible = params.isVisible;
+        this.onChange = params.onChange;
         this.default = params.default;
         this.renderer = params.renderer;
         this.retrieveS3UploadMeta = params.retrieveS3UploadMeta;
@@ -139,7 +145,7 @@ export class FormField<T> {
 
     _matchesCondition(value: string, condition: string): boolean {
         // Or Statement  `a|b`
-        if (condition.indexOf("|") > -1) {
+        if (typeof condition == 'string' && condition.indexOf("|") > -1) {
             for (const conditionPart of condition.split("|")) {
                 if (this._matchesCondition(value, conditionPart)) return true;
             }
@@ -147,14 +153,17 @@ export class FormField<T> {
         }
 
         // Prefix Statement `FirstPart*`
-        if (condition.endsWith("*")) return value.startsWith(condition.slice(0, -1));
+        if (typeof condition == 'string' && condition.endsWith("*")) return value.startsWith(condition.slice(0, -1));
 
         return value == condition;
     }
 
     showField(resource: any): boolean {
+        if (this.isVisible && !this.isVisible(resource)) return false;
+
         for (const condition of this.conditions) {
             const value = resource[condition.name]
+
             if (!this._matchesCondition(value as string, condition.value)) return false;
         }
 

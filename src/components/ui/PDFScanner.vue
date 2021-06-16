@@ -1,142 +1,154 @@
 <template>
-  <div class="flex items-center w-full" @click="handleItemClick()">
-    <div class="hidden">
-      <img src="../../_testdata/receipt.jpg" />
-    </div>
+  <div class="flex flex-col w-full">
+    <zeit-permission-request
+      mode="inline"
+      v-if="!isCameraAvailable"
+      feature="camera"
+      description="Du hast die Möglichkeit, Dokumente (z.B. AU-Bescheinigungen) zur Abwesenheit hinzuzufügen. Dafür wird der Zugriff auf deine Kamera benötigt."
+      notEnabledDescription="Leider hat dein Gerät keine Kamera. Du kannst daher keine Dokumente erfassen."
+      cta="Kamera jetzt freigeben"
+      @isAvailable="isCameraAvailable = $event"
+    />
 
-    <div class="flex-grow">
-      <ion-label>{{ label }}</ion-label>
-    </div>
+    <div class="flex items-center w-full" @click="handleItemClick()" v-if="isCameraAvailable">
+      <div class="hidden">
+        <img src="../../_testdata/receipt.jpg" />
+      </div>
 
-    <div v-if="!pdfUrl" class="text-gray-400 flex items-center pr-2">Scannen</div>
-    <div v-else-if="!isLoadingPreview" class="text-gray-400 flex items-center pr-2">Anzeigen</div>
+      <div class="flex-grow">
+        <ion-label>{{ label }}</ion-label>
+      </div>
 
-    <ion-icon
-      class="text-gray-400"
-      :ios="chevronForwardOutline"
-      :md="chevronForwardOutline"
-      v-if="!isLoadingPreview"
-    ></ion-icon>
+      <div v-if="!pdfUrl" class="text-gray-400 flex items-center pr-2">Scannen</div>
+      <div v-else-if="!isLoadingPreview" class="text-gray-400 flex items-center pr-2">Anzeigen</div>
 
-    <ion-spinner v-if="isLoadingPreview" />
+      <ion-icon
+        class="text-gray-400"
+        :ios="chevronForwardOutline"
+        :md="chevronForwardOutline"
+        v-if="!isLoadingPreview"
+      ></ion-icon>
 
-    <teleport to="#scan-overlay" v-if="pdfUrl && previewPdf">
-      <ion-page>
-        <ion-header>
-          <ion-toolbar>
-            <ion-buttons slot="start">
-              <ion-back-button default-href="/" text="Zurück" @click="previewPdf = undefined"></ion-back-button>
-            </ion-buttons>
-            <ion-buttons slot="end" v-if="!isUploading">
-              <ion-button color="primary" @click="pdfUrl = null; previewPdf = undefined">
-                Löschen
-              </ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-header>
-        <ion-content>
-          <div class="px-4">
-            <PDFPreview
-              v-for="idx in previewPdf.numPages" :key="idx"
-              :pdf="previewPdf"
-              :page="idx"
-              class="max-w-full my-4 shadow"
-            />
-          </div>
-        </ion-content>
-      </ion-page>
-    </teleport>
+      <ion-spinner v-if="isLoadingPreview" />
 
-    <teleport to="#scan-overlay" v-if="activeImageIdx > -1">
-      <ion-page>
-        <ion-header>
-          <ion-toolbar>
-            <ion-buttons slot="start">
-              <ion-back-button default-href="/" text="Zurück" @click="activeImageIdx = -1"></ion-back-button>
-            </ion-buttons>
-            <ion-buttons slot="end" v-if="!isUploading">
-              <ion-button color="primary" @click="removeAttachmentIdx(activeImageIdx)">
-                <ion-icon slot="icon-only" :ios="trashOutline" :md="trashOutline"></ion-icon>
-              </ion-button>
-              <ion-button color="primary" @click="uploadPdf()">Fertig</ion-button>
-            </ion-buttons>
-            <ion-buttons slot="end" v-if="isUploading">
-              <ion-button color="primary">
-                <ion-spinner />
-              </ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-header>
+      <teleport to="#scan-overlay" v-if="pdfUrl && previewPdf">
+        <ion-page>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-back-button default-href="/" text="Zurück" @click="previewPdf = undefined"></ion-back-button>
+              </ion-buttons>
+              <ion-buttons slot="end" v-if="!isUploading">
+                <ion-button color="primary" @click="pdfUrl = null; previewPdf = undefined">
+                  Löschen
+                </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content>
+            <div class="px-4">
+              <PDFPreview
+                v-for="idx in previewPdf.numPages" :key="idx"
+                :pdf="previewPdf"
+                :page="idx"
+                class="max-w-full my-4 shadow"
+              />
+            </div>
+          </ion-content>
+        </ion-page>
+      </teleport>
 
-        <ion-content :scrollY="false">
-          <div class="w-full h-full flex items-center justify-center relative">
-            <swiper
-              :slides-per-view="1"
-              @swiper="swiperInit"
-              :initialSlide="activeImageIdx"
-              @slideChange="imageSwipe($event)"
-            >
-              <swiper-slide
-                v-for="attachment, idx of attachments"
-                :key="idx"
+      <teleport to="#scan-overlay" v-if="activeImageIdx > -1">
+        <ion-page>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-back-button default-href="/" text="Zurück" @click="activeImageIdx = -1"></ion-back-button>
+              </ion-buttons>
+              <ion-buttons slot="end" v-if="!isUploading">
+                <ion-button color="primary" @click="removeAttachmentIdx(activeImageIdx)">
+                  <ion-icon slot="icon-only" :ios="trashOutline" :md="trashOutline"></ion-icon>
+                </ion-button>
+                <ion-button color="primary" @click="uploadPdf()">Fertig</ion-button>
+              </ion-buttons>
+              <ion-buttons slot="end" v-if="isUploading">
+                <ion-button color="primary">
+                  <ion-spinner />
+                </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+
+          <ion-content :scrollY="false">
+            <div class="w-full h-full flex items-center justify-center relative">
+              <swiper
+                :slides-per-view="1"
+                @swiper="swiperInit"
+                :initialSlide="activeImageIdx"
+                @slideChange="imageSwipe($event)"
               >
-                <div class="flex items-center justify-center w-full">
-                  <img :src="getUrl(attachment)" />
-                </div>
-              </swiper-slide>
-            </swiper>
-          </div>
-        </ion-content>
+                <swiper-slide
+                  v-for="attachment, idx of attachments"
+                  :key="idx"
+                >
+                  <div class="flex items-center justify-center w-full">
+                    <img :src="getUrl(attachment)" />
+                  </div>
+                </swiper-slide>
+              </swiper>
+            </div>
+          </ion-content>
 
-        <ion-footer>
-          <ion-toolbar>
-            <swiper
-              :slides-per-view="4"
-              :space-between="0"
-              @swiper="swiperPreviewInit"
-              :initialSlide="activeImageIdx"
-              :centerInsufficientSlides="true"
-              :centeredSlides="true"
-              :centeredSlidesBounds="true"
-            >
-              <swiper-slide
-                v-for="attachment, idx of attachments"
-                :key="idx"
+          <ion-footer>
+            <ion-toolbar>
+              <swiper
+                :slides-per-view="4"
+                :space-between="0"
+                @swiper="swiperPreviewInit"
+                :initialSlide="activeImageIdx"
+                :centerInsufficientSlides="true"
+                :centeredSlides="true"
+                :centeredSlidesBounds="true"
               >
-                <div
-                  class="flex items-center justify-center w-full h-32 p-2"
-                  @click="activeImageIdx = idx"
+                <swiper-slide
+                  v-for="attachment, idx of attachments"
+                  :key="idx"
                 >
                   <div
-                    class="w-full h-full bg-center bg-cover"
-                    :class="{'ring ring-primary': activeImageIdx == idx}"
-                    :style="{'background-image': 'url(' + getUrl(attachment) + ')'}"
+                    class="flex items-center justify-center w-full h-32 p-2"
+                    @click="activeImageIdx = idx"
                   >
-                    <img
-                      :src="getUrl(attachment)"
-                      class="opacity-0"
+                    <div
+                      class="w-full h-full bg-center bg-cover"
                       :class="{'ring ring-primary': activeImageIdx == idx}"
-                    />
+                      :style="{'background-image': 'url(' + getUrl(attachment) + ')'}"
+                    >
+                      <img
+                        :src="getUrl(attachment)"
+                        class="opacity-0"
+                        :class="{'ring ring-primary': activeImageIdx == idx}"
+                      />
+                    </div>
                   </div>
-                </div>
-              </swiper-slide>
-              <swiper-slide v-if="!isUploading">
-                <div class="w-full h-32 p-2">
-                  <div
-                    @click="addAttachment()"
-                    class="w-full h-full border-dashed border-2 flex flex-col items-center justify-center p-2"
-                  >
-                    <ion-icon :ios="addCircleOutline" :md="addCircleOutline" class="w-6 h-6" />
-                    <div class="text-sm mt-2 text-center">Neue Seite</div>
+                </swiper-slide>
+                <swiper-slide v-if="!isUploading">
+                  <div class="w-full h-32 p-2">
+                    <div
+                      @click="addAttachment()"
+                      class="w-full h-full border-dashed border-2 flex flex-col items-center justify-center p-2"
+                    >
+                      <ion-icon :ios="addCircleOutline" :md="addCircleOutline" class="w-6 h-6" />
+                      <div class="text-sm mt-2 text-center">Neue Seite</div>
+                    </div>
                   </div>
-                </div>
-              </swiper-slide>
-            </swiper>
-          </ion-toolbar>
-        </ion-footer>
-      </ion-page>
-    </teleport>
+                </swiper-slide>
+              </swiper>
+            </ion-toolbar>
+          </ion-footer>
+        </ion-page>
+      </teleport>
 
+    </div>
   </div>
 </template>
 
@@ -157,6 +169,8 @@
 
   import { IonIcon, IonPage, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonContent, IonFooter, IonLabel, IonSpinner, toastController, } from '@ionic/vue';
   import { addCircleOutline, trashOutline, chevronForwardOutline } from 'ionicons/icons';
+
+  import ZeitPermissionRequest from './ZeitPermissionRequest.vue';
 
   import { Capacitor } from '@capacitor/core';
 
@@ -189,6 +203,8 @@
 
       PDFPreview,
 
+      ZeitPermissionRequest,
+
       Swiper, SwiperSlide,
     },
     props: {
@@ -201,6 +217,7 @@
         state: '',
         activeImageIdx: -1,
 
+        isCameraAvailable: false,
         isUploading: false,
         isLoadingPreview: false,
         previewPdf: undefined as any,

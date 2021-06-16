@@ -275,6 +275,7 @@ export default defineComponent({
   },
   data() {
     return {
+      oldLocalResourceJson: '',
       colors,
       localResource: {},
       mode: 'create',
@@ -282,9 +283,10 @@ export default defineComponent({
     }
   },
   methods: {
-    getFields(excludeHiddenFields=true) {
+    getFields(excludeHiddenFields = true) {
       return (this.formFields || this.service.formFields).filter(field => {
         if (excludeHiddenFields && field.type == 'hidden') return false;
+        if (excludeHiddenFields && !field.showField(this.resource)) return false;
 
         const fieldVisibility = (
           this.mode == "edit" && field.showEdit ||
@@ -292,7 +294,6 @@ export default defineComponent({
         );
         if (!fieldVisibility) return false;
 
-        if (!field.showField(this.resource)) return false;
 
         return true;
       });
@@ -322,7 +323,7 @@ export default defineComponent({
         if (this.localResource[field.name]) continue;
 
         if (typeof(field.default) == 'string') this.localResource[field.name] = field.default;
-
+        if (typeof(field.default) == 'boolean') this.localResource[field.name] = field.default;
         if (typeof(field.default) == 'function') field.default(this.localResource);
       }
     },
@@ -342,8 +343,19 @@ export default defineComponent({
   watch: {
     localResource: {
         deep: true,
-        handler(newResource) {
-          this.$emit('update:resource', newResource);
+        handler() {
+          // We can't use old and new since they are referencing to the same
+          // objects.
+          const newJson = JSON.stringify(this.localResource);
+          if (newJson == this.oldLocalResourceJson) return;
+          this.oldLocalResourceJson = newJson;
+
+          this.$emit('update:resource', this.localResource);
+
+          // Call `onChange` method on the form fields
+          for (const field of this.getFields(false)) {
+            if (field.onChange) field.onChange(this.formFields, this.localResource);
+          }
         },
     },
   },

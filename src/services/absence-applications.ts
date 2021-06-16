@@ -15,6 +15,7 @@ interface AbsenceApplication {
   employee_id: string;
   date_from: string;
   date_to: string;
+  half_day: boolean;
   affected_hours: number;
   target_hour_behaviour: string;
   attachment?: string;
