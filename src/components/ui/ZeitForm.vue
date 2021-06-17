@@ -1,7 +1,11 @@
 <template>
   <div>
     <template v-if="isMobile">
-      <ion-item v-if="mobileLineTop" lines="full" class="transparent-bg h-0" />
+      <ion-item v-if="mobileLineTop && !description" :lines="full" class="transparent-bg h-0" />
+      <ion-item v-if="description" lines="full" class="transparent-bg">
+        <p class="pb-10 text-sm font-medium text-gray-400">{{ description }}</p>
+      </ion-item>
+
       <ion-item v-for="(field, idx) of getFields()" :key="idx" :lines="idx + 1 == getFields().length ? lastLine : undefined" class="flex flex-col">
         <ion-label position="stacked" class="w-full" color="danger" v-if="errors && errors[field.name]">{{ errors[field.name][0] }}</ion-label>
 
@@ -271,6 +275,10 @@ export default defineComponent({
     mobileLineTop: {
       type: Boolean,
       default: true,
+    },
+    description: {
+      type: String,
+      default: '',
     },
   },
   data() {

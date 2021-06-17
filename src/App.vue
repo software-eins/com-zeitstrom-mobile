@@ -321,6 +321,8 @@ export default defineComponent({
           updateStatusBar({
               transparentStatusBar: newRoute.meta.transparentStatusBar,
           });
+
+          this.updateSideMenuVisibility();
       },
   },
   data() {
@@ -423,6 +425,12 @@ export default defineComponent({
       }
       return categories;
     },
+    updateSideMenuVisibility() {
+      this.updateAccountDetails().then(() => {
+        if (!this.account) return;
+        this.showSidemenu = !this.isMobile || this.account.role != 'employee';
+      });
+    },
   },
   mounted() {
     if (isPlatform("capacitor")) {
@@ -430,10 +438,7 @@ export default defineComponent({
     }
 
     this.loadDarkMode();
-    this.updateAccountDetails().then(() => {
-      if (!this.account) return;
-      this.showSidemenu = !this.isMobile || this.account.role != 'employee';
-    });
+    this.updateSideMenuVisibility();
 
     // Add branding to html tag
     document.getElementsByTagName("html")[0].classList.add("brand-" + branding.id);

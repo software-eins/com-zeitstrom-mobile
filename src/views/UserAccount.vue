@@ -65,15 +65,14 @@
       </div>
     </div>
 
-
-
-    <div if="isLoaded" class="max-w-md">
+    <div if="isLoaded && account" class="max-w-md">
       <zeit-form
         :resource="passwordForm.resource"
         :service="passwordForm.service"
         :formFields="passwordForm.fields"
         :errors="passwordForm.errors"
         :disabled="passwordForm.isSaving"
+        description="Wenn du dein Passwort ändern möchtest, gebe dein aktuelles und neues Passwort an. Neue Passwörter erfordern eine Mindestlänge von 10 Zeichen."
         @update:resource="passwordForm.resource = $event"
         marginLeft=""
         marginRight=""
