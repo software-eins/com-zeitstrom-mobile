@@ -1,19 +1,13 @@
 {
 	"appId": "com.zeitstrom.tamobile",
 	"appName": "TA Zeitblick",
-	"bundledWebRuntime": false,
-	"npmClient": "npm",
 	"webDir": "dist",
 	"plugins": {
 		"SplashScreen": {
-			"launchShowDuration": 0,
 			"launchAutoHide": true,
+			"launchShowDuration": 0,
 			"splashImmersive": true,
 			"androidSplashResourceName": "splash_orange"
 		}
-	},
-	"cordova": {},
-	"server": {
-		"url": "http://192.168.2.230:8100"
 	}
 }

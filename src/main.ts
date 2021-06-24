@@ -28,9 +28,6 @@ import './theme/custom.css';
 
 import Sticky from 'vue-sticky-directive';
 
-import * as Sentry from "@sentry/vue";
-import { Integrations } from "@sentry/tracing";
-
 
 const app = createApp(App)
   .use(IonicVue)
@@ -44,6 +41,9 @@ router.isReady().then(() => {
 
 
 // Add sentry
+// import * as Sentry from "@sentry/vue";
+// import { Integrations } from "@sentry/tracing";
+
 // Sentry.init({
 //   dsn: "https://63a481d3883e4655a6fcbb20b692fbb6@o119036.ingest.sentry.io/5810940",
 //   integrations: [new Integrations.BrowserTracing()],

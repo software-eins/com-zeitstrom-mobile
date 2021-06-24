@@ -138,8 +138,9 @@ import { updateStatusBar } from "./globals/statusbar";
 
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
-import { Plugins, KeyboardStyle } from '@capacitor/core';
-const { Keyboard, StatusBar } = Plugins;
+import { KeyboardStyle, Keyboard } from '@capacitor/keyboard';
+import { StatusBar } from '@capacitor/status-bar';
+
 
 
 export default defineComponent({

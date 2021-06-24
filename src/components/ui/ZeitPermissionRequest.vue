@@ -96,6 +96,7 @@
     },
     methods: {
       showCta() {
+        console.log(this.authorizationStatus);
         if (!this.authorizationStatus) return;
 
         return (
@@ -104,6 +105,7 @@
         );
       },
       showSettings() {
+        console.log(this.authorizationStatus);
         if (!this.authorizationStatus) return;
 
         return (

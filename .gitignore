@@ -29,6 +29,7 @@ npm-debug.log*
 /.sourcemaps
 /.versions
 /.vscode
+/android.new
 /coverage
 /dist
 /node_modules

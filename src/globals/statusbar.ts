@@ -1,8 +1,6 @@
-import { Plugins, StatusBarStyle } from '@capacitor/core';
+import { Style, StatusBar } from '@capacitor/status-bar';
 
 import { isPlatform } from '@ionic/vue';
-
-const { StatusBar } = Plugins;
 
 
 interface UpdateStatusBarOptions {
@@ -33,6 +31,6 @@ export function updateStatusBar(options?: UpdateStatusBarOptions) {
       StatusBar.setBackgroundColor({ color: color });
       StatusBar.setOverlaysWebView({ overlay: false });
   }
-  StatusBar.setStyle({ style: StatusBarStyle.Light });
+  StatusBar.setStyle({ style: Style.Light });
 }
 
