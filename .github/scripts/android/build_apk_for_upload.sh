@@ -6,7 +6,7 @@ cd android
 rm -f ./app/build/outputs/apk/release/app-release-unsigned.apk
 rm -f ./app/build/outputs/apk/release/app.apk
 
-./gradlew build --no-daemon
+./gradlew --no-daemon build
 
 # ~/Library/Android/sdk/build-tools/30.0.2/zipalign -v 4 \
 /usr/local/lib/android/sdk/build-tools/30.0.3/zipalign -v 4 \
