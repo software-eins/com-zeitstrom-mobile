@@ -6,7 +6,7 @@ on:
 jobs:
   deploy:
     name: Deploy to Android Alpha Track
-    runs-on: macos-10.15
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -32,8 +32,7 @@ jobs:
         run: 'npm i'
 
       - name: Install ionic
-        run : 'npm install -g @ionic/cli'
-        # run : 'sudo chown -R $USER /usr/local/ && npm install -g @ionic/cli'
+        run : 'sudo chown -R $USER /usr/local/ && npm install -g @ionic/cli'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
