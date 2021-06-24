@@ -8,7 +8,7 @@ BASE_DIR = "/".join(__file__.split("/")[:-1])
 SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, '../../secrets/android/2021-03-13-service-account.json')
 APK_FILE = os.path.join(BASE_DIR, "../../../android/app/build/outputs/apk/release/app.apk")
 
-TRACK = 'alpha'
+TRACK = 'internal'
 PACKAGE_NAME = os.getenv("APP_PACKAGE")
 
 
@@ -32,7 +32,7 @@ def main():
         packageName=PACKAGE_NAME,
         media_body=APK_FILE).execute()
 
-    # Assign to track `alpha`
+    # Assign to track `internal`
     track_response = service.edits().tracks().update(
         editId=edit_id,
         track=TRACK,
