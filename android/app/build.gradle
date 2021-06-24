@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
 
-apply plugin: 'com.github.triplet.play'
-
 android {
     defaultConfig {
         manifestPlaceholders = [
@@ -24,12 +22,6 @@ android {
             // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
-
-play {
-    serviceAccountCredentials = file("../../.github/secrets/android/2021-03-13-service-account.json")
-    track = "alpha"
-    artifactDir = file("./build/outputs/apk/release")
 }
 
 repositories {

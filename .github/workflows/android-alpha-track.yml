@@ -49,7 +49,7 @@ jobs:
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
       - name: Black / Upload APK
-        run: 'source envars && cd android && ./gradlew publish'
+        run: 'source envars && pip install google-api-python-client && python ./.github/scripts/android/upload_apk.py'
 
 
       # Orange
@@ -68,7 +68,7 @@ jobs:
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
       - name: Orange / Upload APK
-        run: 'source envars && cd android && ./gradlew publish'
+        run: 'source envars && pip install google-api-python-client && python ./.github/scripts/android/upload_apk.py'
 
       # Red
       - name: Red / Create environment vars
@@ -86,5 +86,5 @@ jobs:
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
       - name: Red / Upload APK
-        run: 'source envars && cd android && ./gradlew publish'
+        run: 'source envars && pip install google-api-python-client && python ./.github/scripts/android/upload_apk.py'
 
