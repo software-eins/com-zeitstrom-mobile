@@ -21,14 +21,16 @@
     <template v-slot:subheader v-if="isMobile">
       <ion-title size="large" v-if="false">Hallo {{ getName() }}</ion-title>
 
-      <ion-text color="medium">
-        <template v-if="activeTimespan">Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</template>
-        <template v-else-if="isLoaded">Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.</template>
-        <template v-else>
-          <ion-skeleton-text animated class="mb-3" />
-          <ion-skeleton-text animated class="mb-3 w-1/2" />
-        </template>
+      <ion-text color="medium" v-if="activeTimespan">
+        Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.
       </ion-text>
+      <ion-text color="medium" v-else-if="isLoaded">
+        Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.
+      </ion-text>
+      <div v-else class="w-full">
+        <ion-skeleton-text animated class="mb-3 w-full" />
+        <ion-skeleton-text animated class="mb-3 w-1/2" />
+      </div>
     </template>
 
     <zeit-permission-request

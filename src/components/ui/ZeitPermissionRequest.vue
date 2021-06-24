@@ -60,7 +60,7 @@
         Diagnostic.isCameraAuthorized(),
         Diagnostic.isCameraAvailable(),
       ],
-      requestPermission: () => Diagnostic.isCameraAvailable(),
+      requestPermission: () => Diagnostic.requestCameraAuthorization(),
     },
   }
 
@@ -97,15 +97,15 @@
     methods: {
       showCta() {
         return (
-          this.authorizationStatus == 'not_requested' ||
-          this.authorizationStatus == 'not_determined' ||
+          this.authorizationStatus.toLowerCase() == 'not_requested' ||
+          this.authorizationStatus.toLowerCase() == 'not_determined' ||
           false
         );
       },
       showSettings() {
         return (
-          this.authorizationStatus == 'denied' ||
-          this.authorizationStatus == 'denied_always' ||
+          this.authorizationStatus.toLowerCase() == 'denied' ||
+          this.authorizationStatus.toLowerCase() == 'denied_always' ||
           false
         )
       },

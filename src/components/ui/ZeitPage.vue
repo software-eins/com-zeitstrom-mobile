@@ -31,8 +31,8 @@
           <ion-toolbar class="opacity-0" style="height: 0;">Foo</ion-toolbar>
         </ion-header>
 
-        <ion-item class="transparent-bg" lines="none" v-if="$slots.subheader">
-          <ion-text color="medium" class="mb-10">
+        <ion-item class="transparent-bg" lines="none" v-if="$slots.subheader" >
+          <ion-text color="medium" class="mb-10 w-full" :class="[isAndroid ? 'mt-6' : '']">
             <slot name="subheader" />
           </ion-text>
         </ion-item>
@@ -87,6 +87,7 @@
     ],
     inject: [
       "isMobile",
+      "isAndroid",
     ],
   });
 </script>

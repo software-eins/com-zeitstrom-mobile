@@ -338,6 +338,7 @@ export default defineComponent({
     return {
       showSidemenu: computed(() => this.showSidemenu),
       isMobile: isPlatform("capacitor") || navigator.userAgent.indexOf("iPhone") > -1,
+      isAndroid: isPlatform("android"),
     }
   },
   methods: {
