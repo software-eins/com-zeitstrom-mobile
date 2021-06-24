@@ -96,17 +96,19 @@
     },
     methods: {
       showCta() {
+        if (!this.authorizationStatus) return;
+
         return (
           this.authorizationStatus.toLowerCase() == 'not_requested' ||
-          this.authorizationStatus.toLowerCase() == 'not_determined' ||
-          false
+          this.authorizationStatus.toLowerCase() == 'not_determined'
         );
       },
       showSettings() {
+        if (!this.authorizationStatus) return;
+
         return (
           this.authorizationStatus.toLowerCase() == 'denied' ||
-          this.authorizationStatus.toLowerCase() == 'denied_always' ||
-          false
+          this.authorizationStatus.toLowerCase() == 'denied_always'
         )
       },
       async requestPermission() {
