@@ -21,7 +21,7 @@
     "@heroicons/vue": "^1.0.1",
     "@ionic-native/call-number": "^5.31.1",
     "@ionic-native/camera": "^5.33.1",
-    "@ionic-native/core": "^5.31.1",
+    "@ionic-native/core": "^5.33.1",
     "@ionic-native/diagnostic": "^5.31.1",
     "@ionic-native/document-scanner": "^5.33.1",
     "@ionic-native/file": "^5.33.1",
