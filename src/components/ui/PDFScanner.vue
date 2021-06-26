@@ -172,10 +172,10 @@
 
   import ZeitPermissionRequest from './ZeitPermissionRequest.vue';
 
-  import { Capacitor } from '@capacitor/core';
+  // import { Capacitor } from '@capacitor/core';
 
   import { Camera, CameraOptions } from '@ionic-native/camera';
-  import { File } from '@ionic-native/file';
+  // import { File } from '@ionic-native/file';
 
   import * as pdfMake from 'pdfmake/build/pdfmake';
   import * as pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -290,13 +290,13 @@
           targetWidth: 1200,
           targetHeight: 2000,
           allowEdit: false,
-          destinationType: Camera.DestinationType.FILE_URI,
+          destinationType: Camera.DestinationType.DATA_URL,
           encodingType: Camera.EncodingType.JPEG,
           mediaType: Camera.MediaType.PICTURE,
           saveToPhotoAlbum: false,
         }
-        Camera.getPicture(options).then((fileUri) => {
-          this.attachments.push(fileUri);
+        Camera.getPicture(options).then((dataUri) => {
+          this.attachments.push(dataUri);
           this.activeImageIdx = this.attachments.length - 1;
         });
       },
@@ -308,9 +308,11 @@
         }
       },
       getUrl(filePath: string): string {
-        if (filePath.indexOf('http') == 0 || filePath.indexOf('/') == 0 || filePath.indexOf('capacitor') == 0) return filePath;
+        return 'data:image/jpeg;base64,' + filePath;
+        // console.log(filePath.slice(0, 200));
+        // if (filePath.indexOf('http') == 0 || filePath.indexOf('/') == 0 || filePath.indexOf('capacitor') == 0) return filePath;
 
-        return Capacitor.convertFileSrc(filePath);
+        // return Capacitor.convertFileSrc(filePath);
       },
       async uploadPdf() {
         if (!this.account || !this.account.employee_id) return;
@@ -329,9 +331,9 @@
 
         let idx = 0;
         for (const attachment of this.attachments) {
-          const fileParts = attachment.split("/");
-          images[String(idx)] = await File.readAsDataURL(fileParts.slice(0, -1).join("/"), fileParts[fileParts.length - 1]);
-          // images[String(idx)] = attachment;
+          // const fileParts = attachment.split("/");
+          // images[String(idx)] = await File.readAsDataURL(fileParts.slice(0, -1).join("/"), fileParts[fileParts.length - 1]);
+          images[String(idx)] = attachment;
           content.push({
             image: String(idx),
             fit: [600, 1000],
