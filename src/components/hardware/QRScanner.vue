@@ -117,7 +117,7 @@
       QRScanner.hide();
       QRScanner.destroy();
 
-      updateStatusBar({transparentStatusBar: this.$route.meta.transparentStatusBar});
+      updateStatusBar({transparentStatusBar: this.$route.meta.transparentStatusBar as boolean | undefined});
     },
   })
 </script>

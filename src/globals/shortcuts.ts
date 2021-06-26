@@ -1,5 +1,7 @@
 import { fromEvent } from 'rxjs/observable/fromEvent';
-import { merge, combineLatest, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { merge } from 'rxjs/observable/merge';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 import { distinctUntilChanged, share, filter } from 'rxjs/operators';
 
 
@@ -137,13 +139,13 @@ export const shortcut = (shortcut: KeyCode[]): Observable<KeyboardEvent[]> => {
 
     // All KeyboardEvents - emitted only when KeyboardEvent changes (key or type)
     const keyEvents$ = merge(keyDown$, keyUp$).pipe(
-        distinctUntilChanged((a, b) => a.code === b.code && a.type === b.type),
+        distinctUntilChanged((a, b) => (a as any).code === (b as any).code && (a as any).type === (b as any).type),
         share()
     );
 
     // Create KeyboardEvent Observable for specified KeyCode
     const createKeyPressStream = (charCode: KeyCode) =>
-        keyEvents$.pipe(filter((event) => event.code === charCode.valueOf()));
+        keyEvents$.pipe(filter((event) => (event as any).code === charCode.valueOf()));
 
     // Create Event Stream for every KeyCode in shortcut
     const keyCodeEvents$ = shortcut.map((s) => createKeyPressStream(s));

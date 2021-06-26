@@ -452,7 +452,7 @@ export default defineComponent({
 
     // Set status bar
     updateStatusBar({
-        transparentStatusBar: this.$route.meta.transparentStatusBar,
+        transparentStatusBar: this.$route.meta.transparentStatusBar as boolean | undefined,
     });
   },
   activated() {
