@@ -50,6 +50,7 @@ jobs:
           BRAND: black
           LABEL: 'UTAX Zeitblick'
           PACKAGE: com.zeitstrom.utax_mobile
+          MODULE: utax_mobile
           BASE_URL: https://api.ta-zeitblick.de
 
       - name: Black / Build capacitor app
@@ -69,6 +70,7 @@ jobs:
           BRAND: orange
           LABEL: 'TA Zeitblick'
           PACKAGE: com.zeitstrom.ta_mobile
+          MODULE: ta_mobile
           BASE_URL: https://api.ta-zeitblick.de
 
       - name: Orange / Build capacitor app
@@ -87,6 +89,7 @@ jobs:
           BRAND: red
           LABEL: 'Zeitstrom'
           PACKAGE: com.zeitstrom.zs_mobile
+          MODULE: zs_mobile
           BASE_URL: https://api.zeitstrom.com
 
       - name: Red / Build capacitor app
