@@ -1,4 +1,4 @@
-package com.zeitstrom.tamobile;
+package com.zeitstrom.ta_mobile;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">TA Zeitblick</string>
     <string name="title_activity_main">TA Zeitblick</string>
-    <string name="package_name">com.zeitstrom.tamobile</string>
-    <string name="custom_url_scheme">com.zeitstrom.tamobile</string>
+    <string name="package_name">com.zeitstrom.ta_mobile</string>
+    <string name="custom_url_scheme">com.zeitstrom.ta_mobile</string>
 </resources>

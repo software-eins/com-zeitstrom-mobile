@@ -56,12 +56,17 @@ jobs:
       - name: Black / Build capacitor app
         run: 'source envars && ionic cap sync android'
 
+      - name: Black / Rename package
+        run: 'source envars && ./.github/scripts/android/set_package_name.sh'
+
       - name: Black / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
       - name: Black / Upload APK
         run: 'source envars && pip install google-api-python-client && python ./.github/scripts/android/upload_apk.py'
 
+      - name: Black / Reset package
+        run: 'source envars && ./.github/scripts/android/reverse_package_name.sh'
 
       # Orange
       - name: Orange / Create environment vars
@@ -76,11 +81,17 @@ jobs:
       - name: Orange / Build capacitor app
         run: 'source envars && ionic cap sync android'
 
+      - name: Orange / Rename package
+        run: 'source envars && ./.github/scripts/android/set_package_name.sh'
+
       - name: Orange / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
       - name: Orange / Upload APK
         run: 'source envars && pip install google-api-python-client && python ./.github/scripts/android/upload_apk.py'
+
+      - name: Orange / Reset package
+        run: 'source envars && ./.github/scripts/android/reverse_package_name.sh'
 
       # Red
       - name: Red / Create environment vars
@@ -95,9 +106,14 @@ jobs:
       - name: Red / Build capacitor app
         run: 'source envars && ionic cap sync android'
 
+      - name: Red / Rename package
+        run: 'source envars && ./.github/scripts/android/set_package_name.sh'
+
       - name: Red / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
 
       - name: Red / Upload APK
         run: 'source envars && pip install google-api-python-client && python ./.github/scripts/android/upload_apk.py'
 
+      - name: Red / Reset package
+        run: 'source envars && ./.github/scripts/android/reverse_package_name.sh'
