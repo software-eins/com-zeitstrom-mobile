@@ -50,7 +50,7 @@ jobs:
           BASE_URL: https://api.ta-zeitblick.de
 
       - name: Black / Build capacitor app
-        run: 'source envars && npm install cordova-plugin-camera && ionic cap sync android'
+        run: 'source envars && ionic cap sync android'
 
       - name: Black / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
@@ -69,7 +69,7 @@ jobs:
           BASE_URL: https://api.ta-zeitblick.de
 
       - name: Orange / Build capacitor app
-        run: 'source envars && npm install cordova-plugin-camera && ionic cap sync android'
+        run: 'source envars && ionic cap sync android'
 
       - name: Orange / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
@@ -87,7 +87,7 @@ jobs:
           BASE_URL: https://api.zeitstrom.com
 
       - name: Red / Build capacitor app
-        run: 'source envars && npm install cordova-plugin-camera && ionic cap sync android'
+        run: 'source envars && ionic cap sync android'
 
       - name: Red / Build and sign APK
         run: 'source envars && ./.github/scripts/android/build_apk_for_upload.sh'
