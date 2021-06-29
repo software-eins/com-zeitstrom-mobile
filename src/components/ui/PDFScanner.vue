@@ -2,7 +2,7 @@
   <div class="flex flex-col w-full">
     <zeit-permission-request
       mode="inline"
-      v-if="!isCameraAvailable"
+      v-if="!isCameraAvailable && !pdfUrl"
       feature="camera"
       description="Du hast die Möglichkeit, Dokumente (z.B. AU-Bescheinigungen) zur Abwesenheit hinzuzufügen. Dafür wird der Zugriff auf deine Kamera benötigt."
       notEnabledDescription="Leider hat dein Gerät keine Kamera. Du kannst daher keine Dokumente erfassen."
@@ -10,11 +10,7 @@
       @isAvailable="isCameraAvailable = $event"
     />
 
-    <div class="flex items-center w-full" @click="handleItemClick()" v-if="isCameraAvailable">
-      <div class="hidden">
-        <img src="../../_testdata/receipt.jpg" />
-      </div>
-
+    <div class="flex items-center w-full" @click="handleItemClick()" v-if="isCameraAvailable || pdfUrl">
       <div class="flex-grow">
         <ion-label>{{ label }}</ion-label>
       </div>
@@ -92,7 +88,7 @@
                   :key="idx"
                 >
                   <div class="flex items-center justify-center w-full">
-                    <img :src="getUrl(attachment)" />
+                    <img :src="attachment" />
                   </div>
                 </swiper-slide>
               </swiper>
@@ -121,10 +117,10 @@
                     <div
                       class="w-full h-full bg-center bg-cover"
                       :class="{'ring ring-primary': activeImageIdx == idx}"
-                      :style="{'background-image': 'url(' + getUrl(attachment) + ')'}"
+                      :style="{'background-image': 'url(' + attachment + ')'}"
                     >
                       <img
-                        :src="getUrl(attachment)"
+                        :src="attachment"
                         class="opacity-0"
                         :class="{'ring ring-primary': activeImageIdx == idx}"
                       />
@@ -225,27 +221,13 @@
         swiper: undefined,
         swiperPreview: undefined,
 
-        showMagnifier: false,
-        magnifierPosition: [329.95703125, 6.65234375],
-        magnifierSize: 150,
-        pointerSize: 10,
-        magnifierImageSize: 900,
-        sourceWidth: 1,
-
         addCircleOutline,
         trashOutline,
         chevronForwardOutline,
 
         torchEnabled: false,
 
-        attachments: [
-          // "http://172.20.10.2:8100/img/cv.71b5e1bc.jpg",
-          // "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-          // "http://172.20.10.2:8100/img/cv.71b5e1bc.jpg",
-          // "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-          // "http://172.20.10.2:8100/img/cv.71b5e1bc.jpg",
-          // "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        ] as Array<string>,
+        attachments: [] as Array<string>,
 
         pdfUrl: undefined as undefined|string,
         points: [] as Array<any>,
@@ -295,8 +277,8 @@
           mediaType: Camera.MediaType.PICTURE,
           saveToPhotoAlbum: false,
         }
-        Camera.getPicture(options).then((dataUri) => {
-          this.attachments.push(dataUri);
+        Camera.getPicture(options).then(dataUri => {
+          this.attachments.push('data:image/jpeg;base64,' + dataUri);
           this.activeImageIdx = this.attachments.length - 1;
         });
       },
@@ -307,24 +289,10 @@
           this.activeImageIdx = this.attachments.length - 1;
         }
       },
-      getUrl(filePath: string): string {
-        return 'data:image/jpeg;base64,' + filePath;
-        // console.log(filePath.slice(0, 200));
-        // if (filePath.indexOf('http') == 0 || filePath.indexOf('/') == 0 || filePath.indexOf('capacitor') == 0) return filePath;
-
-        // return Capacitor.convertFileSrc(filePath);
-      },
       async uploadPdf() {
         if (!this.account || !this.account.employee_id) return;
 
         this.isUploading = true;
-
-        // const attachments: Array<string> = [
-        //   "http://localhost:8100/img/cv.71b5e1bc.jpg",
-        //   "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        //   "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        //   "http://172.20.10.2:8100/img/receipt.cf8fa128.jpg",
-        // ]
 
         const images: { [key: string]: string } = {};
         const content: Content = [];
