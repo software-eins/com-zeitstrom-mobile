@@ -67,6 +67,7 @@
     </ion-split-pane>
 
     <ion-router-outlet v-if="$route.meta.hideChrome && !showSidemenu" :animated="false"></ion-router-outlet>
+
     <zeit-tab-menu v-if="!$route.meta.hideChrome && !showSidemenu" />
 
   </ion-app>
@@ -353,26 +354,28 @@ export default defineComponent({
       if (isPlatform("capacitor")) StatusBar.show();
     },
     loadDarkMode() {
-      if (document == null) return;
+      return;
 
-      if (!this.isMobile) return;
+      // if (document == null) return;
 
-      const body = document.querySelector('body');
-      if (body == null) return;
+      // if (!this.isMobile) return;
 
-      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          body.classList.add('dark')
-      } else {
-          body.classList.remove('dark')
-      }
+      // const body = document.querySelector('body');
+      // if (body == null) return;
 
-      if (isPlatform("capacitor") && document.body.classList.contains('dark')) {
-        Keyboard.setAccessoryBarVisible({isVisible: false});
-        Keyboard.setStyle({
-          style: KeyboardStyle.Dark,
-        })
-      }
+      // // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      // if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      //     body.classList.add('dark')
+      // } else {
+      //     body.classList.remove('dark')
+      // }
+
+      // if (isPlatform("capacitor") && document.body.classList.contains('dark')) {
+      //   Keyboard.setAccessoryBarVisible({isVisible: false});
+      //   Keyboard.setStyle({
+      //     style: KeyboardStyle.Dark,
+      //   })
+      // }
 
     //   Whenever the user explicitly chooses light mode
     //   localStorage.theme = 'light'
