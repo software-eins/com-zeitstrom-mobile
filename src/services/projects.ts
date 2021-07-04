@@ -5,6 +5,7 @@ interface ProjectListParams {
     ids?: Array<string>;
     includeArchived?: boolean;
     highlighted?: boolean;
+    recent?: boolean;
     page?: number;
     pagesize?: number;
     query?: string;
@@ -69,9 +70,14 @@ class ProjectService extends BaseService<Project> {
         if (params.ids && params.ids.length > 0) url += '&ids=' + params.ids.join("|");
         if ((params.ids && params.ids.length > 0) || params.includeArchived) url += '&include-archived';
 
+        if (params.recent) url += '&recent';
         if (params.highlighted) url += '&highlighted';
 
-        return this._get(url) as unknown as Promise<AxiosResponse<PaginatedResponse<Project>>>;
+        // Add results to details cache
+        return this._get(url).then((response: AxiosResponse<PaginatedResponse<Project>>) => {
+            this._cacheDetails(response.data.results);
+            return response;
+        })
     }
 
     archive(resourceId: string): Promise<AxiosResponse<Project>> {

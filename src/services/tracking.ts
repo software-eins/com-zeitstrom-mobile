@@ -13,7 +13,7 @@ class TrackingService extends BaseService<EmployeeTrack> {
         super("/api/v2/tracking/employees/");
     }
 
-    addTwoTimestamps(employeeId: string, comment: string, projectId: string, newProjectId: string) {
+    addTwoTimestamps(employeeId: string, comment?: string, projectId?: string, newProjectId?: string) {
         return this._post(employeeId + '/add-timestamps/', {
             "description": comment,
             "project_id": projectId,
@@ -29,7 +29,7 @@ class TrackingService extends BaseService<EmployeeTrack> {
         });
     }
 
-    updateComment(employeeId: string, comment: string, projectId: string) {
+    updateComment(employeeId: string, comment?: string, projectId?: string) {
         return this._post(employeeId + '/update-comment/', {
             "description": comment,
             "project_id": projectId,

@@ -21,18 +21,18 @@
 
     <ion-content :fullscreen="true">
       <zeit-form
-        :resource="remoteTimespan"
+        :resource="localTimespan"
         :service="timespanService"
         :formFields="projectFields"
-        @update:resource="updateLocalTimespan($event)"
+        @update:resource="updateLocalTimespan($event, projectFields)"
         v-if="showProjectSelection"
         :disabled="isSaving"
       />
       <zeit-form
-        :resource="remoteTimespan"
+        :resource="localTimespan"
         :service="timespanService"
         :formFields="commentFields"
-        @update:resource="updateLocalTimespan($event)"
+        @update:resource="updateLocalTimespan($event, commentFields)"
         lastLine="full"
         :disabled="isSaving"
       />
@@ -51,7 +51,7 @@
       />
       <zeit-form
         v-if="employeeSettings.employee_app_access.edit_working_times == 'edit_missing_days'"
-        :resource="remoteTimespan.checkout"
+        :resource="localTimespan.checkout"
         :service="timespanService"
         :formFields="checkoutFields"
         @update:resource="updateLocalTimestamp('checkout', $event)"
@@ -72,20 +72,20 @@
         <ion-item>
           Anmeldung
           <div slot="end" class="text-sm text-gray-400">
-            {{ formatTime(remoteTimespan.checkin.time, 'seconds') }} Uhr
+            {{ formatTime(localTimespan.checkin.time, 'seconds') }} Uhr
           </div>
         </ion-item>
         <ion-item>
           Abmeldung
-          <div slot="end" class="text-sm text-gray-400" v-if="remoteTimespan.checkout">
-            {{ formatTime(remoteTimespan.checkout.time, 'seconds') }} Uhr
+          <div slot="end" class="text-sm text-gray-400" v-if="localTimespan.checkout">
+            {{ formatTime(localTimespan.checkout.time, 'seconds') }} Uhr
           </div>
           <div slot="end" class="text-sm text-gray-400" v-else>??</div>
         </ion-item>
         <ion-item lines="full">
           Erfasste Zeit
-          <div slot="end" class="text-sm text-gray-400" v-if="remoteTimespan.duration">
-            <zeit-promise-solver :promise="formatDuration(remoteTimespan.duration)" /> h
+          <div slot="end" class="text-sm text-gray-400" v-if="localTimespan.duration">
+            <zeit-promise-solver :promise="formatDuration(localTimespan.duration)" /> h
           </div>
           <div slot="end" class="text-sm text-gray-400" v-else>??</div>
         </ion-item>
@@ -195,6 +195,8 @@
 
         this.isSaving = true;
 
+        if (!this.localTimespan.checkin) return;
+
         const promises = [];
         if (this.localTimespan.employee_comment != this.remoteTimespan.employee_comment) {
           promises.push(
@@ -202,6 +204,7 @@
             .updateEmployeeComment(this.localTimespan.id, this.localTimespan.employee_comment)
           );
         }
+
         if (this.localTimespan.project_id != this.remoteTimespan.project_id) {
           promises.push(
             this.timespanService
@@ -209,15 +212,16 @@
           );
         }
 
-        if (!this.localTimespan.checkin) return;
-
         const hasTimeChange = (
           this.localTimespan.checkin.time != this.remoteTimespan.checkin.time ||
 
           !this.localTimespan.checkout && this.remoteTimespan.checkout ||
           this.localTimespan.checkout && !this.remoteTimespan.checkout ||
-          // eslint-disable-next-line
-          this.localTimespan.checkout!.time != this.remoteTimespan.checkout!.time
+          (
+            this.localTimespan.checkout &&
+            this.remoteTimespan.checkout &&
+            this.localTimespan.checkout.time != this.remoteTimespan.checkout.time
+          )
         );
 
         if (hasTimeChange) {
@@ -248,10 +252,14 @@
             }).then(toast => toast.present());
         });
 
+        this.timespanService.clearCache();
+
         this.isSaving = false;
       },
-      updateLocalTimespan(newTimespan: Timespan) {
-        this.localTimespan = newTimespan;
+      updateLocalTimespan(newTimespan: Timespan, fields: Array<FormField<Timespan>>) {
+        if (!this.localTimespan) return;
+
+        for (const field of fields) (this.localTimespan as any)[field.name] = (newTimespan as any)[field.name];
       },
       updateLocalTimestamp(target: string, newTimestamp: Timestamp) {
         if (!this.localTimespan) return;

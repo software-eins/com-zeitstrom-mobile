@@ -27,6 +27,9 @@ interface TimespanListParams {
     pagesize?: number;
     verbosity?: string;
     order?: Array<string>;
+
+    hasEmployeeComment?: boolean;
+    employeeComment?: string;
 }
 
 interface TimespanHistoryParams {
@@ -103,6 +106,8 @@ class TimespanService extends BaseService<Timespan> {
         if (params.isoDateFrom) query += '&datetime_from=' + params.isoDateFrom;
         if (params.isoDateTo) query += '&datetime_to=' + params.isoDateTo;
         if (params.order) query += "&order=" + params.order.join("|");
+        if (params.hasEmployeeComment !== undefined) query += "&has_employee_comment=" + (params.hasEmployeeComment ? 'true' : 'false');
+        if (params.employeeComment) query += "&employee_comment=" + params.employeeComment;
 
         return this._get(query) as unknown as AxiosResponse<PaginatedResponse<Timespan>>;
     }
@@ -181,4 +186,4 @@ class TimespanService extends BaseService<Timespan> {
 
 const timespanService = new TimespanService();
 
-export { Timespan, timespanService }
+export { Timespan, timespanService, TimespanListParams }

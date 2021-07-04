@@ -277,10 +277,14 @@ export class BaseService<T> {
         }
     }
 
+    _get_cache_key(url: string) {
+        return localStorage.accessToken + "|" + url;
+    }
+
     _get(pathParameters: string, useCachedResponse = true) {
         pathParameters = pathParameters ? pathParameters : '';
         const url = this.endpoint + pathParameters;
-        const cacheKey = localStorage.accessToken + "|" + url;
+        const cacheKey = this._get_cache_key(url);
 
         const cachedResponse = this._cachedResponses.get(cacheKey);
         let promise;
@@ -306,6 +310,30 @@ export class BaseService<T> {
         });
 
         return promise;
+    }
+
+    /**
+     * Populates the retrieve cache with pre-defined entries (e.g. from a list
+     * response).
+     *
+     * @param entries
+     */
+
+    _cacheDetails(entries: Array<T>) {
+        for (const entry of entries) {
+            const url = this.endpoint + (entry as any).id + "/";
+            const cacheKey = this._get_cache_key(url);
+
+            this._cachedResponses.set(cacheKey, new CachedResponse(new Promise(resolve => {
+                resolve({
+                    headers: {},
+                    config: {},
+                    status: 200,
+                    statusText: "OK",
+                    data: entry,
+                })
+            }), this.cacheTimeout));
+        }
     }
 
     _delete(pathParameters: string) {

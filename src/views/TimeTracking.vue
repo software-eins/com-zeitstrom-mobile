@@ -12,6 +12,7 @@
           <div class="flex items-center">
             <div class="mr-1 inline-block">Angemeldet</div>
             <div class="dot-active inline-block" />
+            <div class="inline-block text-sm ml-2 font-regular success font-medium" :key="now">{{ timeAgo(activeTimespan.checkin.time) }}</div>
           </div>
         </div>
         <template v-else-if="isLoaded">Abgemeldet</template>
@@ -22,7 +23,29 @@
       <ion-title size="large" v-if="false">Hallo {{ getName() }}</ion-title>
 
       <ion-text color="medium" v-if="activeTimespan">
-        Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.
+        <p>Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</p>
+        <template v-if="false">
+          Deine
+          <template v-if="activeTimespan.employee_comment">Tätigkeit&nbsp;</template>
+          <ZeitActivitySelector
+            :activeActivity="activeTimespan.employee_comment"
+            @activitySelected="updateActivity($event)"
+          >
+            <template #noActivitySelected>
+              Tätigkeit
+            </template>
+          </ZeitActivitySelector>
+          ist
+          <template v-if="activeTimespan.project_id">dem Projekt&nbsp;</template>
+          <ZeitProjectSelector
+            :activeProjectId="activeTimespan.project_id"
+            @projectSelected="updateProject($event)"
+            position="left"
+          >
+            <template #noProjectSelected><span class="underline">keinem Projekt</span></template>
+          </ZeitProjectSelector>
+          zugeordnet.
+        </template>
       </ion-text>
       <ion-text color="medium" v-else-if="isLoaded">
         Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.
@@ -42,36 +65,105 @@
       @isAvailable="handleLocationPermissionChange($event)"
     />
 
-    <template v-if="isMobile">
-      <ion-item  v-if="isLoaded" lines="full" class="hero-cta mb-4" @click="addTimestamp()">
+    <template v-if="isMobile && isTargetAvailable() && $route.fullPath == '/time-tracking/'">
+      <teleport to="#pre-tab-bar-slot">
+        <ion-item v-if="!isLoaded" lines="full" class="hero-cta mb-4">
+          <ion-label>
+            <h2><ion-skeleton-text animated class="w-60" /></h2>
+            <p><ion-skeleton-text animated class="w-40" /></p>
+          </ion-label>
+        </ion-item>
 
-        <ion-label v-if="activeTimespan">
-          <h2>
-            Erfassung beenden
-            <div class="dot-active" />
-            <ion-text color="success" class="ml-2" :key="now"><span class="text-sm">{{ timeAgo(activeTimespan.checkin.time) }}</span></ion-text>
-          </h2>
-          <p v-if="formattedAddress">{{ formattedAddress }}</p>
-          <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
-          <p v-else>Pausiere oder beende deinen Arbeitstag</p>
-        </ion-label>
-        <ion-label v-else>
-          <h2>Erfassung starten</h2>
-          <p v-if="formattedAddress">{{ formattedAddress }}</p>
-          <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
-          <p v-else>Beginne einen neuen Arbeitstag</p>
-        </ion-label>
+        <template v-else-if="activeTimespan">
+          <ion-item  lines="none" class="hero-cta">
+            <ion-label>
+              <ZeitActivitySelector
+                :activeActivity="activeTimespan.employee_comment"
+                @activitySelected="updateActivity($event)"
+                class="mb-2"
+              >
+                <template #noActivitySelected>
+                  <span class="text-gray-600 font-medium">Keine Tätigkeitsbeschreibung</span>
+                </template>
+                <template v-slot:activeActivity="slotProps">
+                  <span class="font-medium">{{ slotProps.activity }}</span>
+                </template>
+              </ZeitActivitySelector>
+              <p v-if="formattedAddress">{{ formattedAddress }}</p>
+              <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
+              <p v-else>
+                <ZeitProjectSelector
+                  :activeProjectId="activeTimespan.project_id"
+                  @projectSelected="updateProject($event)"
+                >
+                  <template #noProjectSelected>
+                    <div class="flex items-center block px-2 py-0.5 text-sm rounded text-gray-700 bg-gray-100">Projekt hinzufügen</div>
+                  </template>
+                </ZeitProjectSelector>
+              </p>
+            </ion-label>
 
-        <ion-icon :icon="logOutOutline" slot="end" size="large" v-if="!isLoadingAddTimestamp && activeTimespan && !waitingForAddress()" />
-        <ion-icon :icon="playOutline" slot="end" size="large" v-else-if="!isLoadingAddTimestamp && !waitingForAddress()" />
-        <ion-spinner slot="end" v-else />
-      </ion-item>
-      <ion-item v-else lines="full" class="hero-cta mb-4">
-        <ion-label>
-          <h2><ion-skeleton-text animated class="w-60" /></h2>
-          <p><ion-skeleton-text animated class="w-40" /></p>
-        </ion-label>
-      </ion-item>
+            <div slot="end" class="flex flex-col items-end">
+              <div class="text-sm ml-2 font-regular font-medium mb-1" :key="now">{{ timeAgo(activeTimespan.checkin.time) }}</div>
+              <div class="flex -mr-1">
+                <ion-icon
+                  @click="addConsecutiveTimestamps()"
+                  :icon="playForward"
+                  slot="end"
+                  size="medium"
+                  class="bg-gray-500 text-white rounded-full p-2 shadow-sm mr-2"
+                  v-if="!isLoadingAddTimestamp && !waitingForAddress()"
+                />
+                <ion-icon
+                  @click="addTimestamp()"
+                  :icon="stop"
+                  slot="end"
+                  size="medium"
+                  class="bg-primary text-white rounded-full p-2 shadow-sm"
+                  v-if="!isLoadingAddTimestamp && !waitingForAddress()"
+                />
+                <ion-spinner slot="end" v-else />
+              </div>
+            </div>
+          </ion-item>
+          <ion-item  lines="full" class="hero-cta mb-4" @click="addConsecutiveTimestamps()" v-if="false">
+            <ion-label>
+              <h2>
+                Neue Arbeitsphase
+              </h2>
+              <p v-if="formattedAddress">{{ formattedAddress }}</p>
+              <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
+              <p v-else>Beginne eine neue Phase ohne Unterbrechung</p>
+            </ion-label>
+
+            <ion-icon :icon="play" slot="end" size="large" v-if="!isLoadingAddTimestamp && !waitingForAddress()" />
+            <ion-spinner slot="end" v-else />
+          </ion-item>
+
+        </template>
+
+        <ion-item v-else lines="none" class="hero-cta mb-4">
+          <ion-label>
+            <h2>Erfassung starten</h2>
+            <p v-if="formattedAddress">{{ formattedAddress }}</p>
+            <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
+            <p v-else>Beginne einen neuen Arbeitstag</p>
+          </ion-label>
+
+          <ion-icon
+            :icon="play"
+            slot="end"
+            size="large"
+            v-if="!isLoadingAddTimestamp && !waitingForAddress()"
+            @click="addTimestamp()"
+            style="padding-left: .6rem; padding-right: .4rem;"
+            class="bg-primary text-white rounded-full py-2 shadow"
+          />
+          <ion-spinner slot="end" v-else />
+        </ion-item>
+
+      </teleport>
+
     </template>
 
     <p class="text-sm text-gray-400 font-semibold mb-4 uppercase tracking-wide" v-if="!isMobile">
@@ -85,11 +177,11 @@
           :key="workday.id"
           :workdays="[workday]"
           :employeeId="account.employee_id"
+          :showRepeat="true"
           cardClasses="mx-0"
+          @repeatClick="continueTimespan($event)"
       />
     </div>
-
-
 
   </zeit-page>
 </template>
@@ -102,20 +194,24 @@
 </style>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import {
     IonTitle, IonIcon, IonLabel,
-    IonItem, IonText, IonSpinner, IonSkeletonText, getPlatforms,
+    IonItem, IonText, IonSpinner, IonSkeletonText,
+
+    getPlatforms, toastController,
   } from '@ionic/vue';
 
   import { Geolocation, Geoposition } from '@ionic-native/geolocation';
 
-  import { playOutline, logOutOutline } from 'ionicons/icons';
+  import { play, stop, playForward } from 'ionicons/icons';
 
   import ZeitPage from '../components/ui/ZeitPage.vue';
   import ZeitWorkdayCard from '../components/ui/ZeitWorkdayCard.vue';
   import ZeitPermissionRequest from '../components/ui/ZeitPermissionRequest.vue';
   import ZeitTimeTrackingPanel from '../components/ui/ZeitTimeTrackingPanel.vue';
+  import ZeitProjectSelector from '../components/ui/ZeitProjectSelector.vue';
+  import ZeitActivitySelector from '../components/ui/ZeitActivitySelector.vue';
 
   import { accountService, Account } from '../services/accounts';
   import { institutionService, Institution } from '../services/institutions';
@@ -123,6 +219,7 @@
   import { employeeReportService, WorkdayReport } from '../services/reports-employees';
   import { employeeService } from '../services/employees';
   import { addressService } from '../services/addresses';
+  import { timespanService } from '../services/timespans';
 
   import branding from '../branding';
   import { AxiosResponse } from 'axios';
@@ -134,6 +231,7 @@
   import { Subscription } from 'rxjs';
 
   import { isPlatform } from '@ionic/vue';
+  import { Project } from '../services/projects';
 
   interface LatLong {
     accuracy: number;
@@ -147,6 +245,7 @@
         IonItem, IonText, IonSpinner, IonSkeletonText,
 
         ZeitWorkdayCard, ZeitPermissionRequest, ZeitPage, ZeitTimeTrackingPanel,
+        ZeitProjectSelector, ZeitActivitySelector,
     },
     inject: ['showSidemenu', 'isMobile'],
     data() {
@@ -155,6 +254,8 @@
 
         now: undefined as Date|undefined,
         isLoaded: false,
+
+        lastWorkingStatusUpdate: ref(0),
 
         accountService,
         institutionService,
@@ -170,8 +271,9 @@
         formatDifference,
 
         branding,
-        playOutline,
-        logOutOutline,
+        play,
+        stop,
+        playForward,
 
         account: undefined as Account|undefined,
         institution: undefined as Institution|undefined,
@@ -212,9 +314,11 @@
       }
     },
     methods: {
-      async updateWorkingStatus() {
+      async updateWorkingStatus(clearCache = false) {
         if (this.account === undefined) return;
         if (this.account.employee_id === undefined) return;
+
+        if (clearCache) this.trackingService.clearCache();
 
         const employeeId = this.account.employee_id
         const activeTimespanResponse = await this.trackingService.activeTimespan(employeeId);
@@ -224,13 +328,18 @@
           this.activeTimespan = activeTimespanResponse.data as Timespan;
         }
 
+        this.lastWorkingStatusUpdate += 1;
+
         return this.activeTimespan;
+      },
+      isTargetAvailable() {
+        return document.getElementById("pre-tab-bar-slot") !== null
       },
       getName() {
         if (this.account && this.account.full_name) return this.account.full_name.split(' ')[0];
         return ''
       },
-      addTimestamp() {
+      addTimestamp(comment?: string, projectId?: string) {
         if (this.isLoadingAddTimestamp) return;
         if (this.waitingForAddress()) return;
         if (this.account === undefined) return;
@@ -245,12 +354,77 @@
         if (this.coordinates) meta["coordinates"] = this.coordinates;
 
         this.isLoadingAddTimestamp = true;
-        this.trackingService.addTimestamp(employeeId, undefined, undefined, meta).then(() => {
+        this.trackingService.addTimestamp(employeeId, comment, projectId, meta).then(() => {
           this.updateWorkingStatus().then(() => {
             this.isLoadingAddTimestamp = false;
             this.loadWorkdayReports(true);
+            this.updateWorkingStatus(true);
           });
         });
+      },
+      addConsecutiveTimestamps() {
+        if (this.isLoadingAddTimestamp) return;
+        if (this.waitingForAddress()) return;
+        if (this.account === undefined) return;
+        if (this.account.employee_id === undefined) return;
+        if (!this.activeTimespan) return;
+
+        const employeeId = this.account.employee_id;
+
+        const ts = this.activeTimespan;
+
+        const meta: any = {
+          "platforms": getPlatforms(),
+        };
+        if (this.formattedAddress) meta["location"] = this.formattedAddress;
+        if (this.coordinates) meta["coordinates"] = this.coordinates;
+
+        this.isLoadingAddTimestamp = true;
+        // TODO: Add meta
+        this.trackingService.addTwoTimestamps(employeeId, ts.employee_comment, ts.project_id, undefined).then(() => {
+          this.updateWorkingStatus().then(() => {
+            this.isLoadingAddTimestamp = false;
+            this.loadWorkdayReports(true);
+            this.updateWorkingStatus(true);
+          });
+        });
+      },
+      async updateProject(project: Project) {
+        if (!this.activeTimespan) return;
+
+        this.isLoadingAddTimestamp = true;
+
+        this.activeTimespan.project_id = project.id;
+        await timespanService.assignProject(this.activeTimespan.id, project.id);
+
+        await this.loadWorkdayReports(true);
+        await this.updateWorkingStatus(true);
+
+        toastController.create({
+          message: 'Projektauswahl aktualisiert',
+          duration: 2000,
+          color: 'dark'
+        }).then(toast => toast.present());
+
+        this.isLoadingAddTimestamp = false;
+      },
+      async updateActivity(newActivity: string) {
+        if (!this.activeTimespan) return;
+
+        this.isLoadingAddTimestamp = true;
+
+        this.activeTimespan.employee_comment = newActivity;
+        await timespanService.updateEmployeeComment(this.activeTimespan.id, newActivity);
+
+        await this.loadWorkdayReports(true);
+
+        toastController.create({
+          message: 'Tätigkeit aktualisiert',
+          duration: 2000,
+          color: 'dark'
+        }).then(toast => toast.present());
+
+        this.isLoadingAddTimestamp = false;
       },
       loadWorkdayReports(clearCache = false) {
         if (this.account === undefined) return;
@@ -329,6 +503,23 @@
                 if (event && event.target && event.target.complete) event.target.complete();
             });
         });
+      },
+      async continueTimespan(timespan: Timespan) {
+        if (this.activeTimespan) {
+          if (!this.account || !this.account.employee_id) return;
+          const employeeId = this.account.employee_id;
+
+          this.isLoadingAddTimestamp = true;
+          await trackingService.updateComment(employeeId, timespan.employee_comment, timespan.project_id);
+          await Promise.all([
+            this.loadWorkdayReports(true),
+            this.updateWorkingStatus(true)
+          ]);
+
+          this.isLoadingAddTimestamp = false;
+        } else {
+          this.addTimestamp(timespan.employee_comment, timespan.project_id);
+        }
       },
     },
     mounted() {

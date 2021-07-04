@@ -44,12 +44,15 @@
           @click="showTimespanDetails(timespan)"
         >
           <ion-label>
-            <h3>
+            <h3 class="flex items-center">
               {{ formatTime(timespan.checkin.time) }}
-              <span v-if="timespan.checkout"> – {{ formatTime(timespan.checkout.time) }}</span>
+              <span v-if="timespan.checkout">&nbsp;– {{ formatTime(timespan.checkout.time) }}</span>
               <span v-else-if="isActiveTimespan(timespan)"><div class="dot-active ml-2" /></span>
-              <span v-else> – ??</span>
+              <span v-else>&nbsp;– ??</span>
               <zeit-project-badge :projectId="timespan.project_id" class="ml-2" />
+              <div class="ml-2 flex items-center text-gray-400" v-if="showRepeat && !isActiveTimespan(timespan)" @click.prevent.stop="repeatClick(timespan)">
+                <ion-icon :ios="repeatOutline" :md="repeatOutline" />
+              </div>
             </h3>
             <p v-if="timespan.employee_comment">{{ timespan.employee_comment }}</p>
           </ion-label>
@@ -111,8 +114,12 @@
   import { defineComponent } from 'vue';
 
   import {
-    IonCard, IonLabel, IonList, IonItem, IonNote, IonSpinner,
+    IonCard, IonLabel, IonList, IonItem, IonNote, IonSpinner, IonIcon,
   } from '@ionic/vue';
+
+  import {
+    repeatOutline,
+} from 'ionicons/icons';
 
   import ZeitPromiseSolver from '../helpers/ZeitPromiseSolver.vue';
   import { formatTime, formatDifference, formatLongDate, formatDatetime, formatDuration } from '../../globals/helpers';
@@ -129,10 +136,13 @@
 
   export default defineComponent({
     components: {
-      IonCard, IonLabel, IonList, IonItem, IonNote, IonSpinner,
+      IonCard, IonLabel, IonList, IonItem, IonNote, IonSpinner, IonIcon,
       ZeitPromiseSolver,
-        ZeitProjectBadge
+      ZeitProjectBadge,
     },
+    emits: [
+      "repeatClick",
+    ],
     props: {
       workdays: {
         type: Array,
@@ -159,12 +169,19 @@
         type: String,
         default: '',
       },
+
+      showRepeat: {
+        type: Boolean,
+        default: false,
+      },
     },
     data() {
       return {
         isPlatform,
 
         timespanService,
+
+        repeatOutline,
 
         isLoadingTimespan: undefined as string|undefined,
 
@@ -317,6 +334,9 @@
       hasOpenTimespans(workday: WorkdayReport) {
         return workday.timespans.some((timespan: Timespan) => !timespan.checkout);
       },
+      repeatClick(timespan: Timespan) {
+        this.$emit("repeatClick", timespan);
+      }
     },
     async beforeMount() {
       const workdays = (this.workdays || []) as Array<Workday>;

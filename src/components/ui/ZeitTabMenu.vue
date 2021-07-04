@@ -1,7 +1,9 @@
 <template>
   <ion-page>
-
     <ion-tabs>
+
+      <div id="pre-tab-bar-slot" class="bg-white"></div>
+
       <ion-tab-bar slot="bottom" :translucent="true">
 
         <ion-tab-button tab="tracking" href="/time-tracking/">
@@ -28,11 +30,13 @@
   </ion-page>
 </template>
 
-<style scoped>
-  ion-tab-bar {
+<style>
+  #pre-tab-bar-slot {
     border-top: .55px solid var(--ion-toolbar-border-color, var(--ion-border-color, var(--ion-color-step-150, rgba(0, 0, 0, 0.2))));
   }
+</style>
 
+<style scoped>
   ion-tab-button {
     --padding-top: .25rem;
   }

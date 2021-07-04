@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="isMobile">
-      <ion-item v-if="mobileLineTop && !description" :lines="full" class="transparent-bg h-0" />
+      <ion-item v-if="mobileLineTop && !description" lines="full" class="transparent-bg h-0" />
       <ion-item v-if="description" lines="full" class="transparent-bg">
         <p class="pb-10 text-sm font-medium text-gray-400">{{ description }}</p>
       </ion-item>
