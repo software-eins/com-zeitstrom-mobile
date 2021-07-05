@@ -140,7 +140,7 @@ import { updateStatusBar } from "./globals/statusbar";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 import { KeyboardStyle, Keyboard } from '@capacitor/keyboard';
-import { StatusBar } from '@capacitor/status-bar';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 
 
@@ -354,6 +354,10 @@ export default defineComponent({
       if (isPlatform("capacitor")) StatusBar.show();
     },
     loadDarkMode() {
+      if (isPlatform("ios")) {
+        StatusBar.setStyle({ style: Style.Light });
+      }
+
       return;
 
       // if (document == null) return;
