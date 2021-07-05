@@ -1,7 +1,7 @@
 <template>
   <ion-item
     :color="mode == 'inline' ? '' : 'warning'"
-    :class="mode == 'inline' ? 'ion-no-padding' : ''"
+    :class="[mode == 'inline' ? 'ion-no-padding' : '', extraCssClasses]"
     v-if="available == false"
   >
     <div class="flex flex-col py-4">
@@ -88,6 +88,10 @@
       cta: String,
       feature: String,
       mode: String,
+      extraCssClasses: {
+        type: String,
+        default: '',
+      },
     },
     watch: {
       enabled: function(newValue) { this.$emit("isEnabled", newValue) },

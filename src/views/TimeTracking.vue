@@ -56,17 +56,19 @@
       </div>
     </template>
 
-    <zeit-permission-request
-      v-if="locationSetting == 'location_tracking_detailed'"
-      feature="location"
-      description="Dein Arbeitgeber benötigt den genauen Standort zur Erfassung von Arbeitszeiten."
-      notEnabledDescription="Leider unterstützt dein Gerät keine Standortfreigabe. Du kannst daher keine Zeiten erfassen."
-      cta="Standort jetzt freigeben"
-      @isAvailable="handleLocationPermissionChange($event)"
-    />
-
     <template v-if="isMobile && isTargetAvailable() && $route.fullPath == '/time-tracking/'">
       <teleport to="#pre-tab-bar-slot">
+
+
+        <zeit-permission-request
+          v-if="locationSetting == 'location_tracking_detailed'"
+          feature="location"
+          description="Dein Arbeitgeber benötigt den genauen Standort zur Erfassung von Arbeitszeiten."
+          notEnabledDescription="Leider unterstützt dein Gerät keine Standortfreigabe. Du kannst daher keine Zeiten erfassen."
+          cta="Standort jetzt freigeben"
+          @isAvailable="handleLocationPermissionChange($event)"
+        />
+
         <ion-item v-if="!isLoaded" lines="full" class="hero-cta mb-4">
           <ion-label>
             <h2><ion-skeleton-text animated class="w-60" /></h2>
@@ -122,7 +124,7 @@
                   class="bg-primary text-white rounded-full p-2 shadow-sm"
                   v-if="!isLoadingAddTimestamp && !waitingForAddress()"
                 />
-                <ion-spinner slot="end" v-else />
+                <ion-spinner class="mt-1" slot="end" v-else />
               </div>
             </div>
           </ion-item>
@@ -177,9 +179,8 @@
           :key="workday.id"
           :workdays="[workday]"
           :employeeId="account.employee_id"
-          :showRepeat="true"
+          :showRepeat="false"
           cardClasses="mx-0"
-          @repeatClick="continueTimespan($event)"
       />
     </div>
 
@@ -391,38 +392,24 @@
       },
       async updateProject(project: Project) {
         if (!this.activeTimespan) return;
+        if (this.activeTimespan.project_id == project.id) return;
 
         this.isLoadingAddTimestamp = true;
 
         this.activeTimespan.project_id = project.id;
         await timespanService.assignProject(this.activeTimespan.id, project.id);
 
-        await this.loadWorkdayReports(true);
-        await this.updateWorkingStatus(true);
-
-        toastController.create({
-          message: 'Projektauswahl aktualisiert',
-          duration: 2000,
-          color: 'dark'
-        }).then(toast => toast.present());
-
         this.isLoadingAddTimestamp = false;
       },
       async updateActivity(newActivity: string) {
         if (!this.activeTimespan) return;
 
+        if (this.activeTimespan.employee_comment == newActivity) return;
+
         this.isLoadingAddTimestamp = true;
 
         this.activeTimespan.employee_comment = newActivity;
         await timespanService.updateEmployeeComment(this.activeTimespan.id, newActivity);
-
-        await this.loadWorkdayReports(true);
-
-        toastController.create({
-          message: 'Tätigkeit aktualisiert',
-          duration: 2000,
-          color: 'dark'
-        }).then(toast => toast.present());
 
         this.isLoadingAddTimestamp = false;
       },
