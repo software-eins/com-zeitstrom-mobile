@@ -219,8 +219,12 @@ const routes: Array<RouteRecordRaw> = [
   // Startpage
   {
     path: '',
-    // component: () => import('../components/ui/ZeitTabMenu.vue')
-    redirect: { path: '/time-tracking/',},
+    component: () => import('../views/Home.vue'),
+    // redirect: { path: '/time-tracking/',},
+    meta: {
+      hideChrome: true,
+      transparentStatusBar: true,
+    }
   },
 
 ]

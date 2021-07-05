@@ -254,13 +254,13 @@ export default defineComponent({
             mdIcon: documentTextOutline,
             permissions: ['licenses:view'],
           },
-          {
-            title: 'Datenschutz',
-            url: '/account/data-processing-agreement/',
-            iosIcon: lockClosedOutline,
-            mdIcon: lockClosedOutline,
-            permissions: ['contracts:view'],
-          },
+          // {
+          //   title: 'Datenschutz',
+          //   url: '/account/data-processing-agreement/',
+          //   iosIcon: lockClosedOutline,
+          //   mdIcon: lockClosedOutline,
+          //   permissions: ['contracts:view'],
+          // },
         ]
       },
       {
@@ -354,7 +354,7 @@ export default defineComponent({
       if (isPlatform("capacitor")) StatusBar.show();
     },
     loadDarkMode() {
-      if (isPlatform("ios")) {
+      if (isPlatform("ios") && isPlatform("capacitor")) {
         StatusBar.setStyle({ style: Style.Light });
       }
 

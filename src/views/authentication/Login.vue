@@ -147,7 +147,6 @@
             .login(this.email, this.password)
             .then(() => {
                 this.$router.replace(this.nextUrl());
-
                 this.isLoading = false;
             })
             .catch(error => {
