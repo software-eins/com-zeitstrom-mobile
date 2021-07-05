@@ -3,7 +3,7 @@
     <template #headline>Und los geht's…</template>
 
     <p class="text-sm text-gray-500 mb-4">
-      Herzlichen Glückwunsch! Du hast unsere App installiert und deine erste Arbeitszeit gestartet.
+      Super! Du hast deine erste Arbeitszeit gestartet.
     </p>
 
     <div class="flex items-start justify-start mb-4">

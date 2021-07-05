@@ -174,9 +174,15 @@
         const seen = new Set();
 
         for (const ts of timespans) {
-          if (seen.has(ts.employee_comment)) continue;
+          let comment = ts.employee_comment;
+          if (!comment) continue;
+
+          comment = comment.trim();
+          if (comment.length == 0) continue;
+          if (seen.has(comment)) continue;
+
           // if (ts.employee_comment == this.newActivity) continue;
-          seen.add(ts.employee_comment);
+          seen.add(comment);
           newRecentTimespans.push(ts);
         }
 

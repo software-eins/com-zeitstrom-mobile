@@ -23,15 +23,23 @@
       <ion-title size="large" v-if="false">Hallo {{ getName() }}</ion-title>
 
       <ion-text color="medium" v-if="activeTimespan">
-        <p>Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</p>
+        <p class="mb-2">Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</p>
       </ion-text>
       <ion-text color="medium" v-else-if="isLoaded">
-        Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.
+        <p class="mb-2">Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.</p>
       </ion-text>
       <div v-else class="w-full">
         <ion-skeleton-text animated class="mb-3 w-full" />
         <ion-skeleton-text animated class="mb-3 w-1/2" />
       </div>
+
+      <ion-text color="medium" v-if="formattedAddress">
+        <p>Der Standort {{ formattedAddress }} wird bei Erfassungen gespeichert.</p>
+      </ion-text>
+      <ion-text v-else-if="waitingForAddress()">
+        <p>Dein Standort wird ermittelt.</p>
+      </ion-text>
+
     </template>
 
     <template v-if="isMobile && isTargetAvailable() && $route.fullPath == '/time-tracking/'">
@@ -69,9 +77,8 @@
                   <span class="font-medium">{{ slotProps.activity }}</span>
                 </template>
               </ZeitActivitySelector>
-              <p v-if="formattedAddress">{{ formattedAddress }}</p>
-              <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
-              <p v-else-if="projectCount > 0 || activeTimespan.project_id">
+
+              <p v-if="projectCount > 0 || activeTimespan.project_id">
                 <ZeitProjectSelector
                   :activeProjectId="activeTimespan.project_id"
                   @projectSelected="updateProject($event)"
@@ -180,7 +187,7 @@
     IonTitle, IonIcon, IonLabel,
     IonItem, IonText, IonSpinner, IonSkeletonText,
 
-    getPlatforms, toastController,
+    getPlatforms,
   } from '@ionic/vue';
 
   import { Geolocation, Geoposition } from '@ionic-native/geolocation';
@@ -340,6 +347,12 @@
         if (this.waitingForAddress()) return;
         if (this.account === undefined) return;
         if (this.account.employee_id === undefined) return;
+
+        if (this.activeTimespan) {
+          comment = comment || this.activeTimespan.employee_comment;
+          projectId = projectId || this.activeTimespan.project_id;
+          this.activeTimespan = undefined;
+        }
 
         const employeeId = this.account.employee_id
         const meta = this.getMeta();
