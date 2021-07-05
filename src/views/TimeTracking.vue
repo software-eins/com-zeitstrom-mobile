@@ -24,28 +24,6 @@
 
       <ion-text color="medium" v-if="activeTimespan">
         <p>Du bist seit {{ formatTime(activeTimespan.checkin.time) }} Uhr angemeldet. Deine Arbeitszeit wird aufgezeichnet.</p>
-        <template v-if="false">
-          Deine
-          <template v-if="activeTimespan.employee_comment">Tätigkeit&nbsp;</template>
-          <ZeitActivitySelector
-            :activeActivity="activeTimespan.employee_comment"
-            @activitySelected="updateActivity($event)"
-          >
-            <template #noActivitySelected>
-              Tätigkeit
-            </template>
-          </ZeitActivitySelector>
-          ist
-          <template v-if="activeTimespan.project_id">dem Projekt&nbsp;</template>
-          <ZeitProjectSelector
-            :activeProjectId="activeTimespan.project_id"
-            @projectSelected="updateProject($event)"
-            position="left"
-          >
-            <template #noProjectSelected><span class="underline">keinem Projekt</span></template>
-          </ZeitProjectSelector>
-          zugeordnet.
-        </template>
       </ion-text>
       <ion-text color="medium" v-else-if="isLoaded">
         Du bist momentan nicht angemeldet. Deine Arbeitszeit wird nicht aufgezeichnet.
@@ -93,7 +71,7 @@
               </ZeitActivitySelector>
               <p v-if="formattedAddress">{{ formattedAddress }}</p>
               <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
-              <p v-else>
+              <p v-else-if="projectCount > 0 || activeTimespan.project_id">
                 <ZeitProjectSelector
                   :activeProjectId="activeTimespan.project_id"
                   @projectSelected="updateProject($event)"
@@ -168,6 +146,8 @@
 
     </template>
 
+    <instructions-tracking v-if="activeTimespan" />
+
     <p class="text-sm text-gray-400 font-semibold mb-4 uppercase tracking-wide" v-if="!isMobile">
       Deine erfassten Zeiten
     </p>
@@ -213,6 +193,7 @@
   import ZeitTimeTrackingPanel from '../components/ui/ZeitTimeTrackingPanel.vue';
   import ZeitProjectSelector from '../components/ui/ZeitProjectSelector.vue';
   import ZeitActivitySelector from '../components/ui/ZeitActivitySelector.vue';
+  import InstructionsTracking from '../components/ui/InstructionsTracking.vue';
 
   import { accountService, Account } from '../services/accounts';
   import { institutionService, Institution } from '../services/institutions';
@@ -221,6 +202,7 @@
   import { employeeService } from '../services/employees';
   import { addressService } from '../services/addresses';
   import { timespanService } from '../services/timespans';
+  import { projectService } from '../services/projects';
 
   import branding from '../branding';
   import { AxiosResponse } from 'axios';
@@ -244,6 +226,8 @@
     components: {
         IonTitle, IonIcon, IonLabel,
         IonItem, IonText, IonSpinner, IonSkeletonText,
+
+        InstructionsTracking,
 
         ZeitWorkdayCard, ZeitPermissionRequest, ZeitPage, ZeitTimeTrackingPanel,
         ZeitProjectSelector, ZeitActivitySelector,
@@ -290,6 +274,8 @@
         positionSubscription: undefined as Subscription|undefined,
         coordinates: undefined as LatLong|undefined,
         formattedAddress: undefined as string|undefined,
+
+        projectCount: 0,
       }
     },
     watch: {
@@ -340,6 +326,15 @@
         if (this.account && this.account.full_name) return this.account.full_name.split(' ')[0];
         return ''
       },
+      getMeta() {
+        const meta: any = {
+          "platforms": getPlatforms(),
+        };
+        if (this.formattedAddress) meta["location"] = this.formattedAddress;
+        if (this.coordinates) meta["coordinates"] = this.coordinates;
+
+        return meta;
+      },
       addTimestamp(comment?: string, projectId?: string) {
         if (this.isLoadingAddTimestamp) return;
         if (this.waitingForAddress()) return;
@@ -347,12 +342,7 @@
         if (this.account.employee_id === undefined) return;
 
         const employeeId = this.account.employee_id
-
-        const meta: any = {
-          "platforms": getPlatforms(),
-        };
-        if (this.formattedAddress) meta["location"] = this.formattedAddress;
-        if (this.coordinates) meta["coordinates"] = this.coordinates;
+        const meta = this.getMeta();
 
         this.isLoadingAddTimestamp = true;
         this.trackingService.addTimestamp(employeeId, comment, projectId, meta).then(() => {
@@ -373,16 +363,10 @@
         const employeeId = this.account.employee_id;
 
         const ts = this.activeTimespan;
-
-        const meta: any = {
-          "platforms": getPlatforms(),
-        };
-        if (this.formattedAddress) meta["location"] = this.formattedAddress;
-        if (this.coordinates) meta["coordinates"] = this.coordinates;
+        const meta = this.getMeta();
 
         this.isLoadingAddTimestamp = true;
-        // TODO: Add meta
-        this.trackingService.addTwoTimestamps(employeeId, ts.employee_comment, ts.project_id, undefined).then(() => {
+        this.trackingService.addTwoTimestamps(employeeId, ts.employee_comment, ts.project_id, undefined, meta).then(() => {
           this.updateWorkingStatus().then(() => {
             this.isLoadingAddTimestamp = false;
             this.loadWorkdayReports(true);
@@ -469,6 +453,7 @@
           this.accountService.clearCache();
           this.institutionService.clearCache();
           this.employeeReportService.clearCache();
+          projectService.clearCache();
         }
 
         Promise.all([
@@ -479,6 +464,10 @@
             // Load institution
             this.institutionService.list().then((response: AxiosResponse<PaginatedResponse<Institution>>) => {
             this.institution = response.data.results[0];
+            }),
+            // Load projects
+            projectService.list().then(response => {
+              this.projectCount = response.data.count;
             }),
         ]).then(() => {
             Promise.all([

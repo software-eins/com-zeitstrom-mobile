@@ -1,10 +1,12 @@
 <template>
-  <div class="h-screen w-full flex items-center justify-center relative">
-    <background-drawing-top class="absolute w-1/2 top-0 right-0" />
-    <background-drawing-bottom class="absolute w-1/3 left-0 bottom-0 opacity-animation" />
+  <transition name="fade">
+    <div class="h-screen w-full flex items-center justify-center relative">
+      <background-drawing-top class="absolute w-1/2 top-0 right-0" />
+      <background-drawing-bottom class="absolute w-1/3 left-0 bottom-0 opacity-animation" />
 
-    <Logo :showName="true" style="max-width: 40%;" />
-  </div>
+      <Logo :showName="true" style="max-width: 40%;" />
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">

@@ -13,11 +13,12 @@ class TrackingService extends BaseService<EmployeeTrack> {
         super("/api/v2/tracking/employees/");
     }
 
-    addTwoTimestamps(employeeId: string, comment?: string, projectId?: string, newProjectId?: string) {
+    addTwoTimestamps(employeeId: string, comment?: string, projectId?: string, newProjectId?: string, meta?: any) {
         return this._post(employeeId + '/add-timestamps/', {
             "description": comment,
             "project_id": projectId,
             "next_project_id": newProjectId,
+            "meta": meta,
         });
     }
 

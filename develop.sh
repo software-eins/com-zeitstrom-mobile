@@ -7,7 +7,7 @@ export APP_VERSION_MARKETING=3.1.211201
 export BRAND=$APP_BRAND
 export LABEL=$APP_LABEL
 export PACKAGE=$APP_PACKAGE
-export BASE_URL="http://192.168.2.230:8000"
+export BASE_URL="http://192.168.178.60:8000"
 export VUE_APP_BASE_URL=$BASE_URL
 
 ionic capacitor run ios -l --external

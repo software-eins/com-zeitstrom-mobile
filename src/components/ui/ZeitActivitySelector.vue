@@ -158,7 +158,7 @@
         this.$emit('activitySelected', activity);
       },
       async loadActivities(event?: any) {
-        this.isResultsLoading = true;
+        if (event) this.isResultsLoading = true;
 
         const params: TimespanListParams = {
           order: ['-checkin__time'],
@@ -170,16 +170,17 @@
 
         const timespans = (await timespanService.listParams(params)).data.results;
 
-        this.recentTimespans = [];
+        const newRecentTimespans = [];
         const seen = new Set();
 
         for (const ts of timespans) {
           if (seen.has(ts.employee_comment)) continue;
           // if (ts.employee_comment == this.newActivity) continue;
           seen.add(ts.employee_comment);
-          this.recentTimespans.push(ts);
+          newRecentTimespans.push(ts);
         }
 
+        this.recentTimespans = newRecentTimespans;
         this.isResultsLoading = false;
         if (event) event.target.complete();
       },
