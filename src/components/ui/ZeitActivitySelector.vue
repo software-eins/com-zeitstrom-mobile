@@ -14,27 +14,32 @@
 
     <teleport to="#scan-overlay" v-if="isMobile">
       <transition
-        enter-active-class="ease-out duration-150"
-        enter-from-class="top-full transform scale-50"
-        enter-to-class="top-0 transform scale-100"
-        leave-active-class="ease-in duration-150"
-        leave-from-class="top-0 transform scale-100"
-        leave-to-class="top-full transform scale-95"
+        enter-active-class="ease-out duration-100"
+        enter-from-class="-bottom-full opacity-0"
+        enter-to-class="bottom-0 opacity-100"
+        leave-active-class="ease-in duration-100"
+        leave-from-class="bottom-0"
+        leave-to-class="-bottom-full"
       >
-        <MenuItems as="div" class="fixed left-0 w-full h-full z-20">
-          <ion-page>
-            <ion-header>
-              <ion-toolbar>
+        <MenuItems as="div" class="h-full w-full left-0 fixed">
+          <MenuItem as="div" class="fixed bg-black bg-opacity-30 w-full absolute -top-full bottom-0 left-0" />
+          <ion-page class="absolute left-0 w-full top-16 z-20 bottom-0 focus:outline-none">
+            <div class="shadow-xl">
+              <ion-toolbar class="rounded-t-xl overflow-hidden">
                 <ion-buttons slot="start">
-                  <MenuItem as="template" class="focus:outline-none"><ion-button>Zurück</ion-button></MenuItem>
+                  <MenuItem as="template"><ion-button class="focus:outline-none">Zurück</ion-button></MenuItem>
                 </ion-buttons>
                 <ion-title>Tätigkeit wählen</ion-title>
               </ion-toolbar>
-            </ion-header>
-            <ion-content>
+            </div>
+            <ion-content class="flex flex-col">
+              <ion-refresher slot="fixed" @ionRefresh="loadActivities($event)">
+                <ion-refresher-content></ion-refresher-content>
+              </ion-refresher>
               <div class="py-4 px-4">
                 <div class="relative w-full">
                   <input
+                    @keydown.stop
                     v-model="newActivity"
                     class="
                       text-sm rounded-md block w-full h-8 px-3 py-2 border-transparent text-gray-900 placeholder-gray-500 sm:text-sm
@@ -46,12 +51,13 @@
 
               <div class="pb-2 px-2">
                 <MenuItem as="div" v-slot="{ active }" @click="selectActivity(newActivity)" v-if="newActivity" class="focus:outline-none">
-                  <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="flex items-center block px-4 py-2 text-sm rounded cursor-pointer">
+                  <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="block px-4 py-2 text-sm rounded cursor-pointer">
                     Tätigkeit&nbsp;<strong>{{ newActivity }}</strong>&nbsp;verwenden
-                    <ion-icon :ios="arrowForward" :md="arrowForward" class="ml-2 text-gray-400" />
+                    <div class="inline-block relative"><ion-icon :ios="arrowForward" :md="arrowForward" class="absolute left-1 -bottom-0.5 text-gray-400" /></div>
                   </div>
                 </MenuItem>
-                <MenuItem as="div" v-slot="{ active }" @click="selectActivity('')" class="focus:outline-none">
+
+                <MenuItem v-else as="div" v-slot="{ active }" @click="selectActivity('')" class="focus:outline-none">
                   <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="flex items-center block px-4 py-2 text-sm rounded cursor-pointer">
                     Keine Tätigkeitsbeschreibung auswählen
                     <ion-icon :ios="arrowForward" :md="arrowForward" class="ml-2 text-gray-400" />
@@ -67,8 +73,8 @@
                 <template v-else-if="recentTimespans && recentTimespans.length > 0">
                   <p class="uppercase text-gray-400 mt-2 mb-2 text-sm font-semibold pl-2">Zuletzt verwendet</p>
                   <MenuItem as="div" v-slot="{ active }" v-for="timespan of recentTimespans" :key="timespan.id" @click="selectActivity(timespan.employee_comment)" class="focus:outline-none">
-                    <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="flex items-center block px-4 py-2 text-sm rounded cursor-pointer">
-                      {{ timespan.employee_comment }}&nbsp; <div class="inline-block text-gray-400 text-xs">&middot; {{ formatDatetime(timespan.created_at) }}</div>
+                    <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="block px-4 py-2 text-sm rounded cursor-pointer">
+                      {{ timespan.employee_comment }}&nbsp; <span class="text-gray-400 text-xs">&middot; {{ formatDatetime(timespan.created_at) }}</span>
                     </div>
                   </MenuItem>
                 </template>
@@ -81,11 +87,17 @@
   </Menu>
 </template>
 
+<style scoped>
+  ion-toolbar {
+    --border-width: 0 0 .67px 0;
+    --border-color: rgba(0, 0, 0, .2);
+  }
+</style>
 
 <script lang="ts">
   import { defineComponent } from 'vue';
 
-  import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonSkeletonText, IonIcon, } from '@ionic/vue';
+  import { IonPage, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonSkeletonText, IonIcon, IonRefresher, IonRefresherContent, } from '@ionic/vue';
   import { arrowForward } from 'ionicons/icons';
 
   import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
@@ -100,8 +112,9 @@
       MenuButton,
       MenuItem,
       MenuItems,
-      IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
+      IonPage, IonToolbar, IonTitle, IonContent,
       IonButton, IonButtons, IonSkeletonText, IonIcon,
+      IonRefresher, IonRefresherContent,
     },
     props: {
       activeActivity: String,
@@ -144,7 +157,7 @@
         this.newActivity = '';
         this.$emit('activitySelected', activity);
       },
-      async loadActivities() {
+      async loadActivities(event?: any) {
         this.isResultsLoading = true;
 
         const params: TimespanListParams = {
@@ -168,6 +181,7 @@
         }
 
         this.isResultsLoading = false;
+        if (event) event.target.complete();
       },
     },
     mounted() {

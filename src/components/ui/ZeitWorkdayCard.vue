@@ -38,9 +38,9 @@
           v-for="(timespan, tidx) of workday.timespans"
           :key="timespan.id"
           class="transparent-bg"
-          button
+          :button="isLoadingTimespan != timespan.id && !isActiveTimespan(timespan)"
           :lines="tidx == workday.timespans.length - 1 && (widx < workday.length - 1 || displayFooter) ? 'full' : 'none'"
-          :detail="isLoadingTimespan != timespan.id"
+          :detail="isLoadingTimespan != timespan.id && !isActiveTimespan(timespan)"
           @click="showTimespanDetails(timespan)"
         >
           <ion-label>
@@ -49,12 +49,14 @@
               <span v-if="timespan.checkout">&nbsp;– {{ formatTime(timespan.checkout.time) }}</span>
               <span v-else-if="isActiveTimespan(timespan)"><div class="dot-active ml-2" /></span>
               <span v-else>&nbsp;– ??</span>
-              <zeit-project-badge :projectId="timespan.project_id" class="ml-2" />
+              <zeit-project-badge :projectId="getTimespan(timespan).project_id" class="ml-2" />
               <div class="ml-2 flex items-center text-gray-400" v-if="showRepeat && !isActiveTimespan(timespan)" @click.prevent.stop="repeatClick(timespan)">
                 <ion-icon :ios="repeatOutline" :md="repeatOutline" />
               </div>
             </h3>
-            <p v-if="timespan.employee_comment">{{ timespan.employee_comment }}</p>
+            <p v-if="getTimespan(timespan).employee_comment">
+              {{ getTimespan(timespan).employee_comment }}
+            </p>
           </ion-label>
           <div slot="end" class="flex justify-end">
             <ion-note
@@ -196,6 +198,10 @@
       }
     },
     methods: {
+      getTimespan(timespan: Timespan) {
+        if (this.isActiveTimespan(timespan)) return this.activeTimespan;
+        return timespan;
+      },
       workDuration(workday: WorkdayReport): number {
         let total = 0;
 
@@ -310,6 +316,8 @@
         return breakTime;
       },
       showTimespanDetails(timespan: Timespan) {
+        if (this.isActiveTimespan(timespan)) return;
+
         this.isLoadingTimespan = timespan.id;
         this.timespanService.retrieve(timespan.id, new Map([['verbosity', 'detail']])).then(() => {
           const path = '/timespans/' + timespan.id + '/';

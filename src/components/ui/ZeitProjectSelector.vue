@@ -25,23 +25,24 @@
 
     <teleport to="#scan-overlay" v-if="isMobile">
       <transition
-        enter-active-class="ease-out duration-150"
-        enter-from-class="top-full transform scale-50"
-        enter-to-class="top-0 transform scale-100"
-        leave-active-class="ease-in duration-150"
-        leave-from-class="top-0 transform scale-100"
-        leave-to-class="top-full transform scale-95"
+        enter-active-class="ease-out duration-100"
+        enter-from-class="-bottom-full opacity-0"
+        enter-to-class="bottom-0 opacity-100"
+        leave-active-class="ease-in duration-100"
+        leave-from-class="bottom-0"
+        leave-to-class="-bottom-full"
       >
-        <MenuItems as="div" class="fixed left-0 w-full h-full z-20">
-          <ion-page>
-            <ion-header>
-              <ion-toolbar>
+        <MenuItems as="div" class="h-full w-full left-0 fixed">
+          <MenuItem as="div" class="fixed bg-black bg-opacity-30 w-full absolute -top-full bottom-0 left-0" />
+          <ion-page class="absolute left-0 w-full top-16 z-20 bottom-0 focus:outline-none">
+            <div class="shadow-xl">
+              <ion-toolbar class="rounded-t-xl overflow-hidden">
                 <ion-buttons slot="start">
-                  <MenuItem as="template"><ion-button>Zurück</ion-button></MenuItem>
+                  <MenuItem as="template"><ion-button class="focus:outline-none">Zurück</ion-button></MenuItem>
                 </ion-buttons>
                 <ion-title>Projekt wählen</ion-title>
               </ion-toolbar>
-            </ion-header>
+            </div>
             <ion-content>
               <div class="py-4 px-4">
                 <div class="relative w-full">
@@ -49,6 +50,7 @@
                     <ion-icon :ios="search" :md="search" class="w-5 h-5 text-gray-400" />
                   </div>
                   <input
+                    @keydown.stop
                     v-model="projectQueryString"
                     ref="search"
                     class="
@@ -75,7 +77,7 @@
                 </template>
                 <template v-else>
                   <template v-if="recentProjects && recentProjects.length > 0">
-                    <p class="uppercase text-gray-400 mt-2 text-sm font-semibold pl-2" v-if="allProjects && allProjects.length > 0">Zuletzt verwendet</p>
+                    <p class="uppercase text-gray-400 my-2 text-sm font-semibold pl-2" v-if="allProjects && allProjects.length > 0">Zuletzt verwendet</p>
 
                     <MenuItem as="div" v-slot="{ active }" v-for="project, idx of recentProjects" :key="idx" @click="selectProject(project)">
                       <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="flex items-center block px-4 py-2 text-sm rounded cursor-pointer">
@@ -86,7 +88,7 @@
                   </template>
 
                   <template v-if="allProjects && allProjects.length > 0">
-                    <p class="uppercase text-gray-400 mt-2 text-sm font-semibold pl-2" v-if="recentProjects && recentProjects.length > 0">Alle</p>
+                    <p class="uppercase text-gray-400 my-2 text-sm font-semibold pl-2" v-if="recentProjects && recentProjects.length > 0">Weitere</p>
 
                     <MenuItem as="div" v-slot="{ active }" v-for="project, idx of allProjects" :key="idx" @click="selectProject(project)">
                       <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="flex items-center block px-4 py-2 text-sm rounded cursor-pointer">
@@ -138,11 +140,18 @@
   </Menu>
 </template>
 
+<style scoped>
+  ion-toolbar {
+    --border-width: 0 0 .67px 0;
+    --border-color: rgba(0, 0, 0, .2);
+  }
+</style>
+
 
 <script lang="ts">
   import { defineComponent } from 'vue';
 
-  import { IonIcon, IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonSkeletonText } from '@ionic/vue';
+  import { IonIcon, IonPage, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonSkeletonText } from '@ionic/vue';
   import { folderOpen, search } from 'ionicons/icons';
 
   import { projectService, Project } from '../../services/projects';
@@ -156,7 +165,7 @@
       MenuItem,
       MenuItems,
       IonIcon,
-      IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
+      IonPage, IonToolbar, IonTitle, IonContent,
       IonButton, IonButtons, IonSkeletonText,
     },
     props: {
@@ -197,6 +206,7 @@
       },
     },
     methods: {
+      keypress(e: any) {console.log(e)},
       async loadActiveProject() {
         if (this.activeProjectId) {
           this.activeProject = (await projectService.retrieve(this.activeProjectId)).data;
