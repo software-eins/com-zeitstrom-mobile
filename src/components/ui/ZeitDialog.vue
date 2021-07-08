@@ -86,7 +86,7 @@
       return {
         isOpen,
         closeModal() {
-          isOpen.value = false
+          isOpen.value = false;
           this.$emit("close");
         },
       }

@@ -7,23 +7,26 @@
         </ion-buttons>
         <ion-title v-if="false">{{ getTitle() }}</ion-title>
         <ion-buttons slot="primary">
-            <ion-button color="primary" @click="showMoreMenu" v-if="getActions().length > 0">
-                <ion-icon slot="icon-only" :ios="ellipsisHorizontalCircle" :md="ellipsisHorizontal"></ion-icon>
-            </ion-button>
-            <ion-button
-                v-if="remoteResource.id && hasEditPermissions()"
-                color="primary"
-                :strong="true"
-                :disabled="!hasChanges()"
-                @click="updateRemoteResource()"
-            >Speichern</ion-button>
-            <ion-button
-                v-if="!remoteResource.id && hasCreatePermissions()"
-                color="primary"
-                :strong="true"
-                :disabled="!hasChanges()"
-                @click="createRemoteResource()"
-            >Hinzufügen</ion-button>
+            <ion-spinner v-if="isLoading" />
+            <template v-else>
+              <ion-button color="primary" @click="showMoreMenu" v-if="getActions().length > 0">
+                  <ion-icon slot="icon-only" :ios="ellipsisHorizontalCircle" :md="ellipsisHorizontal"></ion-icon>
+              </ion-button>
+              <ion-button
+                  v-if="remoteResource.id && hasEditPermissions()"
+                  color="primary"
+                  :strong="true"
+                  :disabled="!hasChanges()"
+                  @click="updateRemoteResource()"
+              >Speichern</ion-button>
+              <ion-button
+                  v-if="!remoteResource.id && hasCreatePermissions()"
+                  color="primary"
+                  :strong="true"
+                  :disabled="!hasChanges()"
+                  @click="createRemoteResource()"
+              >Hinzufügen</ion-button>
+            </template>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -86,7 +89,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import {
-    IonPage, IonHeader, IonToolbar, IonIcon, IonButton,
+    IonPage, IonHeader, IonToolbar, IonIcon, IonButton, IonSpinner,
     IonButtons, IonBackButton, IonTitle, IonContent, toastController,
     actionSheetController,
 } from '@ionic/vue';
@@ -128,7 +131,7 @@ export class DetailAction {
 
 export default defineComponent({
     components: {
-        IonPage, IonHeader, IonToolbar, IonIcon, IonButton, IonButtons, IonBackButton, IonTitle, IonContent,
+        IonPage, IonHeader, IonToolbar, IonIcon, IonButton, IonButtons, IonBackButton, IonTitle, IonContent, IonSpinner,
         ZeitForm, ZeitButton,
     },
     inject: [
@@ -236,12 +239,16 @@ export default defineComponent({
           if (!this.service) return;
           if (!this.localResource) return;
 
+          console.log("this.localResource", (this.localResource as any).attachment, this.localResource);
+
+          this.isLoading = true;
           this.formErrors = undefined;
           this.service.create(this.localResource)
             .then((response: AxiosResponse<any>) => {
               this.remoteResource = response.data;
               this.localResource = JSON.parse(JSON.stringify(response.data)) as unknown as any;
 
+              this.isLoading = false;
               this.goBack();
               toastController
                 .create({
@@ -253,6 +260,7 @@ export default defineComponent({
               if (error.response.status == 400) {
                 this.formErrors = error.response.data;
               }
+              this.isLoading = false;
             });
         },
         hasPermission(name: string) {
