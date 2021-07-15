@@ -1,4 +1,4 @@
-const PLAY_SOUNDS = false;
+const PLAY_SOUNDS = true;
 
 const isSoundEnabled = function() {
   return PLAY_SOUNDS;
