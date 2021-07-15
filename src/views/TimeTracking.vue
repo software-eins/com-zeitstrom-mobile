@@ -134,7 +134,7 @@
             <h2>Erfassung starten</h2>
             <p v-if="formattedAddress">{{ formattedAddress }}</p>
             <p v-else-if="waitingForAddress()">Dein Standort wird ermittelt</p>
-            <p v-else>Beginne einen neuen Arbeitstag</p>
+            <p v-else>Beginne eine neue Arbeitsphase</p>
           </ion-label>
 
           <ion-icon
@@ -359,10 +359,9 @@
 
         this.isLoadingAddTimestamp = true;
         this.trackingService.addTimestamp(employeeId, comment, projectId, meta).then(() => {
-          this.updateWorkingStatus().then(() => {
+          this.updateWorkingStatus(true).then(() => {
             this.isLoadingAddTimestamp = false;
             this.loadWorkdayReports(true);
-            this.updateWorkingStatus(true);
           });
         });
       },
@@ -380,10 +379,9 @@
 
         this.isLoadingAddTimestamp = true;
         this.trackingService.addTwoTimestamps(employeeId, ts.employee_comment, ts.project_id, undefined, meta).then(() => {
-          this.updateWorkingStatus().then(() => {
+          this.updateWorkingStatus(true).then(() => {
             this.isLoadingAddTimestamp = false;
             this.loadWorkdayReports(true);
-            this.updateWorkingStatus(true);
           });
         });
       },

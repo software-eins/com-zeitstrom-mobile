@@ -58,7 +58,14 @@
                 </MenuItem>
 
                 <MenuItem v-else as="div" v-slot="{ active }" @click="selectActivity('')" class="focus:outline-none">
-                  <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="flex items-center block px-4 py-2 text-sm rounded cursor-pointer">
+                  <div :class="[
+                      active && !dark ? 'bg-gray-100 text-gray-900' : '',
+                      !active && !dark ? 'text-gray-700' : '',
+                      active && dark ? 'bg-gray-800 text-white' : '',
+                      !active && dark ? 'text-gray-100' : '',
+                    ]"
+                    class="flex items-center block px-4 py-2 text-sm rounded cursor-pointer"
+                  >
                     Keine Tätigkeitsbeschreibung auswählen
                     <ion-icon :ios="arrowForward" :md="arrowForward" class="ml-2 text-gray-400" />
                   </div>
@@ -73,7 +80,14 @@
                 <template v-else-if="recentTimespans && recentTimespans.length > 0">
                   <p class="uppercase text-gray-400 mt-2 mb-2 text-sm font-semibold pl-2">Zuletzt verwendet</p>
                   <MenuItem as="div" v-slot="{ active }" v-for="timespan of recentTimespans" :key="timespan.id" @click="selectActivity(timespan.employee_comment)" class="focus:outline-none">
-                    <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700']" class="block px-4 py-2 text-sm rounded cursor-pointer">
+                    <div :class="[
+                        active && !dark ? 'bg-gray-100 text-gray-900' : '',
+                        !active && !dark ? 'text-gray-700' : '',
+                        active && dark ? 'bg-gray-800 text-white' : '',
+                        !active && dark ? 'text-gray-100' : '',
+                      ]"
+                      class="block px-4 py-2 text-sm rounded cursor-pointer"
+                    >
                       {{ timespan.employee_comment }}&nbsp; <span class="text-gray-400 text-xs">&middot; {{ formatDatetime(timespan.created_at) }}</span>
                     </div>
                   </MenuItem>
@@ -115,6 +129,12 @@
       IonPage, IonToolbar, IonTitle, IonContent,
       IonButton, IonButtons, IonSkeletonText, IonIcon,
       IonRefresher, IonRefresherContent,
+    },
+    computed: {
+      dark() {
+        if (!document.body) return false;
+        return document.body.classList.contains("dark")
+      },
     },
     props: {
       activeActivity: String,

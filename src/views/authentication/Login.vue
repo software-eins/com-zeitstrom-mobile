@@ -78,7 +78,7 @@
 </style>
 
 <script lang="ts">
-    import { IonContent, IonText, IonInput, IonIcon, IonButton, IonPage, toastController } from '@ionic/vue';
+    import { IonContent, IonText, IonInput, IonIcon, IonButton, IonPage, toastController, isPlatform } from '@ionic/vue';
     import { qrCodeOutline } from 'ionicons/icons';
 
     import { defineComponent } from 'vue';
@@ -94,6 +94,7 @@
     import { QRScanner } from '@ionic-native/qr-scanner';
 
     import accountsService from '../../services/accounts';
+    import deviceService from '../../services/devices';
 
     import { Plugins } from '@capacitor/core';
 
@@ -140,8 +141,31 @@
         nextUrl(): string {
           return this.$route.query.next as string || '/';
         },
-        login() {
+        async login() {
+          delete localStorage.theme;
+
           this.isLoading = true;
+
+          if (this.email == '' && this.password == '') {
+            console.log("Login.login: Terminal mode");
+            const terminalCredentials = (await deviceService.retrieveDeviceCredentials({
+              mobile_ip: "1.1.1.1",
+              device_id: "XXXXX",
+              mac_address: "test-mac"
+            })).data;
+
+            localStorage.accessMode = "Device";
+            localStorage.accessToken = "id=" + terminalCredentials.id + " salt=" + terminalCredentials.salt;
+            localStorage.deviceConfig = JSON.stringify(terminalCredentials);
+            localStorage.theme = "dark";
+
+            console.log("Login.login: ", localStorage.accessToken);
+
+            this.isLoading = false;
+
+            this.$router.replace('/');
+            return;
+          }
 
           accountsService
             .login(this.email, this.password)
@@ -192,13 +216,15 @@
           });
           this.$forceUpdate();
 
-          Keyboard.addListener('keyboardWillShow', () => {
-              this.keyboardVisible = true;
-          });
+          if (isPlatform('capacitor')) {
+            Keyboard.addListener('keyboardWillShow', () => {
+                this.keyboardVisible = true;
+            });
 
-          Keyboard.addListener('keyboardWillHide', () => {
-              this.keyboardVisible = false;
-          });
+            Keyboard.addListener('keyboardWillHide', () => {
+                this.keyboardVisible = false;
+            });
+          }
 
       },
     })

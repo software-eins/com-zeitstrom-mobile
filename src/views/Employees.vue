@@ -107,6 +107,7 @@
             }
         },
         beforeMount() {
+            console.log("Employee.beforeMount");
             this.detailActions = [
                 new DetailAction(
                     'Zugangsdaten kopieren',

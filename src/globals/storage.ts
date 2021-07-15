@@ -15,7 +15,6 @@ class TutorialManager {
 
   isSeen(key: string) {
     const tutorials = this._getTutorials();
-    console.log(tutorials);
     return Boolean(tutorials[key]);
   }
 

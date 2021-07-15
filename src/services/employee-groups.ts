@@ -33,6 +33,7 @@ class EmployeeGroupService extends BaseService<EmployeeGroup> {
     deleteResourceConfirmation(resourceId?: string): Promise<string> { return Promise.resolve("Abteilung entfernt") }
 
     listParams(params: EmployeeGroupListParams) {
+        console.log("employee-groups.listParams");
         const pagesize = params.pagesize || 50;
         const page = params.page || 1;
         const query = params.query || '';

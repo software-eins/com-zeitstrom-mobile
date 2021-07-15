@@ -275,6 +275,7 @@
       },
 
       async loadData(event?: any) {
+        console.log("UserAccount.loadData");
         if (event) {
           this.accountService.clearCache();
           this.institutionService.clearCache();

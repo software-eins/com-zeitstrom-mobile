@@ -106,6 +106,8 @@ class AccountService extends BaseService<Account> {
 
     logout() {
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('accessMode');
+        localStorage.removeItem('deviceConfig');
     }
 }
 

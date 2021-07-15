@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { BaseService, FormField, PaginatedResponse } from './_base';
+import { StorableBaseService, FormField, PaginatedResponse } from './_base';
 
 interface ProjectListParams {
     ids?: Array<string>;
@@ -20,7 +20,7 @@ interface Project {
     total_duration: number;
 }
 
-class ProjectService extends BaseService<Project> {
+class ProjectService extends StorableBaseService<Project> {
     archivedFormFields: Array<FormField<any>>;
 
     constructor() {
@@ -46,7 +46,7 @@ class ProjectService extends BaseService<Project> {
             new FormField("color", "Farbe", { type: 'color', isReadOnly: true }),
         ];
 
-        this.cacheTimeout = 60 * 5;
+        this.cacheTimeout = 60;
     }
 
     newResourceTitle(resourceId?: string): Promise<string> { return Promise.resolve("Projekt hinzufügen") }

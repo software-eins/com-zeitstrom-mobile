@@ -26,6 +26,48 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
 
+  // Terminal Mode
+  {
+    path: '/terminal/',
+    component: () => import('../views/terminal/TerminalHome.vue'),
+    meta: {
+      allowGuests: true,
+      hideChrome: true,
+    },
+  },
+  {
+    path: '/terminal/employees/:id/',
+    component: () => import('../views/terminal/AuthenticatedTracking.vue'),
+    meta: {
+      allowGuests: true,
+      hideChrome: true,
+    },
+  },
+  {
+    path: '/terminal/not-assigned-to-institution/',
+    component: () => import('../views/terminal/NotAssignedToInstitution.vue'),
+    meta: {
+      allowGuests: true,
+      hideChrome: true,
+    },
+  },
+  {
+    path: '/terminal/token/:id/not-assigned/',
+    component: () => import('../views/terminal/TokenNotAssignedToEmployee.vue'),
+    meta: {
+      allowGuests: true,
+      hideChrome: true,
+    },
+  },
+  {
+    path: '/terminal/guest/',
+    component: () => import('../views/terminal/Guest.vue'),
+    meta: {
+      allowGuests: true,
+      hideChrome: true,
+    },
+  },
+
   // Projects
   {
     path: '/projects/add/',
@@ -222,6 +264,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Home.vue'),
     // redirect: { path: '/time-tracking/',},
     meta: {
+      allowGuests: true,
       hideChrome: true,
       transparentStatusBar: true,
     }

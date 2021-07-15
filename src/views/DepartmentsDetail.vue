@@ -40,6 +40,7 @@
     methods: {
         showEmployees() {
             this.isLoadingEmployees = true;
+            console.log("DepartmentsDetail.showEmployees");
             this.employeeService.listParams({employeeGroups: [this.$route.params.id as string]}).then(() => {
                 const path = this.$route.fullPath + "employees/";
 

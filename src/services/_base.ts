@@ -4,6 +4,11 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { Account } from './accounts';
 
 
+export interface Id {
+    id: string;
+}
+
+
 export class FormFieldCondition {
     name: string;
     value: any;
@@ -21,8 +26,8 @@ export interface ChoiceField {
 
 export interface PaginatedResponse<T = any> {
     count: number;
-    next?: string;
-    previous?: string;
+    next: string|null;
+    previous: string|null;
     results: Array<T>;
 }
 
@@ -185,7 +190,7 @@ export interface FilterAttributeParams {
     nullSelectable?: boolean;
     nullLabel?: string;
     multiple?: boolean;
-    visible?: Promise<boolean>;
+    visible?: () => Promise<boolean>;
 }
 
 export class FilterAttribute {
@@ -194,7 +199,7 @@ export class FilterAttribute {
     label: string;
     defaultValue: any;
 
-    visible: Promise<boolean>;
+    visible: () => Promise<boolean>;
 
     // Type 'select'
     remoteSourceService?: BaseService<any>;
@@ -218,7 +223,7 @@ export class FilterAttribute {
         this.nullSelectable = params.nullSelectable !== undefined ? params.nullSelectable : true;
         this.nullLabel = params.nullLabel !== undefined ? params.nullLabel : 'Keine Auswahl';
         this.remoteSourceService = params.remoteSourceService;
-        this.visible = params.visible !== undefined ? params.visible : Promise.resolve(true);
+        this.visible = params.visible !== undefined ? params.visible : () => Promise.resolve(true);
     }
 }
 
@@ -277,14 +282,18 @@ export class BaseService<T> {
         }
     }
 
-    _get_cache_key(url: string) {
-        return localStorage.accessToken + "|" + url;
+    _getCacheKey(url: string) {
+        return (
+            localStorage.accessToken + "|" +
+            this.constructor.name + "|" +
+            url
+        );
     }
 
     _get(pathParameters: string, useCachedResponse = true) {
         pathParameters = pathParameters ? pathParameters : '';
         const url = this.endpoint + pathParameters;
-        const cacheKey = this._get_cache_key(url);
+        const cacheKey = this._getCacheKey(url);
 
         const cachedResponse = this._cachedResponses.get(cacheKey);
         let promise;
@@ -310,30 +319,6 @@ export class BaseService<T> {
         });
 
         return promise;
-    }
-
-    /**
-     * Populates the retrieve cache with pre-defined entries (e.g. from a list
-     * response).
-     *
-     * @param entries
-     */
-
-    _cacheDetails(entries: Array<T>) {
-        for (const entry of entries) {
-            const url = this.endpoint + (entry as any).id + "/";
-            const cacheKey = this._get_cache_key(url);
-
-            this._cachedResponses.set(cacheKey, new CachedResponse(new Promise(resolve => {
-                resolve({
-                    headers: {},
-                    config: {},
-                    status: 200,
-                    statusText: "OK",
-                    data: entry,
-                })
-            }), this.cacheTimeout));
-        }
     }
 
     _delete(pathParameters: string) {
@@ -412,5 +397,33 @@ export class BaseService<T> {
         return this._delete(resourceId + "/") as unknown as Promise<AxiosResponse<undefined>>;
     }
 }
+
+export class StorableBaseService<T extends Id> extends BaseService<T> {
+
+    /**
+     * Populates the retrieve cache with pre-defined entries (e.g. from a list
+     * response).
+     *
+     * @param entries
+     */
+    _cacheDetails(entries: Array<T>) {
+        for (const entry of entries) {
+            const url = this.endpoint + entry.id + "/";
+            const cacheKey = this._getCacheKey(url);
+
+            this._cachedResponses.set(cacheKey, new CachedResponse(new Promise(resolve => {
+                resolve({
+                    headers: {},
+                    config: {},
+                    status: 200,
+                    statusText: "OK",
+                    data: entry,
+                })
+            }), this.cacheTimeout));
+        }
+    }
+}
+
+export { CachedResponse };
 
 export default BaseService;

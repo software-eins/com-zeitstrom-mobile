@@ -11,6 +11,7 @@ interface EmployeeTrack {
 class TrackingService extends BaseService<EmployeeTrack> {
     constructor() {
         super("/api/v2/tracking/employees/");
+        this.cacheTimeout = 5;
     }
 
     addTwoTimestamps(employeeId: string, comment?: string, projectId?: string, newProjectId?: string, meta?: any) {

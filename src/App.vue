@@ -1,7 +1,7 @@
 <template>
   <ion-app>
     <ion-split-pane when="md" content-id="main-content" v-if="showSidemenu">
-      <div class="bg-primary w-full h-full absolute top-0 left-0" />
+      <div class="bg-gray-100 w-full h-full absolute top-0 left-0" />
       <ion-menu
         ref="menu"
         content-id="main-content"
@@ -114,7 +114,12 @@
   ion-list.md ion-item {
     margin-left: -10px;
   }
+</style>
 
+<style>
+  html.font-size-terminal {
+    font-size: 125%;
+  }
 </style>
 
 <script lang="ts">
@@ -329,7 +334,7 @@ export default defineComponent({
   },
   data() {
       return {
-        isMobile: isPlatform("capacitor") || navigator.userAgent.indexOf("iPhone") > -1,
+        isMobile: true || isPlatform("capacitor") || navigator.userAgent.indexOf("iPhone") > -1 || navigator.userAgent.indexOf("Galaxy") > -1,
 
         branding,
         isPlatform,
@@ -339,7 +344,7 @@ export default defineComponent({
   provide() {
     return {
       showSidemenu: computed(() => this.showSidemenu),
-      isMobile: isPlatform("capacitor") || navigator.userAgent.indexOf("iPhone") > -1,
+      isMobile: true || isPlatform("capacitor") || navigator.userAgent.indexOf("iPhone") > -1 || navigator.userAgent.indexOf("Galaxy") > -1,
       isAndroid: isPlatform("android"),
     }
   },
@@ -358,7 +363,20 @@ export default defineComponent({
         StatusBar.setStyle({ style: Style.Light });
       }
 
-      return;
+      // Set color preference
+      if (document == null) return;
+      if (!this.isMobile) return;
+
+      const body = document.querySelector('body');
+      if (body == null) return;
+
+      // We currently need this for the tablet terminal mode only
+      if (localStorage.theme === 'dark') {
+        body.classList.add('dark')
+      } else {
+        body.classList.remove('dark')
+      }
+
 
       // if (document == null) return;
 
@@ -390,25 +408,40 @@ export default defineComponent({
       // Whenever the user explicitly chooses to respect the OS preference
     //   localStorage.removeItem('theme')
     },
+    loadFontSize() {
+      // If this is a terminal, we set a larger font size to the html element
+      const html = document.querySelector("html");
+      if (html == null) return;
+
+      if (localStorage.accessMode == "Device") {
+        html.classList.add('font-size-terminal');
+      } else {
+        html.classList.remove('font-size-terminal');
+      }
+    },
     logout() {
       this.accountService.logout();
       this.$router.replace({name:'authentication:login'});
     },
-    updateAccountDetails() {
-        return Promise.all([
-            this.accountService.list().then((response: AxiosResponse<PaginatedResponse<Account>>) => {
-                this.account = response.data.results[0];
-                return this.account;
-            }).then((account: Account) => {
-                return this.accountService.listRoles(1, 50, '', [account.role]).then((response: AxiosResponse<PaginatedResponse<ChoiceField>>) => {
-                    const roles = response.data.results;
-                    if (roles.length > 0) this.roleLabel = roles[0].label;
-                })
-            }),
-            this.institutionService.list().then((response: AxiosResponse<PaginatedResponse<Institution>>) => {
-                this.institution = response.data.results[0];
-            }),
-        ]).then(() => this.$forceUpdate());
+    async updateAccountDetails() {
+      if (localStorage.accessMode == 'Device') return;
+
+      await Promise.all([
+        this.accountService.list().then((response: AxiosResponse<PaginatedResponse<Account>>) => {
+          this.account=response.data.results[0];
+          return this.account;
+        }).then((account: Account) => {
+          return this.accountService.listRoles(1, 50, '', [account.role]).then((response_1: AxiosResponse<PaginatedResponse<ChoiceField>>) => {
+            const roles=response_1.data.results;
+            if(roles.length>0)
+              this.roleLabel=roles[0].label;
+          });
+        }),
+        this.institutionService.list().then((response_2: AxiosResponse<PaginatedResponse<Institution>>) => {
+          this.institution=response_2.data.results[0];
+        }),
+      ]);
+      return this.$forceUpdate();
     },
     filteredAppPages() {
       if (!this.account) return [];
@@ -447,7 +480,13 @@ export default defineComponent({
     }
 
     this.loadDarkMode();
-    this.updateSideMenuVisibility();
+    this.loadFontSize();
+
+    if (localStorage.accessMode == 'Device') {
+      this.showSidemenu = true;
+    } else {
+      this.updateSideMenuVisibility();
+    }
 
     // Add branding to html tag
     document.getElementsByTagName("html")[0].classList.add("brand-" + branding.id);

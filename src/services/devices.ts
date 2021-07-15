@@ -32,6 +32,22 @@ interface DeviceListParams {
     query?: string;
 }
 
+interface RetrieveDeviceCredentialsRequest {
+    mobile_ip: string;
+    mac_address: string;
+    device_id: string;
+}
+
+interface RetrieveDeviceCredentialsResponse {
+    id: string;
+    salt: string;
+    device_id: string;
+    timezone: string;
+}
+
+interface CurrentlyActiveResponse {
+    institution: string;
+}
 
 class DeviceService extends BaseService<Device> {
     constructor() {
@@ -77,6 +93,10 @@ class DeviceService extends BaseService<Device> {
         return this._getChoices('authentication-modes/', page, pagesize, query);
     }
 
+    retrieveDeviceCredentials(body: RetrieveDeviceCredentialsRequest): Promise<AxiosResponse<RetrieveDeviceCredentialsResponse>> {
+        return this._post("create-touch-device/", body) as unknown as Promise<AxiosResponse<RetrieveDeviceCredentialsResponse>>;
+    }
+
     listParams(params: DeviceListParams) {
         const pagesize = params.pagesize || 50;
         const page = params.page || 1;
@@ -88,6 +108,10 @@ class DeviceService extends BaseService<Device> {
             '&q=' + encodeURIComponent(String(query));
 
         return this._get(url);
+    }
+
+    currentlyActive(): Promise<AxiosResponse<CurrentlyActiveResponse>> {
+        return this._get('currently-active/') as unknown as Promise<AxiosResponse<CurrentlyActiveResponse>>;
     }
 }
 

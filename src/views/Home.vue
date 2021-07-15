@@ -1,16 +1,22 @@
 <template>
-  <transition name="fade">
-    <div class="h-screen w-full flex items-center justify-center relative">
-      <background-drawing-top class="absolute w-1/2 top-0 right-0" />
-      <background-drawing-bottom class="absolute w-1/3 left-0 bottom-0 opacity-animation" />
+  <ion-page>
+    <ion-content :fullscreen="true">
+      <div class="h-screen w-full flex items-center justify-center relative bg-gray-100">
+        <background-drawing-top class="absolute w-1/2 top-0 right-0" />
+        <background-drawing-bottom class="absolute w-1/3 left-0 bottom-0 opacity-animation" />
 
-      <Logo :showName="true" style="max-width: 40%;" />
-    </div>
-  </transition>
+        <Logo :showName="true" style="max-width: 40%;" />
+      </div>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script lang="ts">
   import { defineComponent } from 'vue';
+
+  import {
+    IonPage, IonContent,
+  } from '@ionic/vue';
 
   import Logo from '../components/graphics/Logo.vue';
   import BackgroundDrawingTop from '../components/graphics/BackgroundDrawingTop.vue';
@@ -26,6 +32,8 @@
 
   export default defineComponent({
     components: {
+      IonPage, IonContent,
+
       Logo,
       BackgroundDrawingTop,
       BackgroundDrawingBottom,
@@ -40,22 +48,36 @@
           projectService.list(),
         ]);
 
-        this.$router.push('/time-tracking/');
+        this.$router.push({path: '/time-tracking/'});
       },
-    },
-    mounted() {
-      accountService.list().then(response => {
-        const accounts = response.data.results;
-        if (accounts.length == 0) return;
-        const account = accounts[0];
-
-        if (account.role == 'employee' && account.employee_id) {
-          this.loadEmployeeHome(account.employee_id);
+      async redirectToDefault() {
+        if (!localStorage.accessToken) {
+          this.$router.push({path: '/authentication/login/'});
           return;
         }
 
-        this.$router.push('/account/profile/');
-      })
+        if (localStorage.accessMode == "Device") {
+          this.$router.push({path: '/terminal/'});
+          return;
+        }
+
+        accountService.list().then(response => {
+          const accounts = response.data.results;
+          if (accounts.length == 0) return;
+          const account = accounts[0];
+
+          if (account.role == 'employee' && account.employee_id) {
+            this.loadEmployeeHome(account.employee_id);
+            return;
+          }
+
+          this.$router.push({path: '/account/profile/'});
+        })
+      },
+    },
+    ionViewDidEnter() {
+      console.log("Home.ionViewDidEnter: ", localStorage.accessMode, localStorage.accessToken);
+      this.redirectToDefault();
     },
   });
 </script>

@@ -3,8 +3,17 @@
     <template #headline>Und los geht's…</template>
 
     <p class="text-sm text-gray-500 mb-4">
-      Super! Du hast deine erste Arbeitszeit gestartet.
+      Super! Du hast dich das erste Mal an diesem Terminal angemeldet.
     </p>
+
+    <div class="flex items-start justify-start mb-4">
+      <div class="flex-none pt-1">
+        <ion-icon :icon="play" size="medium" class="bg-primary text-white rounded-full p-2 shadow-sm" />
+      </div>
+      <div class="flex-grow text-sm text-gray-500 pl-4">
+        Beginne einen neuen Arbeitstag oder setze deine Arbeitszeit nach einer Pause fort.
+      </div>
+    </div>
 
     <div class="flex items-start justify-start mb-4">
       <div class="flex-none pt-1">
@@ -25,6 +34,22 @@
         neuen Tätigkeit arbeiten.
       </div>
     </div>
+
+    <div class="border-b mb-4 border-gray-300" />
+
+    <div class="flex items-start justify-start mb-4">
+      <div class="flex-none pt-1 relative">
+        <div class="absolute -top-3 -left-4">
+          <Countdown :seconds="7" :radius="40" :stroke="10" :repeat="true" />
+        </div>
+        <ion-icon :icon="play" size="medium" class="bg-primary text-white rounded-full p-2 shadow-sm" />
+      </div>
+      <div class="flex-grow text-sm text-gray-500 pl-4">
+        Wir erfassen deine Zeiten automatisch und loggen dich aus, wenn du 7 Sekunden nichts machst. Berühre das Display
+        an einer beliebigen Stelle, um den Countdown zu stoppen.
+      </div>
+    </div>
+
   </ZeitDialog>
 </template>
 
@@ -35,14 +60,18 @@
 
   import ZeitDialog from './ZeitDialog.vue';
 
-  import { stop, playForward } from 'ionicons/icons';
+  import { play, stop, playForward } from 'ionicons/icons';
   import projectService from '../../services/projects';
 
   import { tutorialManager } from '../../globals/storage';
 
+  import Countdown from './Countdown.vue';
+
   export default defineComponent({
     components: {
       ZeitDialog,
+
+      Countdown,
 
       IonIcon,
     },
@@ -54,7 +83,7 @@
     },
     emits: ["seen"],
     computed: {
-      key() { return "first-tracking"},
+      key() { return "first-login-terminal"},
     },
     data() {
       return {
@@ -62,13 +91,14 @@
 
         projectCount: 0,
 
+        play,
         stop,
         playForward,
       }
     },
     methods: {
       getKey() {
-        return this.prefix + "|5" + this.key
+        return this.prefix + "|00005" + this.key
       },
       isSeen() {
         return tutorialManager.isSeen(this.getKey());

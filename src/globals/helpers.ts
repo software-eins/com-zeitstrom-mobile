@@ -54,19 +54,23 @@ const formatLongDate = function(value: Date): string {
     return '';
 }
 
-const formatDatetime = function (value: string, format='DD. MMMM YYYY'): string {
+const formatDatetime = function (value: Date|string, format='DD. MMMM YYYY'): string {
+    if (typeof(value) != 'string') value = value.toISOString();
+
     if (value) {
-        return moment(String(value)).format(format)
+        return moment(value).format(format)
     }
     return '';
 }
 
-const formatTime = function (value: Date, precision='minutes'): string {
+const formatTime = function (value: Date|string, precision='minutes'): string {
+    if (typeof(value) != 'string') value = value.toISOString();
+
     let format = "HH:mm";
     if (precision == "seconds") format = "HH:mm:ss";
 
     if (value) {
-        return moment(String(value)).format(format)
+        return moment(value).format(format)
     }
     return '';
 }

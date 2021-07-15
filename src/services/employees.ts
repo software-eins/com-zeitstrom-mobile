@@ -1,4 +1,4 @@
-import { BaseService, FormField, FilterAttribute, PaginatedResponse } from './_base';
+import { StorableBaseService, FormField, FilterAttribute, PaginatedResponse, CachedResponse } from './_base';
 
 import { employeeGroupService, EmployeeGroup } from './employee-groups';
 import { physicalTokenService, PhysicalToken } from './physical-tokens';
@@ -26,6 +26,7 @@ interface Employee {
     physical_token_id?: string;
     can_be_deleted: boolean;
     delete_after_archive_period?: number;
+    working_time_balance?: number;
 }
 
 interface EmployeesListParams {
@@ -36,6 +37,8 @@ interface EmployeesListParams {
 
     verbosity?: string;
 
+    token?: Array<string>;
+
     ids?: Array<string>;
     employeeGroups?: Array<string>;
     showArchived?: boolean;
@@ -44,7 +47,7 @@ interface EmployeesListParams {
 }
 
 
-class EmployeeService extends BaseService<Employee> {
+class EmployeeService extends StorableBaseService<Employee> {
     archivedFormFields: Array<FormField<any>>;
 
     constructor() {
@@ -99,20 +102,20 @@ class EmployeeService extends BaseService<Employee> {
 
         this.filterAttributes = [
             new FilterAttribute("showArchived", "Archivierte Mitarbeiter anzeigen", "boolean", false, {
-                visible: this.listParams({ showArchived: true}).then((response: AxiosResponse<PaginatedResponse<EmployeeGroup>>) => {
+                visible: () => this.listParams({ showArchived: true}).then((response: AxiosResponse<PaginatedResponse<Employee>>) => {
                     return response.data.count > 0;
                 }),
             }),
             new FilterAttribute("employeeGroups", "Abteilungen", "select", undefined, {
                 multiple: true,
                 remoteSourceService: employeeGroupService,
-                visible: employeeGroupService.listParams({}).then((response: AxiosResponse<PaginatedResponse<EmployeeGroup>>) => {
+                visible: () => employeeGroupService.listParams({}).then((response: AxiosResponse<PaginatedResponse<EmployeeGroup>>) => {
                     return response.data.count > 0;
                 }),
             }),
         ];
 
-        this.cacheTimeout = 60 * 60 * 24 * 14;
+        this.cacheTimeout = 60;
     }
 
     titleAttribute(): Promise<any> { return Promise.resolve((resource: any) => resource.first_name + " " + resource.last_name) }
@@ -198,7 +201,7 @@ class EmployeeService extends BaseService<Employee> {
         return this._get(params);
     }
 
-    listParams(params: EmployeesListParams) {
+    _getListParamsUrl(params: EmployeesListParams) {
         const pagesize = params.pagesize || 50;
         const page = params.page || 1;
         const query = params.query || '';
@@ -210,11 +213,17 @@ class EmployeeService extends BaseService<Employee> {
 
         if (params.verbosity) url += "&verbosity=" + params.verbosity;
         if (params.ids) url += "&ids=" + params.ids.join("|");
+        if (params.token) url += "&token=" + params.token.join("|");
         if (params.employeeGroups) url += "&employee_groups=" + params.employeeGroups.join("|");
         if (params.showArchived === true) url = url + '&archived';
         if (params.minimumAbsenceCount) url = url + '&absence_count__gte=' + String(params.minimumAbsenceCount);
         if (params.absenceDaterange) url = url + '&absence_daterange=' + params.absenceDaterange;
 
+        return url;
+    }
+
+    listParams(params: EmployeesListParams): Promise<AxiosResponse<PaginatedResponse<Employee>>> {
+        const url = this._getListParamsUrl(params);
         return this._get(url, params.useCache !== false);
     }
 

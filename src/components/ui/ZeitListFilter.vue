@@ -132,7 +132,7 @@ export default defineComponent({
           // Check for visible filter attributes
           const filterAttributes = this.service!.filterAttributes;
           return Promise.all(
-            filterAttributes.map((fa: FilterAttribute) => fa.visible)
+            filterAttributes.map((fa: FilterAttribute) => fa.visible())
           ).then(filterAttributeVisibilities => {
             // Remove all attributes which are not visisble
             let cleanFilterAttributes = filterAttributes.filter((fa: FilterAttribute, idx: number) => filterAttributeVisibilities[idx]);

@@ -41,13 +41,14 @@
                 <slot />
               </div>
 
-              <div class="mt-4 flex-">
+              <div class="mt-4">
+                <slot name="actionButtons" />
                 <button
                   type="button"
                   class="inline-flex justify-center px-4 py-2 text-sm font-medium text-primary border border-transparent rounded-md hover:bg-primary hover:bg-opacity-20 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                   @click="closeModal"
                 >
-                  Okay, vielen Dank!
+                  {{ closeLabel }}
                 </button>
               </div>
             </div>
@@ -76,6 +77,12 @@
       Dialog,
       DialogOverlay,
       DialogTitle,
+    },
+    props: {
+      closeLabel: {
+        type: String,
+        default: 'Okay, vielen Dank!',
+      },
     },
     emits: [
       "close",

@@ -4,13 +4,11 @@ import axios, { AxiosTransformer } from 'axios';
 const zsAxios = axios.create({
     baseURL: process.env.VUE_APP_BASE_URL,
     transformRequest: [function (data, headers) {
+        let authType = "Bearer";
+        if (localStorage.accessMode == 'Device') authType = "DeviceV2";
         if (localStorage.accessToken) {
-            headers.Authorization = "Bearer " + localStorage.accessToken;
+            headers.Authorization = authType + " " + localStorage.accessToken;
         }
-        // TODO
-        // if (store.debugSession && store.debugSession.id) {
-        //     headers["X-Debug-ID"] = store.debugSession.id;
-        // }
         return data;
     }, ...(axios.defaults.transformRequest as AxiosTransformer[])],
 });
