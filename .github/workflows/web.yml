@@ -1,0 +1,54 @@
+name: Web / Deployment
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: Red / Deploy Red to S3
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install node dependencies
+        run: 'npm i'
+
+      - name: Install Capacitor
+        run: 'npm install @capacitor/cli@latest @capacitor/core@latest'
+
+      - name: Install ionic
+        run : 'sudo chown -R $USER /usr/local/ && npm install -g @ionic/cli'
+
+      - name: Red / Create environment vars
+        run: ./.github/scripts/web/create_environment_variables.sh
+        env:
+          BRAND: red
+          LABEL: 'Zeitstrom'
+          BASE_URL: https://api.zeitstrom.com
+
+      - name: Red / Build Ionic App
+        run: 'source envars && ionic build'
+
+      - name: Publish to AWS S3
+        uses: alexanderschulze/action-s3-sync@master
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "eu-central-1"
+          FROM_PATH: "./dist/"
+          DEST_PATH: "s3://com-zeitstrom-web3/"
+          OPTIONS: "--acl public-read"
+          CLOUDFRONT_ID: "E13W1VFNCX3KQM"
